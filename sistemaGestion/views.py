@@ -61,22 +61,9 @@ def requiere_permiso(modulo):
     return decorator
 
 def login_view(request):
-    # Para debug - mostrar usuarios disponibles
-    if request.method == 'GET':
-        print("DEBUG: Usuarios disponibles:", USUARIOS)
-    
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        
-        print(f"DEBUG: Intento de login - Username: '{username}', Password: '{password}'")
-        print(f"DEBUG: Tipo de username: {type(username)}, Tipo de password: {type(password)}")
-        print(f"DEBUG: Username en USUARIOS: {username in USUARIOS}")
-        
-        if username in USUARIOS:
-            print(f"DEBUG: Password esperada: '{USUARIOS[username]['password']}'")
-            print(f"DEBUG: Password recibida: '{password}'")
-            print(f"DEBUG: Passwords iguales: {USUARIOS[username]['password'] == password}")
         
         if username in USUARIOS and USUARIOS[username]['password'] == password:
             # Guardar datos del usuario en la sesión
@@ -85,11 +72,9 @@ def login_view(request):
             request.session['rol'] = USUARIOS[username]['rol']
             request.session['nombre'] = USUARIOS[username]['nombre']
             
-            print(f"DEBUG: Login exitoso para {username}")
             messages.success(request, f'Bienvenido {USUARIOS[username]["nombre"]}')
             return redirect('sistemaGestion:dashboard')
         else:
-            print(f"DEBUG: Login fallido para {username}")
             messages.error(request, f'Credenciales inválidas. Usuario: {username}')
     
     return render(request, 'auth/login.html')
@@ -99,7 +84,6 @@ def logout_view(request):
     messages.success(request, 'Sesión cerrada exitosamente')
     return redirect('sistemaGestion:login')
 
-@requiere_login
 @requiere_login
 def dashboard(request):
     context = get_base_context(request)
@@ -141,7 +125,6 @@ def crear_cliente(request):
     return render(request, 'clientes/crear_cliente.html', context)
 
 # Contratos
-@requiere_permiso('contratos')
 @requiere_permiso('contratos')
 def lista_contratos(request):
     contratos = [
