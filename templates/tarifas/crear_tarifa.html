@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Tarifa - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Tarifa{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton boton-secundario">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="nombre">Nombre de la Tarifa:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Seleccionar tipo</option>
+                    <option value="residencial">Residencial</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="precio_base">Precio Base:</label>
+                <input type="number" id="precio_base" name="precio_base" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="precio_kwh">Precio por kWh:</label>
+                <input type="number" id="precio_kwh" name="precio_kwh" step="0.0001" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="boton boton-primario">Guardar Tarifa</button>
+        </form>
+    </div>
+{% endblock %}
+

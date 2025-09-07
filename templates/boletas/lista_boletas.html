@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Boletas - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Gastos Eléctricos Municipales{% endblock %}
+
+{% block content %}
+    <!-- Estadísticas Resumen -->
+    <div class="stats-grid">
+        <div class="stat-tarjeta">
+            <h3>{{ total_servicios }}</h3>
+            <p>Total Servicios</p>
+        </div>
+        <div class="stat-tarjeta">
+            <h3>{{ servicios_pagados }}</h3>
+            <p>Servicios Pagados</p>
+        </div>
+        <div class="stat-tarjeta">
+            <h3>{{ servicios_pendientes }}</h3>
+            <p>Servicios Pendientes</p>
+        </div>
+        <div class="stat-tarjeta">
+            <h3>${{ total_gasto_presupuestado|floatformat:0 }}</h3>
+            <p>Gasto Total Presupuestado</p>
+        </div>
+        <div class="stat-tarjeta">
+            <h3>${{ total_pagado|floatformat:0 }}</h3>
+            <p>Total Pagado</p>
+        </div>
+        <div class="stat-tarjeta">
+            <h3>{{ porcentaje_pagado|floatformat:1 }}%</h3>
+            <p>Porcentaje Pagado</p>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:crear_boleta' %}" class="boton boton-primario">Nueva Boleta</a>
+    </div>
+
+    <div class="tarjeta">
+        <table>
+            <thead>
+                <tr>
+                    <th>N° Boleta</th>
+                    <th>NIC</th>
+                    <th>Cliente/Servicio</th>
+                    <th>Consumo (kWh)</th>
+                    <th>Monto Total</th>
+                    <th>Fecha Emisión</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Período</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for boleta in boletas %}
+                <tr>
+                    <td>{{ boleta.numero_boleta }}</td>
+                    <td>{{ boleta.nic }}</td>
+                    <td>{{ boleta.cliente_nombre }}</td>
+                    <td>{{ boleta.consumo_kwh }}</td>
+                    <td>${{ boleta.monto_total|floatformat:0 }}</td>
+                    <td>{{ boleta.fecha_emision }}</td>
+                    <td>{{ boleta.fecha_vencimiento }}</td>
+                    <td>{{ boleta.periodo_facturacion }}</td>
+                    <td>
+                        {% if boleta.estado == 'Pagada' %}
+                            <span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em;">Pagada</span>
+                        {% elif boleta.estado == 'Pendiente' %}
+                            <span style="background: #ffc107; color: #212529; padding: 3px 8px; border-radius: 3px; font-size: 0.8em;">Pendiente</span>
+                        {% elif boleta.estado == 'Vencida' %}
+                            <span style="background: #dc3545; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em;">Vencida</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <a href="#" class="boton boton-primario btn-sm" title="Ver detalles" style="margin-right: 5px; display: inline-block;">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="#" class="boton boton-secundario btn-sm" title="Editar" style="display: inline-block;">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" style="text-align: center;">No hay boletas registradas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

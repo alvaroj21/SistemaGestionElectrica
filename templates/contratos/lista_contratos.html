@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Contratos - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Contratos{% endblock %}
+
+{% block content %}
+    <div class="margen-inferior-20">
+        <a href="{% url 'sistemaGestion:crear_contrato' %}" class="boton boton-primario">Nuevo Contrato</a>
+    </div>
+
+    <div class="tarjeta">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Número</th>
+                    <th>Cliente</th>
+                    <th>Tarifa</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contrato in contratos %}
+                <tr>
+                    <td>{{ contrato.id }}</td>
+                    <td>{{ contrato.numero }}</td>
+                    <td>{{ contrato.cliente }}</td>
+                    <td>{{ contrato.tarifa }}</td>
+                    <td>
+                        {% if contrato.estado == 'Activo' %}
+                            <span class="estado-activo">Activo</span>
+                        {% else %}
+                            <span class="estado-inactivo">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="#" class="boton boton-secundario btn-sm" title="Editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="texto-centrado">No hay contratos registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

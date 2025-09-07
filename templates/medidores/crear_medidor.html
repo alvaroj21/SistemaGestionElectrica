@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Medidor - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Medidor{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton boton-secundario">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="numero">Número de Medidor:</label>
+                <input type="text" id="numero" name="numero" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <option value="">Seleccionar cliente</option>
+                    <option value="1">Juan Pérez</option>
+                    <option value="2">María Rodríguez</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="tipo">Tipo de Medidor:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Seleccionar tipo</option>
+                    <option value="electrónico">Electrónico</option>
+                    <option value="digital">Digital</option>
+                    <option value="analogico">Analógico</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="ubicacion">Ubicación:</label>
+                <textarea id="ubicacion" name="ubicacion" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="boton boton-primario">Guardar Medidor</button>
+        </form>
+    </div>
+{% endblock %}
+

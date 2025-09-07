@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Contrato - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Contrato{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_contratos' %}" class="boton btn-secondary">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="numero">Número de Contrato:</label>
+                <input type="text" id="numero" name="numero" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <option value="">Seleccionar cliente</option>
+                    <option value="1">Juan Pérez</option>
+                    <option value="2">María Rodríguez</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="tarifa">Tipo de Tarifa:</label>
+                <select id="tarifa" name="tarifa" required>
+                    <option value="">Seleccionar tarifa</option>
+                    <option value="residencial">Residencial</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="fecha_inicio">Fecha de Inicio:</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+            </div>
+
+            <button type="submit" class="boton boton-primario">Guardar Contrato</button>
+        </form>
+    </div>
+{% endblock %}
+                 

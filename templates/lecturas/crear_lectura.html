@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Lectura - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Lectura{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton boton-secundario">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="medidor">Medidor:</label>
+                <select id="medidor" name="medidor" required>
+                    <option value="">Seleccionar medidor</option>
+                    <option value="1">MED-001 - Juan Pérez</option>
+                    <option value="2">MED-002 - María Rodríguez</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="fecha">Fecha de Lectura:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="lectura_anterior">Lectura Anterior:</label>
+                <input type="number" id="lectura_anterior" name="lectura_anterior" step="0.01" readonly>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="lectura_actual">Lectura Actual:</label>
+                <input type="number" id="lectura_actual" name="lectura_actual" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="observaciones">Observaciones:</label>
+                <textarea id="observaciones" name="observaciones" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="boton boton-primario">Guardar Lectura</button>
+        </form>
+    </div>
+{% endblock %}
+

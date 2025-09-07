@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Tarifas - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Tarifas{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:crear_tarifa' %}" class="boton boton-primario">Nueva Tarifa</a>
+    </div>
+
+    <div class="tarjeta">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo Tarifa</th>
+                    <th>Tipo Cliente</th>
+                    <th>Precio</th>
+                    <th>Fecha Vigencia</th>
+                    <th>Estado</th>
+                    <th>Contratos Asociados</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarifa in tarifas %}
+                <tr>
+                    <td>{{ tarifa.id }}</td>
+                    <td>{{ tarifa.tipo_tarifa }}</td>
+                    <td>{{ tarifa.tipo_cliente }}</td>
+                    <td>${{ tarifa.precio|floatformat:2 }}</td>
+                    <td>{{ tarifa.fecha_vigencia }}</td>
+                    <td>
+                        {% if tarifa.estado == 'Vigente' %}
+                            <span class="estado-vigente">Vigente</span>
+                        {% elif tarifa.estado == 'Vencida' %}
+                            <span class="estado-vencida">Vencida</span>
+                        {% else %}
+                            <span class="estado-otro">{{ tarifa.estado }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ tarifa.contratos_asociados }}</td>
+                    <td>
+                        <a href="#" class="boton boton-primario btn-sm" title="Ver detalles" style="margin-right: 5px;">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="#" class="boton boton-secundario btn-sm" title="Editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center;">No hay tarifas registradas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

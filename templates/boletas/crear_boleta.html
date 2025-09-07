@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Boleta - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Boleta{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton boton-secundario">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="numero">Número de Boleta:</label>
+                <input type="text" id="numero" name="numero" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <option value="">Seleccionar cliente</option>
+                    <option value="1">Juan Pérez</option>
+                    <option value="2">María Rodríguez</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="periodo">Período:</label>
+                <input type="month" id="periodo" name="periodo" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="consumo">Consumo (kWh):</label>
+                <input type="number" id="consumo" name="consumo" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="monto">Monto Total:</label>
+                <input type="number" id="monto" name="monto" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
+                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
+            </div>
+
+            <button type="submit" class="boton boton-primario">Generar Boleta</button>
+        </form>
+    </div>
+{% endblock %}
+

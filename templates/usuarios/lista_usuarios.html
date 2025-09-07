@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuarios - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Usuarios{% endblock %}
+
+{% block content %}
+    <div class="margin-bottom-20">
+        <a href="{% url 'sistemaGestion:crear_usuario' %}" class="boton boton-primario">Nuevo Usuario</a>
+    </div>
+
+    <div class="tarjeta">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Último Acceso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.telefono }}</td>
+                    <td>
+                        {% if usuario.rol == 'administrador' %}
+                            <span class="rol-administrador">Administrador</span>
+                        {% elif usuario.rol == 'electrico' %}
+                            <span class="rol-electrico">Eléctrico</span>
+                        {% elif usuario.rol == 'finanzas' %}
+                            <span class="rol-finanzas">Finanzas</span>
+                        {% else %}
+                            <span class="estado-otro">{{ usuario.rol }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ usuario.ultimo_acceso }}</td>
+                    <td>
+                        <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="#" class="boton boton-secundario btn-sm" title="Editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="texto-centrado">No hay usuarios registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Pago - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Registrar Pago{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton boton-secundario">Volver</a>
+    </div>
+
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grupo-formulario">
+                <label for="boleta">Boleta:</label>
+                <select id="boleta" name="boleta" required>
+                    <option value="">Seleccionar boleta</option>
+                    <option value="1">BOL-001 - Juan Pérez - $45,000</option>
+                    <option value="2">BOL-002 - María Rodríguez - $38,500</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="metodo">Método de Pago:</label>
+                <select id="metodo" name="metodo" required>
+                    <option value="">Seleccionar método</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="transferencia">Transferencia</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="cheque">Cheque</option>
+                </select>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="fecha">Fecha de Pago:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="referencia">Referencia:</label>
+                <input type="text" id="referencia" name="referencia" placeholder="Número de transferencia, cheque, etc.">
+            </div>
+
+            <button type="submit" class="boton boton-primario">Registrar Pago</button>
+        </form>
+    </div>
+{% endblock %}
+

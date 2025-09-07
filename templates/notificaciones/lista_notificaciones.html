@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Notificaciones - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Notificaciones{% endblock %}
+
+{% block content %}
+    <div class="tarjeta">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Título</th>
+                    <th>Mensaje</th>
+                    <th>Fecha Creación</th>
+                    <th>Prioridad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notificacion in notificaciones %}
+                <tr>
+                    <td>{{ notificacion.id }}</td>
+                    <td>{{ notificacion.tipo }}</td>
+                    <td>{{ notificacion.titulo }}</td>
+                    <td>{{ notificacion.mensaje }}</td>
+                    <td>{{ notificacion.fecha_creacion }}</td>
+                    <td>
+                        {% if notificacion.prioridad == 'Alta' %}
+                            <span class="prioridad-alta">Alta</span>
+                        {% elif notificacion.prioridad == 'Media' %}
+                            <span class="prioridad-media">Media</span>
+                        {% elif notificacion.prioridad == 'Baja' %}
+                            <span class="prioridad-baja">Baja</span>
+                        {% else %}
+                            <span class="estado-otro">{{ notificacion.prioridad }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" class="boton boton-primario btn-sm" title="Ver detalles">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center;">No hay notificaciones</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

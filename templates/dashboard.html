@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Interfaz - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Interfaz{% endblock %}
+
+{% block content %}
+    <!-- Información del usuario -->
+    <div class="informacion-usuario" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h3><i class="fas fa-user"></i> Bienvenido, {{ nombre }}</h3>
+        <p><strong>Rol:</strong> {{ rol|capfirst }} | <strong>Usuario:</strong> {{ username }}</p>
+    </div>
+
+    <!-- Panel de estadísticas -->
+    <div class="grilla-estadisticas" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <!-- Solo mostrar estadísticas según permisos -->
+        {% if 'clientes' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #007bff;">
+            <h4><i class="fas fa-users"></i> Clientes</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #007bff;">{{ total_clientes }}</p>
+            <small>Total registrados</small>
+        </div>
+        {% endif %}
+
+        {% if 'contratos' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #28a745;">
+            <h4><i class="fas fa-file-contract"></i> Contratos</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #28a745;">{{ total_contratos }}</p>
+            <small>Contratos activos</small>
+        </div>
+        {% endif %}
+
+        {% if 'medidores' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #ffc107;">
+            <h4><i class="fas fa-tachometer-alt"></i> Medidores</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #ffc107;">{{ total_medidores }}</p>
+            <small>Medidores instalados</small>
+        </div>
+        {% endif %}
+
+        {% if 'lecturas' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #dc3545;">
+            <h4><i class="fas fa-chart-line"></i> Lecturas Pendientes</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #dc3545;">{{ lecturas_pendientes }}</p>
+            <small>Requieren atención</small>
+        </div>
+        {% endif %}
+
+        {% if 'boletas' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #6f42c1;">
+            <h4><i class="fas fa-file-invoice"></i> Boletas</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #6f42c1;">{{ boletas_emitidas }}</p>
+            <small>Emitidas este mes</small>
+        </div>
+        {% endif %}
+
+        {% if 'pagos' in permisos %}
+        <div class="tarjeta-estadistica" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #20c997;">
+            <h4><i class="fas fa-credit-tarjeta"></i> Pagos</h4>
+            <p style="font-size: 2em; margin: 10px 0; color: #20c997;">{{ gastos_pagados }}</p>
+            <small>Procesados este mes</small>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Accesos rápidos según permisos -->
+    <div class="accesos-rapidos" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3><i class="fas fa-bolt"></i> Accesos Rápidos</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            
+            <!-- Módulo Eléctrico -->
+            {% if 'medidores' in permisos or 'lecturas' in permisos %}
+            <div class="seccion-rapida">
+                <h4 style="color: #495057; margin-bottom: 10px;">Módulo Eléctrico</h4>
+                {% if 'medidores' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-tachometer-alt"></i> Gestionar Medidores
+                </a>
+                {% endif %}
+                {% if 'lecturas' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-chart-line"></i> Ver Lecturas
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Módulo Finanzas -->
+            {% if 'clientes' in permisos or 'contratos' in permisos or 'boletas' in permisos or 'pagos' in permisos %}
+            <div class="seccion-rapida">
+                <h4 style="color: #495057; margin-bottom: 10px;">Módulo Finanzas</h4>
+                {% if 'clientes' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-users"></i> Gestionar Clientes
+                </a>
+                {% endif %}
+                {% if 'contratos' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_contratos' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-file-contract"></i> Ver Contratos
+                </a>
+                {% endif %}
+                {% if 'boletas' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-file-invoice"></i> Gestionar Boletas
+                </a>
+                {% endif %}
+                {% if 'pagos' in permisos %}
+                <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-credit-tarjeta"></i> Ver Pagos
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Configuración (solo admin) -->
+            {% if rol == 'admin' %}
+            <div class="seccion-rapida">
+                <h4 style="color: #495057; margin-bottom: 10px;">Configuración</h4>
+                <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-dollar-sign"></i> Gestionar Tarifas
+                </a>
+                <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-user-cog"></i> Gestionar Usuarios
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Notificaciones (para todos) -->
+            <div class="seccion-rapida">
+                <h4 style="color: #495057; margin-bottom: 10px;">Notificaciones</h4>
+                <a href="{% url 'sistemaGestion:lista_notificaciones' %}" class="boton boton-contorno" style="display: block; margin-bottom: 5px;">
+                    <i class="fas fa-bell"></i> Ver Notificaciones
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .boton-contorno {
+            padding: 8px 15px;
+            border: 1px solid #dee2e6;
+            background: transparent;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .boton-contorno:hover {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            color: #495057;
+        }
+        
+        .seccion-rapida {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+    </style>
+{% endblock %}
+
+
+
