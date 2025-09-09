@@ -25,7 +25,7 @@ PERMISOS_ROL = {
 }
 
 # ============================
-# FUNCIONES AUXILIARES
+# VISTAS PARA LOGIN Y LOGOUT
 # ============================
 
 def usuario_logueado(request):
@@ -38,10 +38,6 @@ def tiene_permiso(request, modulo):
     rol = request.session.get('rol', '')
     permisos = PERMISOS_ROL.get(rol, [])
     return modulo in permisos
-
-# ============================
-# VISTAS PARA LOGIN Y LOGOUT
-# ============================
 
 def login_view(request):
     # Si ya está logueado, ir al dashboard
