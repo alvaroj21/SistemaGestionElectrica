@@ -4,10 +4,10 @@ from . import views
 app_name = 'sistemaGestion'
 
 urlpatterns = [
-    path('', views.login_view, name='login'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('inicio/', views.dashboard, name='dashboard'),  
+    path('', views.login_view, name='login'), # Página de inicio redirige al login
+    path('login/', views.login_view, name='login'), # Login
+    path('logout/', views.logout_view, name='logout'),  # Logout
+    path('inicio/', views.dashboard, name='dashboard'),   # Dashboard o página principal después del login
     # Clientes
     path('clientes/', views.lista_clientes, name='lista_clientes'),
     path('clientes/crear/', views.crear_cliente, name='crear_cliente'),
@@ -42,5 +42,4 @@ urlpatterns = [
     
     # Notificaciones
     path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'),
-    path('notificaciones/<int:id>/', views.detalle_notificacion, name='detalle_notificacion'),
 ]

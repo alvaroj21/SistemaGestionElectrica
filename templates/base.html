@@ -1,71 +1,120 @@
 <!DOCTYPE html>
+<!--
+    TEMPLATE BASE - SISTEMA DE GESTIÓN ELÉCTRICA
+    
+    Descripción:
+    Template base que define la estructura principal de todas las páginas del sistema.
+    Incluye navegación, menús laterales y autenticación.
+    
+    Funcionalidades:
+    - Layout responsive con navegación lateral
+    - Sistema de autenticación integrado
+    - Menús dinámicos según rol de usuario
+    - Sistema de mensajes Flash
+    - Carga de recursos estáticos (CSS, JS, imágenes)
+    
+    Roles de usuario soportados:
+    - admin: Acceso completo a todos los módulos
+    - electrico: Acceso a módulos técnicos (medidores, lecturas)
+    - finanzas: Acceso a módulos comerciales (clientes, contratos, facturación)
+    
+-->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema Eléctrico{% endblock %}</title>
     
+    <!-- Carga de recursos estáticos -->
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Font Awesome para iconografía -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- 
+        ESTRUCTURA PRINCIPAL PARA USUARIOS AUTENTICADOS
+        
+        Esta sección se muestra solo cuando el usuario ha iniciado sesión.
+        Incluye la navegación principal, menú lateral y área de contenido.
+    -->
     {% if request.session.user_logged %}
     <div class="contenedor">
+        
+        <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
         <nav class="barra-navegacion">
+            <!-- Logo y nombre del sistema -->
             <div class="marca-navegacion">
                 <img src="{% static 'images/logo.png' %}" alt="Logo Sistema Eléctrico" class="logotipo">
                 <h1>Sistema Eléctrico</h1>
             </div>
+            
+            <!-- Información del usuario y botón de logout -->
             <div class="usuario-navegacion">
-                <span>{{ nombre|default:username }} ({{ rol|capfirst }})</span>
+                <!-- Muestra nombre completo o username y rol del usuario -->
+                <span>{{ request.session.nombre|default:request.session.username }} ({{ request.session.rol|capfirst }})</span>
+                
+                <!-- Botón para cerrar sesión -->
                 <a href="{% url 'sistemaGestion:logout' %}" class="boton boton-contorno">
                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </a>
             </div>
         </nav>
 
+        <!-- LAYOUT PRINCIPAL: SIDEBAR + CONTENIDO -->
         <div class="diseno-principal">
+            
+            <!-- BARRA LATERAL DE NAVEGACIÓN -->
             <aside class="barra-lateral">
                 <div class="menu-navegacion">
+                    
+                    <!-- ENLACE AL DASHBOARD (disponible para todos los usuarios) -->
                     <div class="elemento-navegacion">
                         <a href="{% url 'sistemaGestion:dashboard' %}">
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </div>
                     
-                    <!-- Módulo Eléctrico -->
-                    {% if 'medidores' in permisos or 'lecturas' in permisos %}
+                    <!-- 
+                        MÓDULO ELÉCTRICO
+                        Acceso: admin, electrico
+                        Funciones: Gestión de medidores y lecturas de consumo
+                    -->
+                    {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
                     <div class="categoria-navegacion">
                         <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                             <i class="fas fa-bolt"></i> Módulo Eléctrico <span class="flecha">▼</span>
                         </div>
                         <div class="contenido-categoria-navegacion">
-                            {% if 'medidores' in permisos %}
+                            <!-- Gestión de medidores eléctricos -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_medidores' %}">
                                     <i class="fas fa-tachometer-alt"></i> Medidores
                                 </a>
                             </div>
-                            {% endif %}
-                            {% if 'lecturas' in permisos %}
+                            <!-- Registro y consulta de lecturas -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_lecturas' %}">
                                     <i class="fas fa-chart-line"></i> Lecturas
                                 </a>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
                     {% endif %}
 
-                    <!-- Módulo Clientes -->
-                    {% if 'clientes' in permisos %}
+                    <!-- 
+                        MÓDULO CLIENTES
+                        Acceso: admin, finanzas
+                        Funciones: Gestión de información de clientes
+                    -->
+                    {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
                     <div class="categoria-navegacion">
                         <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                             <i class="fas fa-users"></i> Módulo Clientes <span class="flecha">▼</span>
                         </div>
                         <div class="contenido-categoria-navegacion">
+                            <!-- Registro y gestión de clientes -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_clientes' %}">
                                     <i class="fas fa-user-friends"></i> Clientes
@@ -75,63 +124,72 @@
                     </div>
                     {% endif %}
 
-                    <!-- Módulo Contratos -->
-                    {% if 'contratos' in permisos or 'tarifas' in permisos %}
+                    <!-- 
+                        MÓDULO CONTRATOS
+                        Acceso: admin, finanzas
+                        Funciones: Gestión de contratos eléctricos y tarifas
+                    -->
+                    {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
                     <div class="categoria-navegacion">
                         <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                             <i class="fas fa-file-contract"></i> Módulo Contratos <span class="flecha">▼</span>
                         </div>
                         <div class="contenido-categoria-navegacion">
-                            {% if 'contratos' in permisos %}
+                            <!-- Gestión de contratos de servicio -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_contratos' %}">
                                     <i class="fas fa-handshake"></i> Contratos
                                 </a>
                             </div>
-                            {% endif %}
-                            {% if 'tarifas' in permisos %}
+                            <!-- Configuración de tarifas eléctricas -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_tarifas' %}">
                                     <i class="fas fa-dollar-sign"></i> Tarifas
                                 </a>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
                     {% endif %}
 
-                    <!-- Módulo Facturación -->
-                    {% if 'boletas' in permisos or 'pagos' in permisos %}
+                    <!-- 
+                        MÓDULO FACTURACIÓN
+                        Acceso: admin, finanzas
+                        Funciones: Gestión de boletas y registro de pagos
+                    -->
+                    {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
                     <div class="categoria-navegacion">
                         <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                             <i class="fas fa-calculator"></i> Módulo Facturación <span class="flecha">▼</span>
                         </div>
                         <div class="contenido-categoria-navegacion">
-                            {% if 'boletas' in permisos %}
+                            <!-- Generación y gestión de boletas -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_boletas' %}">
                                     <i class="fas fa-receipt"></i> Boletas
                                 </a>
                             </div>
-                            {% endif %}
-                            {% if 'pagos' in permisos %}
+                            <!-- Registro y seguimiento de pagos -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_pagos' %}">
-                                    <i class="fas fa-credit-tarjeta"></i> Pagos
+                                    <i class="fas fa-credit-card"></i> Pagos
                                 </a>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
                     {% endif %}
 
-                    <!-- Módulo Administración -->
-                    {% if 'usuarios' in permisos %}
+                    <!-- 
+                        MÓDULO ADMINISTRACIÓN
+                        Acceso: solo admin
+                        Funciones: Gestión de usuarios del sistema
+                    -->
+                    {% if request.session.rol == 'admin' %}
                     <div class="categoria-navegacion">
                         <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                             <i class="fas fa-cog"></i> Módulo Administración <span class="flecha">▼</span>
                         </div>
                         <div class="contenido-categoria-navegacion">
+                            <!-- Gestión de usuarios del sistema -->
                             <div class="elemento-navegacion">
                                 <a href="{% url 'sistemaGestion:lista_usuarios' %}">
                                     <i class="fas fa-user-cog"></i> Usuarios
@@ -141,21 +199,23 @@
                     </div>
                     {% endif %}
 
-                    <!-- Notificaciones -->
+                    <!-- 
+                        NOTIFICACIONES
+                        Acceso: todos los roles
+                        Funciones: Sistema de alertas y notificaciones
+                    -->
                     <div class="elemento-navegacion">
                         <a href="{% url 'sistemaGestion:lista_notificaciones' %}">
                             <i class="fas fa-bell"></i> Notificaciones
-                            {% if notifications_count > 0 %}
-                            <span class="insignia-notificacion">{{ notifications_count }}</span>
-                            {% endif %}
                         </a>
                     </div>
                 </div>
             </aside>
 
+            <!-- ÁREA PRINCIPAL DE CONTENIDO -->
             <main class="contenido">
+                <!-- Título dinámico de la página -->
                 <h2>{% block page_title %}Inicio{% endblock %}</h2>
-                
                 {% if messages %}
                     {% for message in messages %}
                         <div class="mensaje mensaje-{{ message.tags }}">
@@ -164,6 +224,11 @@
                     {% endfor %}
                 {% endif %}
 
+                <!-- 
+                    BLOQUE DE CONTENIDO PRINCIPAL
+                    Aquí se renderiza el contenido específico de cada página
+                    que extiende este template base
+                -->
                 {% block content %}
                 <p>Bienvenido al Sistema Eléctrico</p>
                 {% endblock %}
@@ -171,35 +236,16 @@
         </div>
     </div>
     {% else %}
-    <!-- Si no está logueado, mostrar solo el contenido (login) -->
+    <!-- 
+        ESTRUCTURA PARA PÁGINAS DE AUTENTICACIÓN
+        
+        Esta sección se muestra cuando el usuario no ha iniciado sesión.
+        Incluye solo el área de contenido para login, registro, etc.-->
     {% block login_content %}
     {% endblock %}
     {% endif %}
-    
-    <script>
-        function alternarCategoria(element) {
-            const content = element.nextElementSibling;
-            const arrow = element.querySelector('.flecha');
-            
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                arrow.textContent = '▲';
-                element.classList.add('active');
-            } else {
-                content.style.display = 'none';
-                arrow.textContent = '▼';
-                element.classList.remove('active');
-            }
-        }
-        
-        // Inicializar todas las categorías como cerradas
-        document.addEventListener('DOMContentLoaded', function() {
-            const contents = document.querySelectorAll('.contenido-categoria-navegacion');
-            contents.forEach(content => {
-                content.style.display = 'none';
-            });
-        });
-    </script>
+    <!-- Carga de scripts JS -->
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
 

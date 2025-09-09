@@ -18,30 +18,28 @@
         <table>
             <thead>
                 <tr>
-                    <th>N° Pago</th>
-                    <th>Boleta</th>
+                    <th>ID Pago</th>
                     <th>Cliente</th>
                     <th>Fecha Pago</th>
                     <th>Monto Pagado</th>
                     <th>Método Pago</th>
                     <th>N° Referencia</th>
-                    <th>Estado</th>
+                    <th>Estado Pago</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for pago in pagos %}
                 <tr>
-                    <td>{{ pago.numero_pago }}</td>
-                    <td>{{ pago.boleta }}</td>
-                    <td>{{ pago.cliente }}</td>
+                    <td>{{ pago.idpago }}</td>
+                    <td>{{ pago.cliente_nombre }}</td>
                     <td>{{ pago.fecha_pago }}</td>
                     <td>${{ pago.monto_pagado|floatformat:0 }}</td>
                     <td>{{ pago.metodo_pago }}</td>
                     <td>{{ pago.numero_referencia }}</td>
                     <td>
-                        {% if pago.estado_pago == 'Completado' %}
-                            <span class="estado-completado">Completado</span>
+                        {% if pago.estado_pago == 'Confirmado' %}
+                            <span class="estado-completado">Confirmado</span>
                         {% elif pago.estado_pago == 'Pendiente' %}
                             <span class="estado-pendiente">Pendiente</span>
                         {% elif pago.estado_pago == 'Rechazado' %}
@@ -61,7 +59,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="9" style="text-align: center;">No hay pagos registrados</td>
+                    <td colspan="8" style="text-align: center;">No hay pagos registrados</td>
                 </tr>
                 {% endfor %}
             </tbody>

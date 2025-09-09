@@ -5,7 +5,7 @@
 {% block page_title %}Crear Lectura{% endblock %}
 
 {% block content %}
-    <div style="margin-bottom: 20px;">
+    <div>
         <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton boton-secundario">Volver</a>
     </div>
 
@@ -17,19 +17,15 @@
                 <label for="medidor">Medidor:</label>
                 <select id="medidor" name="medidor" required>
                     <option value="">Seleccionar medidor</option>
-                    <option value="1">MED-001 - Juan Pérez</option>
-                    <option value="2">MED-002 - María Rodríguez</option>
+                    {% for medidor in medidores %}
+                        <option value="{{ medidor.id_medidor }}">{{ medidor.numero_medidor }} - {{ medidor.cliente_nombre }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="grupo-formulario">
-                <label for="fecha">Fecha de Lectura:</label>
-                <input type="date" id="fecha" name="fecha" required>
-            </div>
-
-            <div class="grupo-formulario">
-                <label for="lectura_anterior">Lectura Anterior:</label>
-                <input type="number" id="lectura_anterior" name="lectura_anterior" step="0.01" readonly>
+                <label for="fecha_lectura">Fecha de Lectura:</label>
+                <input type="date" id="fecha_lectura" name="fecha_lectura" required>
             </div>
 
             <div class="grupo-formulario">
@@ -38,8 +34,18 @@
             </div>
 
             <div class="grupo-formulario">
-                <label for="observaciones">Observaciones:</label>
-                <textarea id="observaciones" name="observaciones" rows="3"></textarea>
+                <label for="consumo_energetico">Consumo Energético (kWh):</label>
+                <input type="number" id="consumo_energetico" name="consumo_energetico" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="tipo_lectura">Tipo de Lectura:</label>
+                <select id="tipo_lectura" name="tipo_lectura" required>
+                    <option value="">Seleccionar tipo</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Estimada">Estimada</option>
+                    <option value="Correctiva">Correctiva</option>
+                </select>
             </div>
 
             <button type="submit" class="boton boton-primario">Guardar Lectura</button>

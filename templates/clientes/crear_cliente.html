@@ -5,7 +5,7 @@
 {% block page_title %}Crear Cliente{% endblock %}
 
 {% block content %}
-    <div style="margin-bottom: 20px;">
+    <div>
         <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton boton-secundario">Volver</a>
     </div>
 
@@ -13,6 +13,11 @@
         <form method="post">
             {% csrf_token %}
             
+            <div class="grupo-formulario">
+                <label for="numero_cliente">Número de Cliente:</label>
+                <input type="text" id="numero_cliente" name="numero_cliente" required placeholder="Ej: CLI-001">
+            </div>
+
             <div class="grupo-formulario">
                 <label for="nombre">Nombre Completo:</label>
                 <input type="text" id="nombre" name="nombre" required>

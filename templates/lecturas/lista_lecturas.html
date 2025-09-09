@@ -13,36 +13,22 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Medidor</th>
                     <th>Fecha Lectura</th>
-                    <th>Lectura Anterior</th>
                     <th>Lectura Actual</th>
                     <th>Consumo Energético</th>
                     <th>Tipo Lectura</th>
-                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for lectura in lecturas %}
                 <tr>
-                    <td>{{ lectura.id }}</td>
-                    <td>{{ lectura.medidor }}</td>
+                    <td>{{ lectura.medidor_numero }}</td>
                     <td>{{ lectura.fecha_lectura }}</td>
-                    <td>{{ lectura.lectura_anterior }}</td>
                     <td>{{ lectura.lectura_actual }}</td>
                     <td>{{ lectura.consumo_energetico }} kWh</td>
                     <td>{{ lectura.tipo_lectura }}</td>
-                    <td>
-                        {% if lectura.estado == 'Procesada' %}
-                            <span class="estado-procesada">Procesada</span>
-                        {% elif lectura.estado == 'Pendiente' %}
-                            <span class="estado-pendiente">Pendiente</span>
-                        {% else %}
-                            <span class="estado-otro">{{ lectura.estado }}</span>
-                        {% endif %}
-                    </td>
                     <td>
                         <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
                             <i class="fas fa-eye"></i> Ver
@@ -54,7 +40,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="9" class="texto-centrado">No hay lecturas registradas</td>
+                    <td colspan="7" class="texto-centrado">No hay lecturas registradas</td>
                 </tr>
                 {% endfor %}
             </tbody>

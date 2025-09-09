@@ -5,14 +5,17 @@
 {% block page_title %}Crear Usuario{% endblock %}
 
 {% block content %}
-    <div style="margin-bottom: 20px;">
+    <div>
         <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton boton-secundario">Volver</a>
     </div>
 
     <div class="tarjeta">
         <form method="post">
             {% csrf_token %}
-            
+            <div class="grupo-formulario">
+                <label for="nombreUsuario">Nombre de usuario:</label>
+                <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+            </div>
             <div class="grupo-formulario">
                 <label for="nombre">Nombre Completo:</label>
                 <input type="text" id="nombre" name="nombre" required>
@@ -32,7 +35,7 @@
                 <label for="rol">Rol:</label>
                 <select id="rol" name="rol" required>
                     <option value="">Seleccione un rol</option>
-                    <option value="administrador">Administrador</option>
+                    <option value="admin">Administrador</option>
                     <option value="electrico">Eléctrico</option>
                     <option value="finanzas">Finanzas</option>
                 </select>

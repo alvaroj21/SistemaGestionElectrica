@@ -5,7 +5,7 @@
 {% block page_title %}Clientes{% endblock %}
 
 {% block content %}
-    <div class="margen-inferior-20">
+    <div>
         <a href="{% url 'sistemaGestion:crear_cliente' %}" class="boton boton-primario">Nuevo Cliente</a>
     </div>
 
@@ -13,32 +13,20 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>N° Cliente</th>
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Teléfono</th>
-                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for cliente in clientes %}
                 <tr>
-                    <td>{{ cliente.id }}</td>
+                    <td>{{ cliente.numero_cliente }}</td>
                     <td>{{ cliente.nombre }}</td>
                     <td>{{ cliente.email }}</td>
                     <td>{{ cliente.telefono }}</td>
-                    <td>
-                        {% if cliente.estado == 'Activo' %}
-                            <span class="estado-activo">
-                                <i class="fas fa-check-circle"></i> Activo
-                            </span>
-                        {% else %}
-                            <span class="estado-inactivo">
-                                <i class="fas fa-times-circle"></i> Inactivo
-                            </span>
-                        {% endif %}
-                    </td>
                     <td>
                         <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
                             <i class="fas fa-eye"></i> Ver
@@ -50,7 +38,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="texto-centrado">No hay clientes registrados</td>
+                    <td colspan="7" class="texto-centrado">No hay clientes registrados</td>
                 </tr>
                 {% endfor %}
             </tbody>

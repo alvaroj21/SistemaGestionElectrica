@@ -13,24 +13,25 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>ID Usuario</th>
+                    <th>Nombre Usuario</th>
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Teléfono</th>
                     <th>Rol</th>
-                    <th>Último Acceso</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for usuario in usuarios %}
                 <tr>
-                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.idUsuario }}</td>
+                    <td>{{ usuario.nombreUsuario }}</td>
                     <td>{{ usuario.nombre }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.telefono }}</td>
                     <td>
-                        {% if usuario.rol == 'administrador' %}
+                        {% if usuario.rol == 'admin' %}
                             <span class="rol-administrador">Administrador</span>
                         {% elif usuario.rol == 'electrico' %}
                             <span class="rol-electrico">Eléctrico</span>
@@ -40,7 +41,6 @@
                             <span class="estado-otro">{{ usuario.rol }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ usuario.ultimo_acceso }}</td>
                     <td>
                         <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
                             <i class="fas fa-eye"></i> Ver

@@ -5,7 +5,7 @@
 {% block page_title %}Crear Boleta{% endblock %}
 
 {% block content %}
-    <div style="margin-bottom: 20px;">
+    <div>
         <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton boton-secundario">Volver</a>
     </div>
 
@@ -14,37 +14,45 @@
             {% csrf_token %}
             
             <div class="grupo-formulario">
-                <label for="numero">Número de Boleta:</label>
-                <input type="text" id="numero" name="numero" required>
-            </div>
-
-            <div class="grupo-formulario">
                 <label for="cliente">Cliente:</label>
                 <select id="cliente" name="cliente" required>
                     <option value="">Seleccionar cliente</option>
-                    <option value="1">Juan Pérez</option>
-                    <option value="2">María Rodríguez</option>
+                    {% for cliente in clientes %}
+                        {% if cliente.estado == 'Activo' %}
+                            <option value="{{ cliente.idCliente }}">{{ cliente.nombre }} ({{ cliente.numero_cliente }})</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="grupo-formulario">
-                <label for="periodo">Período:</label>
-                <input type="month" id="periodo" name="periodo" required>
-            </div>
-
-            <div class="grupo-formulario">
-                <label for="consumo">Consumo (kWh):</label>
-                <input type="number" id="consumo" name="consumo" step="0.01" required>
-            </div>
-
-            <div class="grupo-formulario">
-                <label for="monto">Monto Total:</label>
-                <input type="number" id="monto" name="monto" step="0.01" required>
+                <label for="fecha_emision">Fecha de Emisión:</label>
+                <input type="date" id="fecha_emision" name="fecha_emision" required>
             </div>
 
             <div class="grupo-formulario">
                 <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
                 <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="consumo_energetico">Consumo Energético (kWh):</label>
+                <input type="number" id="consumo_energetico" name="consumo_energetico" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="monto_total">Monto Total:</label>
+                <input type="number" id="monto_total" name="monto_total" step="0.01" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccionar estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Vencida">Vencida</option>
+                </select>
             </div>
 
             <button type="submit" class="boton boton-primario">Generar Boleta</button>
