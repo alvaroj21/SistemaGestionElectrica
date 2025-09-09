@@ -6,19 +6,19 @@
 
 {% block content %}
     <div>
-        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton boton-secundario">Volver</a>
+        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">Volver</a>
     </div>
 
-    <div class="tarjeta">
+    <div>
         <form method="post">
             {% csrf_token %}
             
-            <div class="grupo-formulario">
+            <div>
                 <label for="numero_medidor">Número de Medidor:</label>
                 <input type="text" id="numero_medidor" name="numero_medidor" required placeholder="Ej: MED-001">
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="cliente">Cliente:</label>
                 <select id="cliente" name="cliente" required>
                     <option value="">Seleccionar cliente</option>
@@ -28,7 +28,7 @@
                 </select>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="estado_medidor">Estado del Medidor:</label>
                 <select id="estado_medidor" name="estado_medidor" required>
                     <option value="">Seleccionar estado</option>
@@ -38,17 +38,17 @@
                 </select>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="fecha_instalacion">Fecha de Instalación:</label>
                 <input type="date" id="fecha_instalacion" name="fecha_instalacion" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="ubicacion">Ubicación:</label>
                 <textarea id="ubicacion" name="ubicacion" rows="3" required></textarea>
             </div>
 
-            <button type="submit" class="boton boton-primario">Guardar Medidor</button>
+            <button type="submit" class="boton boton-exito">Guardar Medidor</button>
         </form>
     </div>
 {% endblock %}

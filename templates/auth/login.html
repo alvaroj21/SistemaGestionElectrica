@@ -4,53 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Sistema Eléctrico</title>
+    {% load static %}
+    <link rel="icon" type="image/x-icon" href="{% static 'images/icono_pagina.ico' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="contenedor-login">
-        <form method="post">
-            {% csrf_token %}
-            <div class="encabezado-login">
-                <i class="fas fa-bolt"></i>
-                <h2>Sistema Eléctrico</h2>
-                <p>Inicia sesión para continuar</p>
-            </div>
+        <div class="caja-login">
+            <form method="post">
+                {% csrf_token %}
+                <div>
+                    <i class="fas fa-bolt" style="font-size: 40px; color: #3498db; margin-bottom: 10px;"></i>
+                    <h2>Sistema Eléctrico</h2>
+                    <p>Inicia sesión para continuar</p>
+                </div>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="background: #e74c3c; color: white; padding: 10px; margin-bottom: 15px;">
+                            <i class="fas fa-info-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div>
+                    <input type="text" name="username" placeholder="Usuario" required>
+                </div>
+                
+                <div>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                </div>
+                
+                <button type="submit" class="boton boton-exito">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </form>
             
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alerta alerta-{{ message.tags }}">
-                        <i class="fas fa-info-circle"></i> {{ message }}
+            <div class="informacion-login">
+                <strong><i class="fas fa-users"></i> Usuarios de prueba:</strong>
+                <small>
+                    <div>
+                        <strong>Admin:</strong> admin / admin123
                     </div>
-                {% endfor %}
-            {% endif %}
-            
-            <div class="grupo-formulario">
-                <input type="text" name="username" class="control-formulario" placeholder="Usuario" required>
+                    <div>
+                        <strong>Eléctrico:</strong> electrico1 / elec123
+                    </div>
+                    <div>
+                        <strong>Finanzas:</strong> finanzas1 / fin123
+                    </div>
+                </small>
             </div>
-            
-            <div class="grupo-formulario">
-                <input type="password" name="password" class="control-formulario" placeholder="Contraseña" required>
-            </div>
-            
-            <button type="submit" class="boton-login">
-                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-            </button>
-        </form>
-        
-        <div class="usuarios-prueba">
-            <strong><i class="fas fa-users"></i> Usuarios de prueba:</strong>
-            <small>
-                <span class="credencial-usuario">
-                    <strong>Admin:</strong> admin / admin123
-                </span>
-                <span class="credencial-usuario">
-                    <strong>Eléctrico:</strong> electrico1 / elec123
-                </span>
-                <span class="credencial-usuario">
-                    <strong>Finanzas:</strong> finanzas1 / fin123
-                </span>
-            </small>
         </div>
     </div>
 </body>

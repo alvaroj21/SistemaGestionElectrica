@@ -6,14 +6,14 @@
 
 {% block content %}
     <div>
-        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton boton-secundario">Volver</a>
+        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">Volver</a>
     </div>
 
-    <div class="tarjeta">
+    <div>
         <form method="post">
             {% csrf_token %}
             
-            <div class="grupo-formulario">
+            <div>
                 <label for="medidor">Medidor:</label>
                 <select id="medidor" name="medidor" required>
                     <option value="">Seleccionar medidor</option>
@@ -23,22 +23,22 @@
                 </select>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="fecha_lectura">Fecha de Lectura:</label>
                 <input type="date" id="fecha_lectura" name="fecha_lectura" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="lectura_actual">Lectura Actual:</label>
                 <input type="number" id="lectura_actual" name="lectura_actual" step="0.01" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="consumo_energetico">Consumo Energético (kWh):</label>
                 <input type="number" id="consumo_energetico" name="consumo_energetico" step="0.01" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="tipo_lectura">Tipo de Lectura:</label>
                 <select id="tipo_lectura" name="tipo_lectura" required>
                     <option value="">Seleccionar tipo</option>
@@ -48,7 +48,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="boton boton-primario">Guardar Lectura</button>
+            <button type="submit" class="boton boton-exito">Guardar Lectura</button>
         </form>
     </div>
 {% endblock %}

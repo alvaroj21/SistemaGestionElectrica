@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ubicación Medidor {{ medidor.numero_medidor }} - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Ubicación del Medidor {{ medidor.numero_medidor }}{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">Volver a Medidores</a>
+    </div>
+
+    <!-- Información del Medidor -->
+    <div>
+        <h3>Información del Medidor</h3>
+        <div>
+            <p><strong>Número de Medidor:</strong> {{ medidor.numero_medidor }}</p>
+            <p><strong>Cliente:</strong> {{ medidor.cliente_nombre }}</p>
+            <p><strong>Estado:</strong> {{ medidor.estado_medidor }}</p>
+            <p><strong>Fecha de Instalación:</strong> {{ medidor.fecha_instalacion }}</p>
+            <p><strong>Dirección:</strong> {{ medidor.direccion }}</p>
+            <p><strong>Ubicación:</strong> {{ medidor.ubicacion }}</p>
+        </div>
+    </div>
+
+    <!-- Mapa y Medidor -->
+    <div>
+        <div>
+            <!-- Mapa de ubicación -->
+            <div>
+                <h3>Ubicación en el Mapa</h3>
+                <img src="{% static 'images/mapa.png' %}" alt="Mapa de ubicación" style="width: 100%; max-width: 600px; height: 400px;">
+                
+                <div>
+                    <p><strong>Ubicación simulada:</strong> Centro de la ciudad</p>
+                    <p><strong>Nota:</strong> Esta es una ubicación simulada para demostración del sistema.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

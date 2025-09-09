@@ -6,39 +6,34 @@
 
 {% block content %}
     <div>
-        <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton boton-secundario">Volver</a>
+        <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">Volver</a>
     </div>
 
-    <div class="tarjeta">
+    <div>
         <form method="post">
             {% csrf_token %}
             
-            <div class="grupo-formulario">
+            <div>
                 <label for="numero_cliente">Número de Cliente:</label>
                 <input type="text" id="numero_cliente" name="numero_cliente" required placeholder="Ej: CLI-001">
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="nombre">Nombre Completo:</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
             </div>
 
-            <div class="grupo-formulario">
+            <div>
                 <label for="telefono">Teléfono:</label>
                 <input type="tel" id="telefono" name="telefono" required>
             </div>
-
-            <div class="grupo-formulario">
-                <label for="direccion">Dirección:</label>
-                <textarea id="direccion" name="direccion" rows="3"></textarea>
-            </div>
-
-            <button type="submit" class="boton boton-primario">Guardar Cliente</button>
+            
+            <button type="submit" class="boton">Guardar Cliente</button>
         </form>
     </div>
-{% endblock %}a
+{% endblock %}

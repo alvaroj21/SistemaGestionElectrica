@@ -185,26 +185,26 @@ def lista_contratos(request):
         {
             'idContrato': 1, 
             'numero_contrato': 'CON-001', 
-            'fecha_inicio': '2024-01-15', 
-            'fecha_fin': '2025-01-15', 
+            'fecha_inicio': '21-05-2025', 
+            'fecha_fin': '21-09-2025', 
             'estado': 'Activo',
-            'cliente_nombre': 'Juan Pérez'  # Para mostrar en template
+            'cliente_nombre': 'Juan Pérez'
         },
         {
             'idContrato': 2, 
             'numero_contrato': 'CON-002', 
-            'fecha_inicio': '2024-03-20', 
-            'fecha_fin': '2025-03-20', 
+            'fecha_inicio': '21-05-2025', 
+            'fecha_fin': '21-09-2025', 
             'estado': 'Activo',
-            'cliente_nombre': 'María Rodríguez'  # Para mostrar en template
+            'cliente_nombre': 'María Rodríguez'  
         },
         {
             'idContrato': 3, 
             'numero_contrato': 'CON-003', 
-            'fecha_inicio': '2023-12-01', 
-            'fecha_fin': '2024-12-01', 
+            'fecha_inicio': '21-05-2025', 
+            'fecha_fin': '21-09-2025', 
             'estado': 'Vencido',
-            'cliente_nombre': 'Carlos Sánchez'  # Para mostrar en template
+            'cliente_nombre': 'Carlos Sánchez'  
         },
     ]
     
@@ -224,9 +224,48 @@ def crear_contrato(request):
     if not tiene_permiso(request, 'contratos'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
+    
+    # Lista de clientes para el select
+    clientes = [
+        {
+            'nombre': 'Juan Pérez', 
+            'numero_cliente': 'CL-001'
+        },
+        {
+            'nombre': 'María Rodríguez', 
+            'numero_cliente': 'CL-002'
+        },
+        {
+            'nombre': 'Carlos Sánchez', 
+            'numero_cliente': 'CL-003'
+        },
+        {
+            'nombre': 'Ana Gomez', 
+            'numero_cliente': 'CL-004'
+        },
+    ]
+    
+    # Lista de tarifas para el select
+    tarifas = [
+        {
+            'tipo_tarifa': 'Invierno',
+            'tipo_cliente': 'Residencial',
+        },
+        {
+            'tipo_tarifa': 'Invierno',
+            'tipo_cliente': 'Comercial',
+        },
+        {
+            'tipo_tarifa': 'Invierno',
+            'tipo_cliente': 'Industrial',
+        }
+    ]
+    
     datos = {
         'username': request.session.get('username'),
-        'nombre': request.session.get('nombre')
+        'nombre': request.session.get('nombre'),
+        'clientes': clientes,
+        'tarifas': tarifas
     }
     return render(request, 'contratos/crear_contrato.html', datos)
 
@@ -249,18 +288,18 @@ def lista_medidores(request):
         {
             'id_medidor': 1, 
             'numero_medidor': 'MED-001', 
-            'fecha_instalacion': '2024-01-15',
+            'fecha_instalacion': '2021-01-15',
             'ubicacion': 'Calle Principal 123, Casa Juan Pérez',
             'estado_medidor': 'Activo',
-            'cliente_nombre': 'Juan Pérez'  # Para mostrar en template
+            'cliente_nombre': 'Juan Perez'  # Para mostrar en template, borrar luego 
         },
         {
             'id_medidor': 2, 
             'numero_medidor': 'MED-002', 
-            'fecha_instalacion': '2024-03-20',
+            'fecha_instalacion': '2021-03-20',
             'ubicacion': 'Av. Comercial 456, Local María Rodríguez',
             'estado_medidor': 'Activo',
-            'cliente_nombre': 'María Rodríguez'  # Para mostrar en template
+            'cliente_nombre': 'Maria Rodríguez'  
         },
         {
             'id_medidor': 3, 
@@ -268,7 +307,7 @@ def lista_medidores(request):
             'fecha_instalacion': '2023-12-01',
             'ubicacion': 'Barrio Industrial 789, Empresa Carlos Sánchez',
             'estado_medidor': 'Mantenimiento',
-            'cliente_nombre': 'Carlos Sánchez'  # Para mostrar en template
+            'cliente_nombre': 'Carlos Castillo'  
         },
     ]
     
@@ -289,11 +328,72 @@ def crear_medidor(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
+    # Lista de clientes para el select
+    clientes = [
+        {
+            'idCliente': 1,
+            'nombre': 'Juan Pérez', 
+            'email': 'juan@email.com', 
+            'telefono': '123456789', 
+            'numero_cliente': 'CL-001'
+        },
+        {
+            'idCliente': 2,
+            'nombre': 'María Rodríguez', 
+            'email': 'maria@email.com', 
+            'telefono': '987654321', 
+            'numero_cliente': 'CL-002'
+        },
+        {
+            'idCliente': 3,
+            'nombre': 'Carlos Sánchez', 
+            'email': 'carlos@email.com', 
+            'telefono': '111222333', 
+            'numero_cliente': 'CL-003'
+        },
+        {
+            'idCliente': 4,
+            'nombre': 'Ana Gomez', 
+            'email': 'ana@email.com', 
+            'telefono': '14262333', 
+            'numero_cliente': 'CL-004'
+        },
+    ]
+    
     datos = {
         'username': request.session.get('username'),
-        'nombre': request.session.get('nombre')
+        'nombre': request.session.get('nombre'),
+        'clientes': clientes
     }
     return render(request, 'medidores/crear_medidor.html', datos)
+
+def ubicacion_medidor(request, id_medidor):
+    # Verificar login
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    # Verificar permisos
+    if not tiene_permiso(request, 'medidores'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    # Datos simulados del medidor
+    medidor = {
+        'id_medidor': id_medidor,
+        'numero_medidor': f'MED-{str(id_medidor).zfill(3)}',
+        'cliente_nombre': 'Cliente Simulado',
+        'ubicacion': 'Ubicación de Prueba - Sistema de Gestión Eléctrica',
+        'direccion': 'Calle Principal 123, Ciudad Ejemplo',
+        'estado_medidor': 'Activo',
+        'fecha_instalacion': '2024-01-15'
+    }
+    
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'medidor': medidor
+    }
+    return render(request, 'medidores/ubicacion_medidor.html', datos)
 
 # ============================
 # VISTAS PARA GESTIÓN DE LECTURAS
@@ -313,7 +413,7 @@ def lista_lecturas(request):
     lecturas = [
         {
             'id_lectura': 1, 
-            'fecha_lectura': '2024-09-01', 
+            'fecha_lectura': '01-09-2025', 
             'consumo_energetico': 125,  # Calculado: lectura_actual - lectura_anterior
             'tipo_lectura': 'Manual',
             'lectura_actual': 1250,
@@ -321,7 +421,7 @@ def lista_lecturas(request):
         },
         {
             'id_lectura': 2, 
-            'fecha_lectura': '2024-09-01', 
+            'fecha_lectura': '01-09-2025', 
             'consumo_energetico': 98,   # Calculado: lectura_actual - lectura_anterior
             'tipo_lectura': 'Automatica',
             'lectura_actual': 980,
@@ -329,7 +429,7 @@ def lista_lecturas(request):
         },
         {
             'id_lectura': 3, 
-            'fecha_lectura': '2024-08-01', 
+            'fecha_lectura': '01-08-2025', 
             'consumo_energetico': 156,
             'tipo_lectura': 'Manual',
             'lectura_actual': 1125,
@@ -379,8 +479,8 @@ def lista_boletas(request):
     boletas = [
         {
             'id_boleta': 1,
-            'fecha_emision': '2024-09-17',
-            'fecha_vencimiento': '2024-10-22',
+            'fecha_emision': '17-09-2025',
+            'fecha_vencimiento': '22-10-2025',
             'monto_total': 28400,                       # Monto total en pesos
             'consumo_energetico': 125,                  # Consumo en kWh
             'estado': 'Pendiente',
@@ -388,8 +488,8 @@ def lista_boletas(request):
         },
         {
             'id_boleta': 2,
-            'fecha_emision': '2024-09-17',
-            'fecha_vencimiento': '2024-10-22',
+            'fecha_emision': '17-09-2025',
+            'fecha_vencimiento': '22-10-2025',
             'monto_total': 23600,
             'consumo_energetico': 98,
             'estado': 'Pagada',
@@ -397,8 +497,8 @@ def lista_boletas(request):
         },
         {
             'id_boleta': 3,
-            'fecha_emision': '2024-08-17',
-            'fecha_vencimiento': '2024-09-22',
+            'fecha_emision': '17-07-2025',
+            'fecha_vencimiento': '22-08-2025',
             'monto_total': 35200,
             'consumo_energetico': 156,
             'estado': 'Vencida',
@@ -524,24 +624,24 @@ def lista_tarifas(request):
     tarifas = [
         {
             'id_tarifa': 1,
-            'tipo_tarifa': 'Residencial Básica',
+            'tipo_tarifa': 'Invierno',
             'tipo_cliente': 'Residencial',
-            'precio': 120.50,                           # Precio por kWh
-            'fecha_vigencia': '2024-01-01'
+            'precio': 120,                           
+            'fecha_vigencia': '09-09-2025'
         },
         {
             'id_tarifa': 2,
-            'tipo_tarifa': 'Comercial Standard',
+            'tipo_tarifa': 'Invierno',
             'tipo_cliente': 'Comercial',
-            'precio': 95.75,                            # Precio por kWh (menor por mayor consumo)
-            'fecha_vigencia': '2024-01-01'
+            'precio': 95,                            
+            'fecha_vigencia': '09-09-2025'
         },
         {
             'id_tarifa': 3,
-            'tipo_tarifa': 'Industrial Premium',
+            'tipo_tarifa': 'Invierno',
             'tipo_cliente': 'Industrial',
-            'precio': 85.25,                            # Precio por kWh (menor por alto consumo)
-            'fecha_vigencia': '2024-06-01'
+            'precio': 85,                            
+            'fecha_vigencia': '09-09-2025'
         }
     ]
     

@@ -19,6 +19,7 @@ urlpatterns = [
     # Medidores
     path('medidores/', views.lista_medidores, name='lista_medidores'),
     path('medidores/crear/', views.crear_medidor, name='crear_medidor'),
+    path('medidores/ubicacion/<int:id_medidor>/', views.ubicacion_medidor, name='ubicacion_medidor'),
     
     # Lecturas
     path('lecturas/', views.lista_lecturas, name='lista_lecturas'),

@@ -5,11 +5,11 @@
 {% block page_title %}Contratos{% endblock %}
 
 {% block content %}
-    <div class="margen-inferior-20">
-        <a href="{% url 'sistemaGestion:crear_contrato' %}" class="boton boton-primario">Nuevo Contrato</a>
+    <div>
+        <a href="{% url 'sistemaGestion:crear_contrato' %}" class="boton boton-exito">Nuevo Contrato</a>
     </div>
 
-    <div class="tarjeta">
+    <div>
         <table>
             <thead>
                 <tr>
@@ -30,23 +30,23 @@
                     <td>{{ contrato.fecha_fin }}</td>
                     <td>
                         {% if contrato.estado == 'Activo' %}
-                            <span class="estado-activo">Activo</span>
+                            <span>Activo</span>
                         {% else %}
-                            <span class="estado-inactivo">Inactivo</span>
+                            <span>Inactivo</span>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" class="boton boton-primario btn-sm margen-derecha-5" title="Ver detalles">
+                        <a href="#" class="boton" title="Ver detalles">
                             <i class="fas fa-eye"></i> Ver
                         </a>
-                        <a href="#" class="boton boton-secundario btn-sm" title="Editar">
+                        <a href="#" class="boton" title="Editar">
                             <i class="fas fa-edit"></i> Editar
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="texto-centrado">No hay contratos registrados</td>
+                    <td colspan="7">No hay contratos registrados</td>
                 </tr>
                 {% endfor %}
             </tbody>

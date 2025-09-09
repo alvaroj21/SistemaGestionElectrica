@@ -1,123 +1,60 @@
-<!--
-    DASHBOARD PRINCIPAL - SISTEMA DE GESTIÓN ELÉCTRICA
-    
-    Descripción:
-    Página principal del sistema que proporciona una vista general y accesos rápidos
-    a las diferentes funcionalidades según el rol del usuario autenticado.
-    
-    Funcionalidades:
-    - Panel de información del usuario
-    - Estadísticas dinámicas según rol
-    - Accesos rápidos a módulos principales
-    - Layout responsivo con tarjetas estadísticas
-    
-    Roles de usuario y accesos:
-    - admin: Vista completa de todas las estadísticas y accesos
-    - electrico: Medidores, lecturas y estadísticas técnicas
-    - finanzas: Clientes, contratos, boletas, pagos y estadísticas comerciales
-    
-    Extiende: base.html
-    Autor: Alvaro Pinto
-    Fecha: Septiembre 2025
--->
 {% extends 'base.html' %}
 
-<!-- Título específico de la página en el navegador -->
 {% block title %}Interfaz - Sistema Eléctrico{% endblock %}
 
-<!-- Título principal mostrado en el contenido -->
 {% block page_title %}Interfaz{% endblock %}
 
 {% block content %}
-    <div class="dashboard">
-        
-    <!-- 
-        SECCIÓN DE INFORMACIÓN DEL USUARIO
-        
-        Muestra los datos del usuario actualmente autenticado:
-        - Nombre completo o username como fallback
-        - Rol del usuario (capitalizado)
-        - Username del sistema
-        
-        Utiliza datos de la sesión Django para mostrar información personalizada
-    -->
-    <div class="informacion-usuario">
+    
+    <div>
         <h3><i class="fas fa-user"></i> Bienvenido, {{ request.session.nombre|default:request.session.username }}</h3>
         <p><strong>Rol:</strong> {{ request.session.rol|capfirst }} | <strong>Usuario:</strong> {{ request.session.username }}</p>
     </div>
 
-    <!-- 
-        PANEL DE ESTADÍSTICAS PRINCIPALES
-        
-        Grilla responsiva que muestra métricas clave del sistema.
-        Las estadísticas se muestran según el rol del usuario:
-        
-        ROLES Y ESTADÍSTICAS VISIBLES:
-        - admin: Todas las estadísticas (vista completa)
-        - finanzas: Clientes, contratos, boletas, pagos
-        - electrico: Medidores, lecturas pendientes
-        
-        Cada tarjeta incluye:
-        - Icono representativo
-        - Valor numérico de la métrica
-        - Descripción explicativa
-    -->
     <div class="grilla-estadisticas">
         
-        <!-- ESTADÍSTICA: TOTAL DE CLIENTES -->
-        <!-- Visible para: admin, finanzas -->
         {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-        <div class="tarjeta-estadistica clientes">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-users"></i> Clientes</h4>
             <p>{{ total_clientes }}</p>
             <small>Total registrados</small>
         </div>
         {% endif %}
 
-        <!-- ESTADÍSTICA: CONTRATOS ACTIVOS -->
-        <!-- Visible para: admin, finanzas -->
         {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-        <div class="tarjeta-estadistica contratos">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-file-contract"></i> Contratos</h4>
             <p>{{ total_contratos }}</p>
             <small>Contratos activos</small>
         </div>
         {% endif %}
 
-        <!-- ESTADÍSTICA: MEDIDORES INSTALADOS -->
-        <!-- Visible para: admin, electrico -->
         {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
-        <div class="tarjeta-estadistica medidores">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-tachometer-alt"></i> Medidores</h4>
             <p>{{ total_medidores }}</p>
             <small>Medidores instalados</small>
         </div>
         {% endif %}
 
-        <!-- ESTADÍSTICA: LECTURAS PENDIENTES -->
-        <!-- Visible para: admin, electrico -->
         {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
-        <div class="tarjeta-estadistica lecturas">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-chart-line"></i> Lecturas Pendientes</h4>
             <p>{{ lecturas_pendientes }}</p>
             <small>Requieren atención</small>
         </div>
         {% endif %}
 
-        <!-- ESTADÍSTICA: BOLETAS EMITIDAS -->
-        <!-- Visible para: admin, finanzas -->
         {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-        <div class="tarjeta-estadistica boletas">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-file-invoice"></i> Boletas</h4>
             <p>{{ boletas_emitidas }}</p>
             <small>Emitidas este mes</small>
         </div>
         {% endif %}
 
-        <!-- ESTADÍSTICA: PAGOS PROCESADOS -->
-        <!-- Visible para: admin, finanzas -->
         {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-        <div class="tarjeta-estadistica pagos">
+        <div class="tarjeta-estadistica">
             <h4><i class="fas fa-credit-card"></i> Pagos</h4>
             <p>{{ gastos_pagados }}</p>
             <small>Procesados este mes</small>
@@ -125,106 +62,52 @@
         {% endif %}
     </div>
 
-    <!-- 
-        SECCIÓN DE ACCESOS RÁPIDOS
-        
-        Proporciona enlaces directos a las funcionalidades principales del sistema.
-        Los accesos se organizan por módulos y se filtran según el rol del usuario.
-        
-        Cada sección incluye:
-        - Título del módulo
-        - Botón de acceso con icono y texto descriptivo
-        - Enlace directo a la vista de listado correspondiente
-        
-        DISTRIBUCIÓN POR ROLES:
-        - admin: Acceso a todos los módulos
-        - finanzas: Clientes, boletas, pagos, tarifas
-        - electrico: Medidores, lecturas
-    -->
     <div class="accesos-rapidos">
         <h3><i class="fas fa-bolt"></i> Accesos Rápidos</h3>
+        
         <div>
-            
-            <!-- ACCESO RÁPIDO: GESTIÓN DE CLIENTES -->
-            <!-- Disponible para: admin, finanzas -->
             {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-            <div class="seccion-rapida">
-                <h4>Clientes</h4>
-                <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton boton-primario">
-                    <i class="fas fa-users"></i> Ver Clientes
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">
+                <i class="fas fa-users"></i> Ver Clientes
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE MEDIDORES -->
-            <!-- Disponible para: admin, electrico -->
             {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
-            <div class="seccion-rapida">
-                <h4>Medidores</h4>
-                <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton boton-primario">
-                    <i class="fas fa-tachometer-alt"></i> Ver Medidores
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">
+                <i class="fas fa-tachometer-alt"></i> Ver Medidores
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE LECTURAS -->
-            <!-- Disponible para: admin, electrico -->
             {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
-            <div class="seccion-rapida">
-                <h4>Lecturas</h4>
-                <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton boton-primario">
-                    <i class="fas fa-chart-line"></i> Ver Lecturas
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">
+                <i class="fas fa-chart-line"></i> Ver Lecturas
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE BOLETAS -->
-            <!-- Disponible para: admin, finanzas -->
             {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-            <div class="seccion-rapida">
-                <h4>Boletas</h4>
-                <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton boton-primario">
-                    <i class="fas fa-file-invoice"></i> Ver Boletas
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton">
+                <i class="fas fa-file-invoice"></i> Ver Boletas
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE PAGOS -->
-            <!-- Disponible para: admin, finanzas -->
             {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-            <div class="seccion-rapida">
-                <h4>Pagos</h4>
-                <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton boton-primario">
-                    <i class="fas fa-credit-card"></i> Ver Pagos
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">
+                <i class="fas fa-credit-card"></i> Ver Pagos
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE TARIFAS -->
-            <!-- Disponible para: admin, finanzas -->
             {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-            <div class="seccion-rapida">
-                <h4>Tarifas</h4>
-                <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton boton-primario">
-                    <i class="fas fa-dollar-sign"></i> Ver Tarifas
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton">
+                <i class="fas fa-dollar-sign"></i> Ver Tarifas
+            </a>
             {% endif %}
 
-            <!-- ACCESO RÁPIDO: GESTIÓN DE USUARIOS -->
-            <!-- Disponible solo para: admin -->
             {% if request.session.rol == 'admin' %}
-            <div class="seccion-rapida">
-                <h4>Usuarios</h4>
-                <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton boton-primario">
-                    <i class="fas fa-user-cog"></i> Ver Usuarios
-                </a>
-            </div>
+            <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton">
+                <i class="fas fa-user-cog"></i> Ver Usuarios
+            </a>
             {% endif %}
         </div>
     </div>
-    </div>
+    
 {% endblock %}
-
-
-
