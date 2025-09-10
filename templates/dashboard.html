@@ -11,7 +11,7 @@
         <p><strong>Rol:</strong> {{ request.session.rol|capfirst }} | <strong>Usuario:</strong> {{ request.session.username }}</p>
     </div>
 
-    <div class="grilla-estadisticas">
+    <div class="grid-estadisticas">
         
         {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
         <div class="tarjeta-estadistica">

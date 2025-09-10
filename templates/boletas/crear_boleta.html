@@ -10,8 +10,7 @@
     </div>
 
     <div class="tarjeta">
-        <form method="post">
-            {% csrf_token %}
+        <form>
             
             <div class="grupo-formulario">
                 <label for="cliente">Cliente:</label>
@@ -19,7 +18,7 @@
                     <option value="">Seleccionar cliente</option>
                     {% for cliente in clientes %}
                         {% if cliente.estado == 'Activo' %}
-                            <option value="{{ cliente.idCliente }}">{{ cliente.nombre }} ({{ cliente.numero_cliente }})</option>
+                                <option value="{{ cliente.idCliente }}">{{ cliente.nombre }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>

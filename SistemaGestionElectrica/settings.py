@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# Agrega 'sistemaGestion' a la lista de aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +53,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'SistemaGestionElectrica.urls'
 
+#se indica la carpeta de templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

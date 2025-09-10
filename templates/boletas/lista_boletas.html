@@ -8,27 +8,27 @@
     <!-- Estadísticas Resumen -->
     <div class="stats-grid">
         <div class="stat-tarjeta">
-            <h3>{{ total_servicios }}</h3>
+            <h3>{{ estadisticas.total_servicios }}</h3>
             <p>Total Servicios</p>
         </div>
         <div class="stat-tarjeta">
-            <h3>{{ servicios_pagados }}</h3>
+            <h3>{{ estadisticas.servicios_pagados }}</h3>
             <p>Servicios Pagados</p>
         </div>
         <div class="stat-tarjeta">
-            <h3>{{ servicios_pendientes }}</h3>
+            <h3>{{ estadisticas.servicios_pendientes }}</h3>
             <p>Servicios Pendientes</p>
         </div>
         <div class="stat-tarjeta">
-            <h3>${{ total_gasto_presupuestado|floatformat:0 }}</h3>
+            <h3>${{ estadisticas.gasto_total_presupuestado|floatformat:0 }}</h3>
             <p>Gasto Total Presupuestado</p>
         </div>
         <div class="stat-tarjeta">
-            <h3>${{ total_pagado|floatformat:0 }}</h3>
+            <h3>${{ estadisticas.total_pagado|floatformat:0 }}</h3>
             <p>Total Pagado</p>
         </div>
         <div class="stat-tarjeta">
-            <h3>{{ porcentaje_pagado|floatformat:1 }}%</h3>
+            <h3>{{ estadisticas.porcentaje_pagado|floatformat:1 }}%</h3>
             <p>Porcentaje Pagado</p>
         </div>
     </div>

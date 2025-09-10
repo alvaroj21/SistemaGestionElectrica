@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views #importa las vistas desde el mismo directorio
 
 app_name = 'sistemaGestion'
 
@@ -9,38 +9,38 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),  # Logout
     path('inicio/', views.dashboard, name='dashboard'),   # Dashboard o página principal después del login
     # Clientes
-    path('clientes/', views.lista_clientes, name='lista_clientes'),
-    path('clientes/crear/', views.crear_cliente, name='crear_cliente'),
+    path('clientes/', views.lista_clientes, name='lista_clientes'), #  pagina de lista de clientes
+    path('clientes/crear/', views.crear_cliente, name='crear_cliente'), # Página para crear un nuevo cliente
     
     # Contratos
-    path('contratos/', views.lista_contratos, name='lista_contratos'),
-    path('contratos/crear/', views.crear_contrato, name='crear_contrato'),
+    path('contratos/', views.lista_contratos, name='lista_contratos'), # Página de lista de contratos
+    path('contratos/crear/', views.crear_contrato, name='crear_contrato'),  # Página para crear un nuevo contrato
     
     # Medidores
-    path('medidores/', views.lista_medidores, name='lista_medidores'),
-    path('medidores/crear/', views.crear_medidor, name='crear_medidor'),
-    path('medidores/ubicacion/<int:id_medidor>/', views.ubicacion_medidor, name='ubicacion_medidor'),
+    path('medidores/', views.lista_medidores, name='lista_medidores'), # Página de lista de medidores
+    path('medidores/crear/', views.crear_medidor, name='crear_medidor'), # Página para crear un nuevo medidor
+    path('medidores/ubicacion/', views.ubicacion_medidor, name='ubicacion_medidor'), # Página para ver la ubicación del medidor en un mapa
     
     # Lecturas
-    path('lecturas/', views.lista_lecturas, name='lista_lecturas'),
-    path('lecturas/crear/', views.crear_lectura, name='crear_lectura'),
+    path('lecturas/', views.lista_lecturas, name='lista_lecturas'), # Página de lista de lecturas
+    path('lecturas/crear/', views.crear_lectura, name='crear_lectura'), # Página para crear una nueva lectura
     
     # Boletas
-    path('boletas/', views.lista_boletas, name='lista_boletas'),
-    path('boletas/crear/', views.crear_boleta, name='crear_boleta'),
+    path('boletas/', views.lista_boletas, name='lista_boletas'), # Página de lista de boletas
+    path('boletas/crear/', views.crear_boleta, name='crear_boleta'), # Página para crear una nueva boleta
     
     # Pagos
-    path('pagos/', views.lista_pagos, name='lista_pagos'),
-    path('pagos/crear/', views.crear_pago, name='crear_pago'),
+    path('pagos/', views.lista_pagos, name='lista_pagos'), # Página de lista de pagos
+    path('pagos/crear/', views.crear_pago, name='crear_pago'),  # Página para crear un nuevo pago
     
     # Usuarios
-    path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
-    path('usuarios/crear/', views.crear_usuario, name='crear_usuario'),
-    
+    path('usuarios/', views.lista_usuarios, name='lista_usuarios'), # Página de lista de usuarios
+    path('usuarios/crear/', views.crear_usuario, name='crear_usuario'), # Página para crear un nuevo usuario
+
     # Tarifas
-    path('tarifas/', views.lista_tarifas, name='lista_tarifas'),
-    path('tarifas/crear/', views.crear_tarifa, name='crear_tarifa'),
+    path('tarifas/', views.lista_tarifas, name='lista_tarifas'), # Página de lista de tarifas
+    path('tarifas/crear/', views.crear_tarifa, name='crear_tarifa'), # Página para crear una nueva tarifa
     
     # Notificaciones
-    path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'),
+    path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'), # Página de lista de notificaciones
 ]

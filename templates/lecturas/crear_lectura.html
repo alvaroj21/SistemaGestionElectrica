@@ -10,15 +10,16 @@
     </div>
 
     <div>
-        <form method="post">
-            {% csrf_token %}
+        <form>
             
             <div>
                 <label for="medidor">Medidor:</label>
                 <select id="medidor" name="medidor" required>
                     <option value="">Seleccionar medidor</option>
                     {% for medidor in medidores %}
-                        <option value="{{ medidor.id_medidor }}">{{ medidor.numero_medidor }} - {{ medidor.cliente_nombre }}</option>
+                        {% if medidor.estado == 'Activo' %}
+                            <option value="{{ medidor.id_medidor }}">{{ medidor.numero_medidor }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -44,7 +45,6 @@
                     <option value="">Seleccionar tipo</option>
                     <option value="Normal">Normal</option>
                     <option value="Estimada">Estimada</option>
-                    <option value="Correctiva">Correctiva</option>
                 </select>
             </div>
 

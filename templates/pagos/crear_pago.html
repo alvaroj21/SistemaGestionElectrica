@@ -10,8 +10,7 @@
     </div>
 
     <div>
-        <form method="post">
-            {% csrf_token %}
+        <form>
             
             <div>
                 <label for="boleta">Boleta:</label>
@@ -19,7 +18,7 @@
                     <option value="">Seleccionar boleta</option>
                     {% for boleta in boletas %}
                         {% if boleta.estado == 'Pendiente' %}
-                            <option value="{{ boleta.id_boleta }}">{{ boleta.id_boleta }} - {{ boleta.cliente_nombre }} - ${{ boleta.monto_total|floatformat:0 }}</option>
+                            <option value="{{ boleta.numero_boleta }}">{{ boleta.numero_boleta }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>

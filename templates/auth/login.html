@@ -15,14 +15,14 @@
             <form method="post">
                 {% csrf_token %}
                 <div>
-                    <i class="fas fa-bolt" style="font-size: 40px; color: #3498db; margin-bottom: 10px;"></i>
+                    <i class="fas fa-bolt"></i>
                     <h2>Sistema Eléctrico</h2>
                     <p>Inicia sesión para continuar</p>
                 </div>
                 
                 {% if messages %}
                     {% for message in messages %}
-                        <div style="background: #e74c3c; color: white; padding: 10px; margin-bottom: 15px;">
+                        <div class="mensaje-error">
                             <i class="fas fa-info-circle"></i> {{ message }}
                         </div>
                     {% endfor %}
