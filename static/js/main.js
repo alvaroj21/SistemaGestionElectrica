@@ -1,18 +1,3 @@
-function alternarCategoria(element) {
-    const content = element.nextElementSibling;
-    const arrow = element.querySelector('.flecha');
-    
-    if (content.style.display === 'none' || content.style.display === '') {
-        content.style.display = 'block';
-        arrow.textContent = '▲';
-        element.classList.add('active');
-    } else {
-        content.style.display = 'none';
-        arrow.textContent = '▼';
-        element.classList.remove('active');
-    }
-}
-
 // Inicializar todas las categorías como cerradas
 document.addEventListener('DOMContentLoaded', function() {
     const contents = document.querySelectorAll('.contenido-categoria-navegacion');

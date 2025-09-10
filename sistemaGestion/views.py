@@ -575,7 +575,7 @@ def lista_lecturas(request):
             'consumo_energetico': 156,
             'tipo_lectura': 'Manual',
             'lectura_actual': 1125,
-            'medidor_numero': 'MED-001'  
+            'medidor_numero': 'MED-003'  
         },
     ]
     
