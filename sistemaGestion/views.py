@@ -409,7 +409,7 @@ def lista_medidores(request):
         {
             'id_medidor': 1,
             'numero_medidor': 'MED-001', 
-            'fecha_instalacion': '2021-01-15',
+            'fecha_instalacion': '05-03-2021',
             'ubicacion': 'Calle Principal 123, Casa Juan Pérez',
             'estado_medidor': 'Activo',
             'cliente_nombre': 'Juan Perez'  
@@ -417,7 +417,7 @@ def lista_medidores(request):
         {
             'id_medidor': 2,
             'numero_medidor': 'MED-002', 
-            'fecha_instalacion': '2021-03-20',
+            'fecha_instalacion': '20-03-2021',
             'ubicacion': 'Av. Comercial 456, Local María Rodríguez',
             'estado_medidor': 'Activo',
             'cliente_nombre': 'Maria Rodríguez'  
@@ -425,7 +425,7 @@ def lista_medidores(request):
         {
             'id_medidor': 3,
             'numero_medidor': 'MED-003', 
-            'fecha_instalacion': '2023-12-01',
+            'fecha_instalacion': '01-12-2023',
             'ubicacion': 'Barrio Industrial 789, Empresa Carlos Sánchez',
             'estado_medidor': 'Mantenimiento',
             'cliente_nombre': 'Carlos Castillo'  
