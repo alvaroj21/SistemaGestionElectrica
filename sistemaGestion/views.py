@@ -625,6 +625,52 @@ def crear_lectura(request):
     return render(request, 'lecturas/crear_lectura.html', datos)
 
 
+
+def detalle_lectura(request):
+    """
+    Vista que muestra el detalle de una lectura específica con información del medidor
+    y gráficos estadísticos. Requiere permisos de 'lecturas'.
+    
+    Args:
+        request (HttpRequest): Objeto de petición HTTP
+        
+    Returns:
+        HttpResponse: Renderiza la página de detalle de lectura
+    """
+    # Verificar autenticación
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    # Verificar permisos
+    if not tiene_permiso(request, 'lecturas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    # Datos simulados de la lectura específica
+    lectura = {
+        'id_lectura': 1,
+        'fecha_lectura': '01-09-2025',
+        'consumo_energetico': 125,
+        'tipo_lectura': 'Manual',
+        'lectura_actual': 1250,
+        'lectura_anterior': 1125,
+        'medidor': {
+            'numero_medidor': 'MED-001',
+            'cliente_nombre': 'Juan Pérez',
+            'ubicacion': 'Calle Principal 123, Casa Juan Pérez',
+            'estado_medidor': 'Activo',
+            'fecha_instalacion': '05-03-2021'
+        }
+    }
+    
+    # Preparar datos para el template
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'lectura': lectura
+    }
+    return render(request, 'lecturas/detalle_lectura.html', datos)
+
 # ============================================================================
 # VISTAS PARA GESTIÓN DE BOLETAS
 # ============================================================================

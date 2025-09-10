@@ -24,6 +24,8 @@ urlpatterns = [
     # Lecturas
     path('lecturas/', views.lista_lecturas, name='lista_lecturas'), # Página de lista de lecturas
     path('lecturas/crear/', views.crear_lectura, name='crear_lectura'), # Página para crear una nueva lectura
+    path('lectura/detalle_lectura/', views.detalle_lectura, name='detalle_lectura'), # Página para ver el detalle de una lectura
+
     
     # Boletas
     path('boletas/', views.lista_boletas, name='lista_boletas'), # Página de lista de boletas

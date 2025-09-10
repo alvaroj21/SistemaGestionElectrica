@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Lectura - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Detalle de Lectura{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">Volver a Lecturas</a>
+    </div>
+
+    <!-- Información de la Lectura -->
+    <div>
+        <h3>Información de la Lectura</h3>
+        <div>
+            <p><strong>Fecha de Lectura:</strong> {{ lectura.fecha_lectura }}</p>
+            <p><strong>Tipo de Lectura:</strong> {{ lectura.tipo_lectura }}</p>
+            <p><strong>Lectura Actual:</strong> {{ lectura.lectura_actual }} kWh</p>
+            <p><strong>Lectura Anterior:</strong> {{ lectura.lectura_anterior }} kWh</p>
+            <p><strong>Consumo Energético:</strong> {{ lectura.consumo_energetico }} kWh</p>
+        </div>
+    </div>
+
+    <!-- Información del Medidor -->
+    <div>
+        <h3>Información del Medidor</h3>
+        <div>
+            <p><strong>Número de Medidor:</strong> {{ lectura.medidor.numero_medidor }}</p>
+            <p><strong>Cliente:</strong> {{ lectura.medidor.cliente_nombre }}</p>
+            <p><strong>Estado:</strong> {{ lectura.medidor.estado_medidor }}</p>
+            <p><strong>Fecha de Instalación:</strong> {{ lectura.medidor.fecha_instalacion }}</p>
+            <p><strong>Ubicación:</strong> {{ lectura.medidor.ubicacion }}</p>
+        </div>
+    </div>
+
+    <!-- Gráficos Estadísticos -->
+    <div>
+        <h3>Análisis de Consumo</h3>
+        <div>
+            <img src="{% static 'images/grafico1.jpg' %}" alt="Gráfico de consumo mensual">
+            <p><strong>Gráfico 1:</strong> Consumo mensual del medidor {{ lectura.medidor.numero_medidor }}</p>
+        </div>
+    </div>
+{% endblock %}
