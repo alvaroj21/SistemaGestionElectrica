@@ -14,7 +14,7 @@
             <thead>
                 <tr>
                     <th>ID Pago</th>
-                    <th>Cliente</th>
+                    <th>Numero Boleta</th>
                     <th>Fecha Pago</th>
                     <th>Monto Pagado</th>
                     <th>Método Pago</th>
@@ -27,7 +27,7 @@
                 {% for pago in pagos %}
                 <tr>
                     <td>{{ pago.idpago }}</td>
-                    <td>{{ pago.cliente_nombre }}</td>
+                    <td>{{ pago.numero_boleta }}</td>
                     <td>{{ pago.fecha_pago }}</td>
                     <td>${{ pago.monto_pagado|floatformat:0 }}</td>
                     <td>{{ pago.metodo_pago }}</td>

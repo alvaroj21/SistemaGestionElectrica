@@ -14,7 +14,7 @@
             <thead>
                 <tr>
                     <th>N° Medidor</th>
-                    <th>Cliente</th>
+                    <th>Numero Contrato</th>
                     <th>Estado</th>
                     <th>Fecha Instalación</th>
                     <th>Ubicación</th>
@@ -25,7 +25,7 @@
                 {% for medidor in medidores %}
                 <tr>
                     <td>{{ medidor.numero_medidor }}</td>
-                    <td>{{ medidor.cliente_nombre }}</td>
+                    <td>{{ medidor.numero_contrato }}</td>
                     <td>
                         {% if medidor.estado_medidor == 'Activo' %}
                             <span>Activo</span>

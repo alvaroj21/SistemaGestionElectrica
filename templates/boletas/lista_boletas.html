@@ -42,7 +42,7 @@
             <thead>
                 <tr>
                     <th>ID Boleta</th>
-                    <th>Cliente</th>
+                    <th>Numero Lectura</th>
                     <th>Consumo (kWh)</th>
                     <th>Monto Total</th>
                     <th>Fecha Emisión</th>
@@ -55,7 +55,7 @@
                 {% for boleta in boletas %}
                 <tr>
                     <td>{{ boleta.id_boleta }}</td>
-                    <td>{{ boleta.cliente_nombre }}</td>
+                    <td>{{ boleta.numero_lectura }}</td>
                     <td>{{ boleta.consumo_energetico }}</td>
                     <td>${{ boleta.monto_total|floatformat:0 }}</td>
                     <td>{{ boleta.fecha_emision }}</td>

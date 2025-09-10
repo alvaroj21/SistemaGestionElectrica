@@ -18,11 +18,11 @@
             </div>
 
             <div>
-                <label for="cliente">Cliente:</label>
-                <select id="cliente" name="cliente" required>
-                    <option value="">Seleccionar cliente</option>
-                    {% for cliente in clientes %}
-                        <option value="{{ cliente.idCliente }}">{{ cliente.nombre }} ({{ cliente.numero_cliente }})</option>
+                <label for="numero_contrato">Número de Contrato:</label>
+                <select id="numero_contrato" name="numero_contrato" required>
+                    <option value="">Seleccionar contrato</option>
+                    {% for contrato in contratos %}
+                        <option value="{{ contrato.id }}">{{ contrato.numero_contrato }}</option>
                     {% endfor %}
                 </select>
             </div>

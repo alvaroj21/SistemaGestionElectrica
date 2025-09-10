@@ -13,13 +13,11 @@
         <form>
             
             <div class="grupo-formulario">
-                <label for="cliente">Cliente:</label>
-                <select id="cliente" name="cliente" required>
-                    <option value="">Seleccionar cliente</option>
-                    {% for cliente in clientes %}
-                        {% if cliente.estado == 'Activo' %}
-                                <option value="{{ cliente.idCliente }}">{{ cliente.nombre }}</option>
-                        {% endif %}
+                <label for="lectura">Lectura:</label>
+                <select id="lectura" name="lectura" required>
+                    <option value="">Seleccionar lectura</option>
+                    {% for lectura in lecturas %}
+                        <option value="{{ lectura.idLectura }}">{{ lectura.numero_lectura }}</option>
                     {% endfor %}
                 </select>
             </div>

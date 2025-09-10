@@ -412,7 +412,7 @@ def lista_medidores(request):
             'fecha_instalacion': '05-03-2021',
             'ubicacion': 'Calle Principal 123, Casa Juan Pérez',
             'estado_medidor': 'Activo',
-            'cliente_nombre': 'Juan Perez'  
+            'numero_contrato': 'CON-001'  
         },
         {
             'id_medidor': 2,
@@ -420,7 +420,7 @@ def lista_medidores(request):
             'fecha_instalacion': '20-03-2021',
             'ubicacion': 'Av. Comercial 456, Local María Rodríguez',
             'estado_medidor': 'Activo',
-            'cliente_nombre': 'Maria Rodríguez'  
+            'numero_contrato': 'CON-002'  
         },
         {
             'id_medidor': 3,
@@ -428,7 +428,7 @@ def lista_medidores(request):
             'fecha_instalacion': '01-12-2023',
             'ubicacion': 'Barrio Industrial 789, Empresa Carlos Sánchez',
             'estado_medidor': 'Mantenimiento',
-            'cliente_nombre': 'Carlos Castillo'  
+            'numero_contrato': 'CON-003'  
         },
     ]
     
@@ -460,32 +460,20 @@ def crear_medidor(request):
     if not tiene_permiso(request, 'medidores'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
-    
-    # Lista de clientes disponibles para asignar el medidor
-    clientes = [
-        {
-            'nombre': 'Juan Pérez', 
-            'numero_cliente': 'CL-001'
-        },
-        {
-            'nombre': 'María Rodríguez', 
-            'numero_cliente': 'CL-002'
-        },
-        {
-            'nombre': 'Carlos Sánchez', 
-            'numero_cliente': 'CL-003'
-        },
-        {
-            'nombre': 'Ana Gomez', 
-            'numero_cliente': 'CL-004'
-        },
+
+    # Lista de contratos disponibles para asignar el medidor
+    contratos = [
+        {'numero_contrato': 'CON-001'},
+        {'numero_contrato': 'CON-002'},
+        {'numero_contrato': 'CON-003'},
+        {'numero_contrato': 'CON-004'}
     ]
     
     # Preparar datos para el template
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'clientes': clientes
+        'contratos': contratos
     }
     return render(request, 'medidores/crear_medidor.html', datos)
 
@@ -557,6 +545,7 @@ def lista_lecturas(request):
     # Lista de lecturas de ejemplo
     lecturas = [
         {
+            'numero_lectura': 'LEC-001',
             'fecha_lectura': '01-09-2025', 
             'consumo_energetico': 125,  
             'tipo_lectura': 'Manual', 
@@ -564,6 +553,7 @@ def lista_lecturas(request):
             'medidor_numero': 'MED-001'  
         },
         {
+            'numero_lectura': 'LEC-002',
             'fecha_lectura': '01-09-2025', 
             'consumo_energetico': 98,  
             'tipo_lectura': 'Automatica',
@@ -571,6 +561,7 @@ def lista_lecturas(request):
             'medidor_numero': 'MED-002'  
         },
         {
+            'numero_lectura': 'LEC-003',
             'fecha_lectura': '01-08-2025', 
             'consumo_energetico': 156,
             'tipo_lectura': 'Manual',
@@ -705,7 +696,7 @@ def lista_boletas(request):
             'monto_total': 28400,                  
             'consumo_energetico': 125,               
             'estado': 'Pendiente',                      
-            'cliente_nombre': 'Juan Pérez'  
+            'numero_lectura': 'LEC-001',  
         },
         {
             'id_boleta': 2,
@@ -714,7 +705,7 @@ def lista_boletas(request):
             'monto_total': 23600,
             'consumo_energetico': 98,
             'estado': 'Pagada',
-            'cliente_nombre': 'María Rodríguez' 
+            'numero_lectura': 'LEC-002',
         },
         {
             'id_boleta': 3,
@@ -723,7 +714,7 @@ def lista_boletas(request):
             'monto_total': 35200,
             'consumo_energetico': 156,
             'estado': 'Vencida',
-            'cliente_nombre': 'Juan Pérez'  
+            'numero_lectura': 'LEC-003'
         },
     ]
     
@@ -767,19 +758,18 @@ def crear_boleta(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    # Lista de clientes disponibles para emitir boleta
-    clientes = [
-        {'idCliente': 1, 'nombre': 'Juan Pérez', 'estado': 'Activo'},
-        {'idCliente': 2, 'nombre': 'María Rodríguez', 'estado': 'Activo'},
-        {'idCliente': 3, 'nombre': 'Carlos Sánchez', 'estado': 'Activo'},
-        {'idCliente': 4, 'nombre': 'Ana Gomez', 'estado': 'Activo'},
+    # Lista de lecturas disponibles para emitir boleta
+    lecturas = [
+        {'numero_lectura': 'LEC-001'},
+        {'numero_lectura': 'LEC-002'},
+        {'numero_lectura': 'LEC-003'},
     ]
     
     # Preparar datos para el template
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'clientes': clientes
+        'lecturas': lecturas
     }
     return render(request, 'boletas/crear_boleta.html', datos)
 
@@ -816,9 +806,9 @@ def lista_pagos(request):
             'fecha_pago': '20-07-2025',
             'monto_pagado': 23600,                   
             'metodo_pago': 'Transferencia Bancaria',  
-            'numero_referencia': 'TRF001',             
-            'estado_pago': 'Confirmado',                
-            'cliente_nombre': 'María Rodríguez'  
+            'numero_referencia': 'TRF001',
+            'estado_pago': 'Confirmado',
+            'numero_boleta': 'Bol-001'
         },
         {
             'idpago': 2,
@@ -827,7 +817,7 @@ def lista_pagos(request):
             'metodo_pago': 'Efectivo',
             'numero_referencia': 'EFE001',
             'estado_pago': 'Confirmado',
-            'cliente_nombre': 'Juan Pérez' 
+            'numero_boleta': 'Bol-002'
         },
         {
             'idpago': 3,
@@ -836,7 +826,7 @@ def lista_pagos(request):
             'metodo_pago': 'Tarjeta de Crédito',
             'numero_referencia': 'TDC001',
             'estado_pago': 'Pendiente',
-            'cliente_nombre': 'Carlos Mendoza' 
+            'numero_boleta': 'Bol-003'
         },
     ]
     
