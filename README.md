@@ -9,3 +9,5 @@ respecto a los distintos medidores, lecturas, clientes, tarifas, contratos, bole
 Este registro de datos se complementa con la idea de poder entregar informacion visual respecto a distintos datos como pueden ser la lectura o la ubicacion de los medidores.
 
 Actualmente la plataforma se encuentra en desarrollo, lo presentado actualmente solo es un ejemplo y prototipo de lo que se desea realizar con este proyecto.
+
+La pagina se encuentra alojada actualmente en: https://sgem.pythonanywhere.com/ para su testeo.
