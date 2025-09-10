@@ -696,7 +696,7 @@ def lista_boletas(request):
             'monto_total': 28400,                  
             'consumo_energetico': 125,               
             'estado': 'Pendiente',                      
-            'numero_lectura': 'LEC-001',  
+            'numero_boleta': 'BOL-001',  
         },
         {
             'id_boleta': 2,
@@ -705,7 +705,7 @@ def lista_boletas(request):
             'monto_total': 23600,
             'consumo_energetico': 98,
             'estado': 'Pagada',
-            'numero_lectura': 'LEC-002',
+            'numero_boleta': 'BOL-002',
         },
         {
             'id_boleta': 3,
@@ -714,7 +714,7 @@ def lista_boletas(request):
             'monto_total': 35200,
             'consumo_energetico': 156,
             'estado': 'Vencida',
-            'numero_lectura': 'LEC-003'
+            'numero_boleta': 'BOL-003'
         },
     ]
     

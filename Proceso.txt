@@ -62,3 +62,11 @@ Para el alojamiento se intento realizar por vercel pero dada la configuracion di
 un proyecto Django debido al backend a como por ejemplo, se ha visto anteriormente en frontend, se hizo uso 
 de la plataforma python anywhere donde se realiza la configuracion desde la misma pagina para poder
 alojar el proyecto actual.
+
+Considerando ciertas dudas respecto a los datos de las vistas, se procedio a hacer la correcion de distintos datos que se estaban entregando,
+esto a consideracion del diagrama de base de datos y las relaciones entre las distintas tablas.
+Esto tambien nos permitio darnos cuenta la inexistencia de ciertos datos que seran necesarios incluir en una base de datos, como pueden ser
+el numero_boleta, numero_lectura que deben ser incorporados para una buena relacion entre distintas entidades.
+
+Ademas de ello se integro un nuevo template de ejemplo para los detalles de lectura, donde la idea principal es mostrar las distintas
+lecturas por medio de un grafico, en este caso se incorporo por medio de una imagen estatica un grafico de ejemplo de la lectura en distintos meses.

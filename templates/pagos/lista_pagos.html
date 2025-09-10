@@ -14,11 +14,10 @@
             <thead>
                 <tr>
                     <th>ID Pago</th>
-                    <th>Numero Boleta</th>
+                    <th>N° Referencia</th>
                     <th>Fecha Pago</th>
                     <th>Monto Pagado</th>
                     <th>Método Pago</th>
-                    <th>N° Referencia</th>
                     <th>Estado Pago</th>
                     <th>Acciones</th>
                 </tr>
@@ -27,11 +26,10 @@
                 {% for pago in pagos %}
                 <tr>
                     <td>{{ pago.idpago }}</td>
-                    <td>{{ pago.numero_boleta }}</td>
+                    <td>{{ pago.numero_referencia }}</td>
                     <td>{{ pago.fecha_pago }}</td>
                     <td>${{ pago.monto_pagado|floatformat:0 }}</td>
                     <td>{{ pago.metodo_pago }}</td>
-                    <td>{{ pago.numero_referencia }}</td>
                     <td>
                         {% if pago.estado_pago == 'Confirmado' %}
                             <span>Confirmado</span>
