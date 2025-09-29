@@ -202,39 +202,15 @@ def lista_clientes(request):
         return redirect('sistemaGestion:dashboard')
     
     # Lista de clientes de ejemplo (en un sistema real, estos datos vendrían de la base de datos)
-    clientes = [
-        {
-            'nombre': 'Juan Pérez', 
-            'email': 'juan@email.com', 
-            'telefono': '123456789', 
-            'numero_cliente': 'CL-001'
-        },
-        {
-            'nombre': 'María Rodríguez', 
-            'email': 'maria@email.com', 
-            'telefono': '987654321', 
-            'numero_cliente': 'CL-002'
-        },
-        {
-            'nombre': 'Carlos Sánchez', 
-            'email': 'carlos@email.com', 
-            'telefono': '111222333', 
-            'numero_cliente': 'CL-003'
-        },
-        {
-            'nombre': 'Ana Gomez', 
-            'email': 'ana@email.com', 
-            'telefono': '14262333', 
-            'numero_cliente': 'CL-004'
-        },
-    ]
-    
-    # Preparar datos para enviar al template
+    clientes = Clientes.objects.all()
     datos = {
-        'clientes': clientes
+        'username':request.session.get('username'),
+        'nombre':request.session.get('nombre'),
+        'clientes':clientes
     }
     return render(request, 'clientes/lista_clientes.html', datos)
 
+#Por el momento no hacer cambios en las vistas/funciones de crear
 def crear_cliente(request):
     """
     Vista que muestra el formulario para crear un nuevo cliente.
