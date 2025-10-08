@@ -6,7 +6,8 @@ usuarios y notificaciones con un sistema de autenticación por roles.
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, Notification
+from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura
+from .forms import ClienteForm, ContratoForm, MedidorForm, LecturaForm, BoletaForm, PagoForm, TarifaForm, UsuarioForm
 
 
 # ============================================================================
@@ -120,6 +121,7 @@ def lista_clientes(request):
     return render(request, 'clientes/lista_clientes.html', datos)
 
 def crear_cliente(request):
+    # Verificar autenticación
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
@@ -127,9 +129,23 @@ def crear_cliente(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
+    # Procesar formulario
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            # Guardar el cliente
+            cliente = form.save()
+            messages.success(request, f'Cliente "{cliente.nombre}" creado exitosamente con número {cliente.numero_cliente}')
+            return redirect('sistemaGestion:lista_clientes')
+    else:
+        # GET request - mostrar formulario vacío
+        form = ClienteForm()
+    
+    # Preparar datos para el template
     datos = {
         'username': request.session.get('username'),
-        'nombre': request.session.get('nombre')
+        'nombre': request.session.get('nombre'),
+        'form': form
     }
     return render(request, 'clientes/crear_cliente.html', datos)
 
@@ -146,7 +162,7 @@ def lista_contratos(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    contratos = Contrato.objects.select_related('cliente_id_cliente').all()
+    contratos = Contrato.objects.all()
     
     datos = {
         'username': request.session.get('username'),
@@ -163,15 +179,19 @@ def crear_contrato(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    # Usar modelos reales
-    clientes = Cliente.objects.all()
-    tarifas = Tarifa.objects.all()
+    if request.method == 'POST':
+        form = ContratoForm(request.POST)
+        if form.is_valid():
+            contrato = form.save()
+            messages.success(request, f'Contrato "{contrato.numero_contrato}" creado exitosamente')
+            return redirect('sistemaGestion:lista_contratos')
+    else:
+        form = ContratoForm()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'clientes': clientes,
-        'tarifas': tarifas
+        'form': form
     }
     return render(request, 'contratos/crear_contrato.html', datos)
 
@@ -188,7 +208,7 @@ def lista_medidores(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    medidores = Medidor.objects.select_related('contrato_id_contrato').all()
+    medidores = Medidor.objects.all()
     
     datos = {
         'username': request.session.get('username'),
@@ -205,41 +225,21 @@ def crear_medidor(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
 
-    contratos = Contrato.objects.all()
+    if request.method == 'POST':
+        form = MedidorForm(request.POST)
+        if form.is_valid():
+            medidor = form.save()
+            messages.success(request, f'Medidor "{medidor.numero_medidor}" creado exitosamente')
+            return redirect('sistemaGestion:lista_medidores')
+    else:
+        form = MedidorForm()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'contratos': contratos
+        'form': form
     }
     return render(request, 'medidores/crear_medidor.html', datos)
-
-def ubicacion_medidor(request):
-    """
-    Vista que muestra la ubicación específica de un medidor en un mapa o interfaz de ubicación.
-    Requiere permisos de 'medidores'.
-    """
-    if not usuario_logueado(request):
-        return redirect('sistemaGestion:login')
-    
-    if not tiene_permiso(request, 'medidores'):
-        messages.error(request, 'No tienes permisos para acceder a esta sección')
-        return redirect('sistemaGestion:dashboard')
-    
-    # Obtener medidor específico
-    medidor_id = request.GET.get('id', 1)
-    try:
-        medidor = Medidor.objects.get(id_medidor=medidor_id)
-    except Medidor.DoesNotExist:
-        medidor = None
-        messages.error(request, 'Medidor no encontrado')
-    
-    datos = {
-        'username': request.session.get('username'),
-        'nombre': request.session.get('nombre'),
-        'medidor': medidor
-    }
-    return render(request, 'medidores/ubicacion_medidor.html', datos)
 
 
 # ============================================================================
@@ -254,7 +254,7 @@ def lista_lecturas(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    lecturas = Lectura.objects.select_related('medidor_id_medidor').all()
+    lecturas = Lectura.objects.all()
     
     datos = {
         'username': request.session.get('username'),
@@ -271,12 +271,19 @@ def crear_lectura(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    medidores = Medidor.objects.all()
+    if request.method == 'POST':
+        form = LecturaForm(request.POST)
+        if form.is_valid():
+            lectura = form.save()
+            messages.success(request, 'Lectura creada exitosamente')
+            return redirect('sistemaGestion:lista_lecturas')
+    else:
+        form = LecturaForm()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'medidores': medidores
+        'form': form
     }
     return render(request, 'lecturas/crear_lectura.html', datos)
 
@@ -293,7 +300,7 @@ def lista_boletas(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    boletas = Boleta.objects.select_related('lectura_id_lectura').all()
+    boletas = Boleta.objects.all()
     
     # Estadísticas reales
     estadisticas = {
@@ -365,7 +372,29 @@ def lista_notificaciones(request):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
-    notificaciones = Notification.objects.all()
+    if not tiene_permiso(request, 'notificaciones'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    # Obtener notificaciones de ambos tipos
+    notificaciones_lectura = NotificacionLectura.objects.all()
+    notificaciones_pago = NotificacionPago.objects.all()
+    
+    # Combinar ambos tipos de notificaciones
+    notificaciones = []
+    for notif in notificaciones_lectura:
+        notificaciones.append({
+            'tipo': 'Lectura',
+            'titulo': 'Notificación de Lectura',
+            'mensaje': notif.registro_consumo,
+        })
+    
+    for notif in notificaciones_pago:
+        notificaciones.append({
+            'tipo': 'Pago',
+            'titulo': 'Notificación de Pago',
+            'mensaje': notif.deuda_pendiente,
+        })
     
     datos = {
         'username': request.session.get('username'),
@@ -377,62 +406,6 @@ def lista_notificaciones(request):
 # ============================================================================
 # VISTAS FALTANTES - AGREGAR ESTAS FUNCIONES
 # ============================================================================
-
-def ubicacion_medidor(request):
-    """
-    Vista que muestra la ubicación específica de un medidor.
-    Requiere permisos de 'medidores'.
-    """
-    if not usuario_logueado(request):
-        return redirect('sistemaGestion:login')
-    
-    if not tiene_permiso(request, 'medidores'):
-        messages.error(request, 'No tienes permisos para acceder a esta sección')
-        return redirect('sistemaGestion:dashboard')
-    
-    # Obtener medidor específico
-    medidor_id = request.GET.get('id', 1)
-    try:
-        medidor = Medidor.objects.get(id_medidor=medidor_id)
-    except Medidor.DoesNotExist:
-        medidor = None
-        messages.error(request, 'Medidor no encontrado')
-    
-    datos = {
-        'username': request.session.get('username'),
-        'nombre': request.session.get('nombre'),
-        'medidor': medidor
-    }
-    return render(request, 'medidores/ubicacion_medidor.html', datos)
-
-
-def detalle_lectura(request):
-    """
-    Vista que muestra el detalle de una lectura específica.
-    Requiere permisos de 'lecturas'.
-    """
-    if not usuario_logueado(request):
-        return redirect('sistemaGestion:login')
-    
-    if not tiene_permiso(request, 'lecturas'):
-        messages.error(request, 'No tienes permisos para acceder a esta sección')
-        return redirect('sistemaGestion:dashboard')
-    
-    # Obtener lectura específica
-    lectura_id = request.GET.get('id', 1)
-    try:
-        lectura = Lectura.objects.get(id_lectura=lectura_id)
-    except Lectura.DoesNotExist:
-        lectura = None
-        messages.error(request, 'Lectura no encontrada')
-    
-    datos = {
-        'username': request.session.get('username'),
-        'nombre': request.session.get('nombre'),
-        'lectura': lectura
-    }
-    return render(request, 'lecturas/detalle_lectura.html', datos)
-
 
 def crear_boleta(request):
     """
@@ -446,13 +419,19 @@ def crear_boleta(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    # Obtener lecturas disponibles
-    lecturas = Lectura.objects.all()
+    if request.method == 'POST':
+        form = BoletaForm(request.POST)
+        if form.is_valid():
+            boleta = form.save()
+            messages.success(request, 'Boleta creada exitosamente')
+            return redirect('sistemaGestion:lista_boletas')
+    else:
+        form = BoletaForm()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'lecturas': lecturas
+        'form': form
     }
     return render(request, 'boletas/crear_boleta.html', datos)
 
@@ -469,13 +448,19 @@ def crear_pago(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    # Obtener boletas pendientes
-    boletas = Boleta.objects.filter(estado='Pendiente')
+    if request.method == 'POST':
+        form = PagoForm(request.POST)
+        if form.is_valid():
+            pago = form.save()
+            messages.success(request, 'Pago registrado exitosamente')
+            return redirect('sistemaGestion:lista_pagos')
+    else:
+        form = PagoForm()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'boletas': boletas
+        'form': form
     }
     return render(request, 'pagos/crear_pago.html', datos)
 
@@ -492,9 +477,19 @@ def crear_tarifa(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
+    if request.method == 'POST':
+        form = TarifaForm(request.POST)
+        if form.is_valid():
+            tarifa = form.save()
+            messages.success(request, 'Tarifa creada exitosamente')
+            return redirect('sistemaGestion:lista_tarifas')
+    else:
+        form = TarifaForm()
+    
     datos = {
         'username': request.session.get('username'),
-        'nombre': request.session.get('nombre')
+        'nombre': request.session.get('nombre'),
+        'form': form
     }
     return render(request, 'tarifas/crear_tarifa.html', datos)
 
@@ -511,9 +506,19 @@ def crear_usuario(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente')
+            return redirect('sistemaGestion:lista_usuarios')
+    else:
+        form = UsuarioForm()
+    
     datos = {
         'username': request.session.get('username'),
-        'nombre': request.session.get('nombre')
+        'nombre': request.session.get('nombre'),
+        'form': form
     }
     return render(request, 'usuarios/crear_usuario.html', datos)
 

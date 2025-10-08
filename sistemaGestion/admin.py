@@ -1,57 +1,45 @@
-# sistemaGestion/admin.py
+
 from django.contrib import admin
-from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, Notification
+from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, NotificacionLectura, NotificacionPago, Usuario
 
-@admin.register(Cliente)
+# Register your models here.
+
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('cliente', 'nombre', 'numero_cliente', 'email', 'telefono')
-    search_fields = ('nombre', 'numero_cliente', 'email')
-    list_filter = ('nombre',)
+    list_display = ('numero_cliente', 'nombre', 'email', 'telefono')
+admin.site.register(Cliente, ClienteAdmin)
 
-@admin.register(Contrato)
 class ContratoAdmin(admin.ModelAdmin):
-    list_display = ('identificato', 'numero_contrato', 'cliente_id_cliente', 'estado', 'fecha_inicio')
-    search_fields = ('numero_contrato', 'estado')
-    list_filter = ('estado', 'cliente_id_cliente')
+    list_display = ('numero_contrato', 'fecha_inicio', 'fecha_fin', 'estado')
+admin.site.register(Contrato, ContratoAdmin)
 
-@admin.register(Tarifa)
-class TarifaAdmin(admin.ModelAdmin):
-    list_display = ('id_tarifa', 'tipo_tarifa', 'precio', 'fecha_vigencia', 'contrato_id_contrato')
-    search_fields = ('tipo_tarifa', 'tipo_cliente')
-    list_filter = ('tipo_tarifa',)
-
-@admin.register(Medidor)
 class MedidorAdmin(admin.ModelAdmin):
-    list_display = ('id_medidor', 'numero_medidor', 'ubicacion', 'estado_medidor', 'contrato_id_contrato')
-    search_fields = ('numero_medidor', 'ubicacion')
-    list_filter = ('estado_medidor',)
+    list_display = ('numero_medidor', 'fecha_instalacion', 'ubicacion', 'estado_medidor')
+admin.site.register(Medidor, MedidorAdmin)
 
-@admin.register(Lectura)
 class LecturaAdmin(admin.ModelAdmin):
-    list_display = ('id_lectura', 'fecha_lectura', 'lectura_actual', 'tipo_lectura', 'medidor_id_medidor')
-    search_fields = ('fecha_lectura', 'tipo_lectura')
-    list_filter = ('tipo_lectura',)
+    list_display = ('fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual')
+admin.site.register(Lectura, LecturaAdmin)
 
-@admin.register(Boleta)
 class BoletaAdmin(admin.ModelAdmin):
-    list_display = ('id_boleta', 'fecha_emision', 'monto_total', 'estado', 'lectura_id_lectura')
-    search_fields = ('estado',)
-    list_filter = ('estado',)
+    list_display = ('fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico', 'estado')
+admin.site.register(Boleta, BoletaAdmin)
 
-@admin.register(Pago)
 class PagoAdmin(admin.ModelAdmin):
-    list_display = ('id_pago', 'fecha_pago', 'monto_pagado', 'estado_pago', 'numero_referencia')
-    search_fields = ('estado_pago', 'metodo_pago')
-    list_filter = ('estado_pago', 'metodo_pago')
+    list_display = ('fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia', 'estado_pago')
+admin.site.register(Pago, PagoAdmin)
 
-@admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('id_usuario', 'nombre', 'email', 'rol')
-    search_fields = ('nombre', 'email', 'rol')
-    list_filter = ('rol',)
+    list_display = ('username', 'password', 'email', 'telefono', 'rol')
+admin.site.register(Usuario, UsuarioAdmin)
 
-@admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('id_notification', 'tipo_notification', 'estado_notification', 'fecha_generation', 'usuario_id_usuario')
-    search_fields = ('tipo_notification', 'estado_notification')
-    list_filter = ('tipo_notification', 'estado_notification')
+class TarifaAdmin(admin.ModelAdmin):
+    list_display = ('fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente')
+admin.site.register(Tarifa, TarifaAdmin)
+
+class NotificacionLecturaAdmin(admin.ModelAdmin):
+    list_display = ('registro_consumo',)
+admin.site.register(NotificacionLectura, NotificacionLecturaAdmin)
+
+class NotificacionPagoAdmin(admin.ModelAdmin):
+    list_display = ('deuda_pendiente',)
+admin.site.register(NotificacionPago, NotificacionPagoAdmin)    

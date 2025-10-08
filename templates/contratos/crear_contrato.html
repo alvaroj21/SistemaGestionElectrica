@@ -10,44 +10,10 @@
     </div>
 
     <div>
-        <form>
-            
-            <div>
-                <label for="numero_contrato">Número de Contrato:</label>
-                <input type="text" id="numero_contrato" name="numero_contrato" required placeholder="Ej: CONT-001">
-            </div>
-
-            <div>
-                <label for="cliente">Cliente:</label>
-                <select id="cliente" name="cliente" required>
-                    <option value="">Seleccionar cliente</option>
-                    {% for cliente in clientes %}
-                        <option value="{{ cliente.idCliente }}">{{ cliente.nombre }} ({{ cliente.numero_cliente }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div>
-                <label for="tarifa">Tipo de Tarifa:</label>
-                <select id="tarifa" name="tarifa" required>
-                    <option value="">Seleccionar tarifa</option>
-                    {% for tarifa in tarifas %}
-                        <option value="{{ tarifa.id_tarifa }}">{{ tarifa.tipo_tarifa }} - {{ tarifa.tipo_cliente }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div>
-                <label for="fecha_inicio">Fecha de Inicio:</label>
-                <input type="date" id="fecha_inicio" name="fecha_inicio" required>
-            </div>
-
-            <div>
-                <label for="fecha_fin">Fecha de Fin:</label>
-                <input type="date" id="fecha_fin" name="fecha_fin">
-            </div>
-
-            <button type="submit" class="boton boton-exito">Guardar Contrato</button>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar Contrato</button>
         </form>
     </div>
 {% endblock %}

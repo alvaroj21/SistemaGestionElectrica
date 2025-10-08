@@ -10,48 +10,10 @@
     </div>
 
     <div>
-        <form>
-            
-            <div>
-                <label for="medidor">Medidor:</label>
-                <select id="medidor" name="medidor" required>
-                    <option value="">Seleccionar medidor</option>
-                    {% for medidor in medidores %}
-                        {% if medidor.estado == 'Activo' %}
-                            <option value="{{ medidor.id_medidor }}">{{ medidor.numero_medidor }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div>
-                <label for="numero_lectura">Número de Lectura:</label>
-                <input type="text" id="numero_lectura" name="numero_lectura" required placeholder="Ej: LEC-001">
-            </div>
-            <div>
-                <label for="fecha_lectura">Fecha de Lectura:</label>
-                <input type="date" id="fecha_lectura" name="fecha_lectura" required>
-            </div>
-
-            <div>
-                <label for="lectura_actual">Lectura Actual:</label>
-                <input type="number" id="lectura_actual" name="lectura_actual" step="0.01" required>
-            </div>
-
-            <div>
-                <label for="consumo_energetico">Consumo Energético (kWh):</label>
-                <input type="number" id="consumo_energetico" name="consumo_energetico" step="0.01" required>
-            </div>
-
-            <div>
-                <label for="tipo_lectura">Tipo de Lectura:</label>
-                <select id="tipo_lectura" name="tipo_lectura" required>
-                    <option value="">Seleccionar tipo</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Estimada">Estimada</option>
-                </select>
-            </div>
-
-            <button type="submit" class="boton boton-exito">Guardar Lectura</button>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar Lectura</button>
         </form>
     </div>
 {% endblock %}

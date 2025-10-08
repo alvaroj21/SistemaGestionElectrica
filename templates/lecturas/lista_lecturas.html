@@ -13,9 +13,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Numero Lectura</th>
                     <th>Fecha Lectura</th>
-                    <th>Medidor</th>
                     <th>Tipo</th>
                     <th>Lectura Actual</th>
                     <th>Consumo (kWh)</th>
@@ -25,9 +23,7 @@
             <tbody>
                 {% for lectura in lecturas %}
                 <tr>
-                    <td>{{lectura.numero_lectura}}</td>
                     <td>{{ lectura.fecha_lectura }}</td>
-                    <td>{{ lectura.medidor_numero }}</td>
                     <td>{{ lectura.tipo_lectura }}</td>
                     <td>{{ lectura.lectura_actual }}</td>
                     <td>{{ lectura.consumo_energetico }}</td>
@@ -39,6 +35,10 @@
                             <i class="fas fa-edit"></i> Editar
                         </a>
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay lecturas registradas</td>
                 </tr>
                 {% endfor %}
             </tbody>

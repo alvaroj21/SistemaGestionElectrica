@@ -14,7 +14,6 @@
             <thead>
                 <tr>
                     <th>N° Medidor</th>
-                    <th>Numero Contrato</th>
                     <th>Estado</th>
                     <th>Fecha Instalación</th>
                     <th>Ubicación</th>
@@ -25,7 +24,6 @@
                 {% for medidor in medidores %}
                 <tr>
                     <td>{{ medidor.numero_medidor }}</td>
-                    <td>{{ medidor.numero_contrato }}</td>
                     <td>
                         {% if medidor.estado_medidor == 'Activo' %}
                             <span>Activo</span>
@@ -36,13 +34,14 @@
                     <td>{{ medidor.fecha_instalacion }}</td>
                     <td>{{ medidor.ubicacion }}</td>
                     <td>
-                        <a href="{% url 'sistemaGestion:ubicacion_medidor' %}" class="boton" title="Ver ubicación">
-                            <i class="fas fa-map-marker-alt"></i> Ubicación
-                        </a>
                         <a href="#" class="boton" title="Editar">
                             <i class="fas fa-edit"></i> Editar
                         </a>
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay medidores registrados</td>
                 </tr>
                 {% endfor %}
             </tbody>

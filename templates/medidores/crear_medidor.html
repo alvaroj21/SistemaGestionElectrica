@@ -10,44 +10,10 @@
     </div>
 
     <div>
-        <form>
-            
-            <div>
-                <label for="numero_medidor">Número de Medidor:</label>
-                <input type="text" id="numero_medidor" name="numero_medidor" required placeholder="Ej: MED-001">
-            </div>
-
-            <div>
-                <label for="numero_contrato">Número de Contrato:</label>
-                <select id="numero_contrato" name="numero_contrato" required>
-                    <option value="">Seleccionar contrato</option>
-                    {% for contrato in contratos %}
-                        <option value="{{ contrato.id }}">{{ contrato.numero_contrato }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div>
-                <label for="estado_medidor">Estado del Medidor:</label>
-                <select id="estado_medidor" name="estado_medidor" required>
-                    <option value="">Seleccionar estado</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                    <option value="Mantenimiento">Mantenimiento</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="fecha_instalacion">Fecha de Instalación:</label>
-                <input type="date" id="fecha_instalacion" name="fecha_instalacion" required>
-            </div>
-
-            <div>
-                <label for="ubicacion">Ubicación:</label>
-                <textarea id="ubicacion" name="ubicacion" rows="3" required></textarea>
-            </div>
-
-            <button type="submit" class="boton boton-exito">Guardar Medidor</button>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar Medidor</button>
         </form>
     </div>
 {% endblock %}

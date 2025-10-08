@@ -10,38 +10,10 @@
     </div>
 
     <div>
-        <form>
-            
-            <div>
-                <label for="tipo_tarifa">Tipo de Tarifa:</label>
-                <select id="tipo_tarifa" name="tipo_tarifa" required>
-                    <option value="">Seleccionar tipo</option>
-                    <option value="Invierno">Invierno</option>
-                    <option value="Verano">Verano</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="tipo_cliente">Tipo de Cliente:</label>
-                <select id="tipo_cliente" name="tipo_cliente" required>
-                    <option value="">Seleccionar tipo</option>
-                    <option value="Residencial">Residencial</option>
-                    <option value="Comercial">Comercial</option>
-                    <option value="Industrial">Industrial</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="precio">Precio por kWh:</label>
-                <input type="number" id="precio" name="precio" step="0.0001" required>
-            </div>
-
-            <div>
-                <label for="fecha_vigencia">Fecha de Vigencia:</label>
-                <input type="date" id="fecha_vigencia" name="fecha_vigencia" required>
-            </div>
-
-            <button type="submit" class="boton boton-exito">Guardar Tarifa</button>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar Tarifa</button>
         </form>
     </div>
 {% endblock %}

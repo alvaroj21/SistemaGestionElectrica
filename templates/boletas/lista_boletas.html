@@ -41,8 +41,6 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID Boleta</th>
-                    <th>Numero Boleta</th>
                     <th>Consumo (kWh)</th>
                     <th>Monto Total</th>
                     <th>Fecha Emisión</th>
@@ -54,8 +52,6 @@
             <tbody>
                 {% for boleta in boletas %}
                 <tr>
-                    <td>{{ boleta.id_boleta }}</td>
-                    <td>{{ boleta.numero_boleta }}</td>
                     <td>{{ boleta.consumo_energetico }}</td>
                     <td>${{ boleta.monto_total|floatformat:0 }}</td>
                     <td>{{ boleta.fecha_emision }}</td>
@@ -77,6 +73,10 @@
                             <i class="fas fa-edit"></i> Editar
                         </a>
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No hay boletas registradas</td>
                 </tr>
                 {% endfor %}
             </tbody>
