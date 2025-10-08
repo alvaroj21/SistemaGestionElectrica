@@ -8,17 +8,31 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=15)
 
 class Contrato(models.Model):
+    ESTADO_CHOICES =[
+        ('Activo', 'Activo'),
+        ('Inactivo','Inactivo')
+    ]
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
-    estado = models.CharField(max_length=20)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Activo')
     numero_contrato = models.CharField(max_length=45)
 
 
 class Tarifa(models.Model):
+    TARIFA_CHOICES =[
+        ('Verano','Verano'),
+        ('Invierno','Invierno')
+
+    ]
+    CLIENTE_CHOICES =[
+        ('Residencial','Residencial'),
+        ('Comercial','Comercial'),
+        ('Industrial','Industrial')
+    ]
     fecha_vigencia = models.DateField()
     precio = models.IntegerField()
-    tipo_tarifa = models.CharField(max_length=45)
-    tipo_cliente = models.CharField(max_length=45)
+    tipo_tarifa = models.CharField(max_length=45,choices=TARIFA_CHOICES, default='Verano')
+    tipo_cliente = models.CharField(max_length=45,choices=CLIENTE_CHOICES,default='Residencial')
 
 class Medidor(models.Model):
     ESTADO_CHOICES = [
@@ -36,27 +50,39 @@ class Medidor(models.Model):
 
 class Lectura(models.Model):
     fecha_lectura = models.DateField()
-    consumo_energetico = models.CharField(max_length=45, default='0')
+    consumo_energetico = models.CharField(max_length=45)
     tipo_lectura = models.CharField(max_length=45)
     lectura_actual = models.CharField(max_length=45)
 
 
 
 class Boleta(models.Model):
+    BOLETA_CHOICES =[
+        ('Pagado','Pagado'),
+        ('Vencido','Vencido')
+    ]
     fecha_emision = models.DateField()
     fecha_vencimiento = models.DateField()
     monto_total = models.IntegerField()
-    consumo_energetico = models.CharField(max_length=45, default='0')
-    estado = models.CharField(max_length=45)
+    consumo_energetico = models.CharField(max_length=45)
+    estado = models.CharField(max_length=45, choices=BOLETA_CHOICES)
 
 
 
 class Pago(models.Model):
+    PAGO_CHOICES =[
+        ('Pagado','Pagado'),
+        ('No pagado', 'No pagado')
+    ]
+    METODOPAGO_CHOICES =[
+        ('Efectivo','Efectivo'),
+        ('Transferencia','Transferencia')
+    ]
     fecha_pago = models.DateField()
     monto_pagado = models.IntegerField()
-    metodo_pago = models.CharField(max_length=45)
+    metodo_pago = models.CharField(max_length=45, choices=METODOPAGO_CHOICES)
     numero_referencia = models.CharField(max_length=45)
-    estado_pago = models.CharField(max_length=45)
+    estado_pago = models.CharField(max_length=45, choices=PAGO_CHOICES)
 
 
 

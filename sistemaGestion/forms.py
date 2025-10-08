@@ -7,6 +7,12 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['numero_cliente', 'nombre', 'email', 'telefono']
+        widgets = {
+            'numero_cliente': forms.TextInput(attrs={'placeholder': 'Ejemplo: CLI-001'}),
+            'nombre':forms.TextInput(attrs={'placeholder': 'Ingresar nombre completo'}),
+            'email':forms.TextInput(attrs={'placeholder': 'Ingresar email'}),
+            'telefono':forms.TextInput(attrs={'placeholder':'Ingresar numero de telefono'})
+        }
 
 class UsuarioForm(forms.ModelForm):
     class Meta:
@@ -20,6 +26,7 @@ class ContratoForm(forms.ModelForm):
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
             'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
+            'numero_contrato':forms.TextInput(attrs={'placeholder':'Ejemplo: CO-001'})
         }
 
 class MedidorForm(forms.ModelForm):
@@ -46,14 +53,18 @@ class BoletaForm(forms.ModelForm):
         widgets = {
             'fecha_emision': forms.DateInput(attrs={'type': 'date'}),
             'fecha_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+            'monto_total': forms.NumberInput(attrs={'placeholder':'ingresa el monto total'}),
+            'consumo_energetico':forms.TextInput(attrs={'placeholder':'ingresa el consumo en kW'})
         }  
 
 class PagoForm(forms.ModelForm):
     class Meta:
         model = Pago
-        fields = ['fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia', 'estado_pago']
+        fields = ['fecha_pago', 'monto_pagado','numero_referencia', 'metodo_pago','estado_pago']
         widgets = {
             'fecha_pago': forms.DateInput(attrs={'type': 'date'}),
+            'monto_pagado':forms.NumberInput(attrs={'placeholder':'Ingresa el monto pagado'}),
+            'numero_referencia':forms.TextInput(attrs={'placeholder':'Ingresa el numero de referencia'})
         }
 
 class TarifaForm(forms.ModelForm):
@@ -62,6 +73,7 @@ class TarifaForm(forms.ModelForm):
         fields = ['fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente']
         widgets = {
             'fecha_vigencia': forms.DateInput(attrs={'type': 'date'}),
+            'Precio': forms.NumberInput(attrs={'placeholder':'Ingresa el precio de la tarifa'})
         }
 
 class NotificacionLecturaForm(forms.ModelForm):
