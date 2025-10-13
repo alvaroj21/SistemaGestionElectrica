@@ -14,19 +14,11 @@ from .forms import ClienteForm, ContratoForm, MedidorForm, LecturaForm, BoletaFo
 # CONFIGURACIÓN DEL SISTEMA
 # ============================================================================
 
-# Diccionario que almacena los usuarios del sistema con sus credenciales y roles
-USUARIOS = {
-    'admin': {'password': 'admin123', 'rol': 'admin', 'nombre': 'Administrador'},
-    'prueba': {'password': '1234', 'rol': 'admin', 'nombre': 'Alvaro Pinto - Administrador'},
-    'electrico1': {'password': 'elec123', 'rol': 'electrico', 'nombre': 'Juan Pérez - Eléctrico'},
-    'finanzas1': {'password': 'fin123', 'rol': 'finanzas', 'nombre': 'María García - Finanzas'},
-}
-
 # Diccionario que define qué módulos puede acceder cada rol
 PERMISOS_ROL = {
-    'admin': ['medidores', 'lecturas', 'clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'usuarios', 'notificaciones'],
-    'electrico': ['medidores', 'lecturas', 'notificaciones'],
-    'finanzas': ['clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'notificaciones'],
+    'Administrador': ['medidores', 'lecturas', 'clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'usuarios', 'notificaciones'],
+    'Técnico Eléctrico': ['medidores', 'lecturas', 'notificaciones'],
+    'Finanzas': ['clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'notificaciones'],
 }
 
 
@@ -54,18 +46,27 @@ def login_view(request):
         return redirect('sistemaGestion:dashboard')
     
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
-        
-        if username in USUARIOS and USUARIOS[username]['password'] == password:
-            request.session['user_logged'] = True
-            request.session['username'] = username
-            request.session['rol'] = USUARIOS[username]['rol']
-            request.session['nombre'] = USUARIOS[username]['nombre']
+        nombre_usuario = request.POST.get('usuario', '').strip()
+        clave = request.POST.get('clave', '').strip()
+
+        try:
+            # Buscar el usuario en la base de datos
+            usuario = Usuario.objects.get(nombre_usuario=nombre_usuario)
             
-            messages.success(request, f'Bienvenido {USUARIOS[username]["nombre"]}')
-            return redirect('sistemaGestion:dashboard')
-        else:
+            # Verificar la contraseña (comparación simple)
+            if usuario.clave == clave:
+                # Iniciar sesión
+                request.session['user_logged'] = True
+                request.session['usuario'] = usuario.nombre_usuario
+                request.session['rol'] = usuario.rol
+                request.session['nombre'] = usuario.nombre_usuario
+                request.session['email'] = usuario.email
+
+                messages.success(request, f'Bienvenido {usuario.nombre_usuario}')
+                return redirect('sistemaGestion:dashboard')
+            else:
+                messages.error(request, 'Usuario o contraseña incorrectos')
+        except Usuario.DoesNotExist:
             messages.error(request, 'Usuario o contraseña incorrectos')
     
     return render(request, 'auth/login.html')
@@ -607,7 +608,7 @@ def crear_usuario(request):
         form = UsuarioForm(request.POST)
         if form.is_valid():
             usuario = form.save()
-            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente')
+            messages.success(request, f'Usuario "{usuario.nombre_usuario}" creado exitosamente')
             return redirect('sistemaGestion:lista_usuarios')
     else:
         form = UsuarioForm()
