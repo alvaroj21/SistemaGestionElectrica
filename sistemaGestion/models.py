@@ -103,9 +103,9 @@ class NotificacionPago(models.Model):
 
 class Usuario(models.Model):
     ROLES_CHOICES = [
-        ('admin', 'Administrador'),
-        ('electrico', 'Técnico Eléctrico'),
-        ('finanzas', 'Finanzas'),
+        ('Administrador', 'Administrador'),
+        ('Eléctrico', 'Eléctrico'),
+        ('Finanzas', 'Finanzas'),
     ]
     
     username = models.CharField(max_length=45, unique=True)

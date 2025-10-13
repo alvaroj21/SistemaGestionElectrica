@@ -13,7 +13,7 @@
 
     <div class="grid-estadisticas">
         
-        {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-users"></i> Clientes</h4>
             <p>{{ total_clientes }}</p>
@@ -21,7 +21,7 @@
         </div>
         {% endif %}
 
-        {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-file-contract"></i> Contratos</h4>
             <p>{{ total_contratos }}</p>
@@ -29,7 +29,7 @@
         </div>
         {% endif %}
 
-        {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-tachometer-alt"></i> Medidores</h4>
             <p>{{ total_medidores }}</p>
@@ -37,7 +37,7 @@
         </div>
         {% endif %}
 
-        {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-chart-line"></i> Lecturas Pendientes</h4>
             <p>{{ lecturas_pendientes }}</p>
@@ -45,7 +45,7 @@
         </div>
         {% endif %}
 
-        {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-file-invoice"></i> Boletas</h4>
             <p>{{ boletas_emitidas }}</p>
@@ -53,10 +53,10 @@
         </div>
         {% endif %}
 
-        {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
         <div class="tarjeta-estadistica">
             <h4><i class="fas fa-credit-card"></i> Pagos</h4>
-            <p>{{ gastos_pagados }}</p>
+            <p>{{ pagos_realizados }}</p>
             <small>Procesados este mes</small>
         </div>
         {% endif %}
@@ -66,31 +66,31 @@
         <h3><i class="fas fa-bolt"></i> Accesos Rápidos</h3>
         
         <div>
-            {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
             <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">
                 <i class="fas fa-users"></i> Ver Clientes
             </a>
             {% endif %}
 
-            {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
+            {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
             <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">
                 <i class="fas fa-tachometer-alt"></i> Ver Medidores
             </a>
             {% endif %}
 
-            {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
+            {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
             <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">
                 <i class="fas fa-chart-line"></i> Ver Lecturas
             </a>
             {% endif %}
 
-            {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
             <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton">
                 <i class="fas fa-file-invoice"></i> Ver Boletas
             </a>
             {% endif %}
 
-            {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
             <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">
                 <i class="fas fa-credit-card"></i> Ver Pagos
             </a>
@@ -102,7 +102,7 @@
             </a>
             {% endif %}
 
-            {% if request.session.rol == 'admin' %}
+            {% if request.session.rol == 'Administrador' %}
             <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton">
                 <i class="fas fa-user-cog"></i> Ver Usuarios
             </a>

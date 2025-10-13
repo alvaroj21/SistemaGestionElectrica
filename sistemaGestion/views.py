@@ -17,7 +17,7 @@ from .forms import ClienteForm, ContratoForm, MedidorForm, LecturaForm, BoletaFo
 # Diccionario que define qué módulos puede acceder cada rol
 PERMISOS_ROL = {
     'Administrador': ['medidores', 'lecturas', 'clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'usuarios', 'notificaciones'],
-    'Técnico Eléctrico': ['medidores', 'lecturas', 'notificaciones'],
+    'Eléctrico': ['medidores', 'lecturas', 'notificaciones'],
     'Finanzas': ['clientes', 'contratos', 'tarifas', 'boletas', 'pagos', 'notificaciones'],
 }
 
@@ -46,23 +46,24 @@ def login_view(request):
         return redirect('sistemaGestion:dashboard')
     
     if request.method == 'POST':
-        nombre_usuario = request.POST.get('usuario', '').strip()
-        clave = request.POST.get('clave', '').strip()
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
 
         try:
             # Buscar el usuario en la base de datos
-            usuario = Usuario.objects.get(nombre_usuario=nombre_usuario)
+            usuario = Usuario.objects.get(username=username)
             
             # Verificar la contraseña (comparación simple)
-            if usuario.clave == clave:
+            if usuario.password == password:
                 # Iniciar sesión
                 request.session['user_logged'] = True
-                request.session['usuario'] = usuario.nombre_usuario
+                request.session['usuario'] = usuario.username
+                request.session['username'] = usuario.username  # Agregado para consistencia
                 request.session['rol'] = usuario.rol
-                request.session['nombre'] = usuario.nombre_usuario
+                request.session['nombre'] = usuario.username
                 request.session['email'] = usuario.email
 
-                messages.success(request, f'Bienvenido {usuario.nombre_usuario}')
+                messages.success(request, f'Bienvenido {usuario.username}')
                 return redirect('sistemaGestion:dashboard')
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos')
@@ -608,7 +609,7 @@ def crear_usuario(request):
         form = UsuarioForm(request.POST)
         if form.is_valid():
             usuario = form.save()
-            messages.success(request, f'Usuario "{usuario.nombre_usuario}" creado exitosamente')
+            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente')
             return redirect('sistemaGestion:lista_usuarios')
     else:
         form = UsuarioForm()

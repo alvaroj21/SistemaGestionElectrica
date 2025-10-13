@@ -14,7 +14,6 @@
             <thead>
                 <tr>
                     <th>Nombre Usuario</th>
-                    <th>Nombre</th>
                     <th>Email</th>
                     <th>Teléfono</th>
                     <th>Rol</th>
@@ -25,15 +24,14 @@
                 {% for usuario in usuarios %}
                 <tr>
                     <td>{{ usuario.username }}</td>
-                    <td>{{ usuario.nombre }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.telefono }}</td>
                     <td>
-                        {% if usuario.rol == 'admin' %}
+                        {% if usuario.rol == 'Administrador' %}
                             <span>Administrador</span>
-                        {% elif usuario.rol == 'electrico' %}
+                        {% elif usuario.rol == 'Eléctrico' %}
                             <span>Eléctrico</span>
-                        {% elif usuario.rol == 'finanzas' %}
+                        {% elif usuario.rol == 'Finanzas' %}
                             <span>Finanzas</span>
                         {% else %}
                             <span>{{ usuario.rol }}</span>

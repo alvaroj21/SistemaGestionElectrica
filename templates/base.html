@@ -38,7 +38,7 @@
                     </a>
                 </div>
                 
-                {% if request.session.rol == 'admin' or request.session.rol == 'electrico' %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
                 <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                     <span><i class="fas fa-bolt"></i> Módulo Eléctrico</span>
                     <span>▼</span>
@@ -57,7 +57,7 @@
                 </div>
                 {% endif %}
 
-                {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                 <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                     <span><i class="fas fa-users"></i> Módulo Clientes</span>
                     <span>▼</span>
@@ -71,7 +71,7 @@
                 </div>
                 {% endif %}
 
-                {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                 <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                     <span><i class="fas fa-file-contract"></i> Módulo Contratos</span>
                     <span>▼</span>
@@ -90,7 +90,7 @@
                 </div>
                 {% endif %}
 
-                {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                 <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                     <span><i class="fas fa-calculator"></i> Módulo Facturación</span>
                     <span>▼</span>
@@ -109,7 +109,7 @@
                 </div>
                 {% endif %}
 
-                {% if request.session.rol == 'admin' %}
+                {% if request.session.rol == 'Administrador' %}
                 <div class="titulo-categoria-navegacion" onclick="alternarCategoria(this)">
                     <span><i class="fas fa-cog"></i> Módulo Administración</span>
                     <span>▼</span>
