@@ -18,14 +18,20 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['username', 'password', 'email', 'telefono', 'rol']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Ingresa el nombre de usuario'}),
+            'password': forms.PasswordInput(attrs={'placeholder': 'Ingresa la contraseña'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'ejemplo@correo.com'}),
+            'telefono': forms.TextInput(attrs={'placeholder': 'Ingresa el número de teléfono'}),
+        }
 
 class ContratoForm(forms.ModelForm):
     class Meta:
         model = Contrato
         fields = ['numero_contrato', 'fecha_inicio', 'fecha_fin', 'estado']
         widgets = {
-            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}, format='%d%m%Y'),
+            'fecha_fin': forms.DateInput(attrs={'type': 'date'}, format='%d%m%Y'),
             'numero_contrato':forms.TextInput(attrs={'placeholder':'Ejemplo: CO-001'})
         }
 
@@ -34,7 +40,9 @@ class MedidorForm(forms.ModelForm):
         model = Medidor
         fields = ['numero_medidor', 'fecha_instalacion', 'ubicacion', 'estado_medidor', 'imagen_ubicacion']
         widgets = {
+            'numero_medidor': forms.TextInput(attrs={'placeholder': 'Ejemplo: MED-001'}),
             'fecha_instalacion': forms.DateInput(attrs={'type': 'date'}),
+            'ubicacion': forms.TextInput(attrs={'placeholder': 'Ingresa la ubicación del medidor'}),
             'imagen_ubicacion': forms.URLInput(attrs={'placeholder': 'https://ejemplo.com/imagen.jpg'})
         } 
 
@@ -43,7 +51,9 @@ class LecturaForm(forms.ModelForm):
         model = Lectura
         fields = ['fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual']
         widgets = {
-            'fecha_lectura': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_lectura': forms.DateInput(attrs={'type': 'date'},format='%d%m%Y'),
+            'consumo_energetico': forms.TextInput(attrs={'placeholder': 'Ingresa el consumo en kWh'}),
+            'lectura_actual': forms.TextInput(attrs={'placeholder': 'Ingresa la lectura actual'})
         }  
 
 class BoletaForm(forms.ModelForm):
@@ -51,10 +61,10 @@ class BoletaForm(forms.ModelForm):
         model = Boleta
         fields = ['fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico', 'estado']
         widgets = {
-            'fecha_emision': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date'}),
-            'monto_total': forms.NumberInput(attrs={'placeholder':'ingresa el monto total'}),
-            'consumo_energetico':forms.TextInput(attrs={'placeholder':'ingresa el consumo en kW'})
+            'fecha_emision': forms.DateInput(attrs={'type': 'date'},format='%d%m%Y'),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date'},format='%d%m%Y'),
+            'monto_total': forms.NumberInput(attrs={'placeholder':'Ingresa el monto total'}),
+            'consumo_energetico':forms.TextInput(attrs={'placeholder':'Ingresa el consumo en kWh'})
         }  
 
 class PagoForm(forms.ModelForm):
@@ -62,7 +72,7 @@ class PagoForm(forms.ModelForm):
         model = Pago
         fields = ['fecha_pago', 'monto_pagado','numero_referencia', 'metodo_pago','estado_pago']
         widgets = {
-            'fecha_pago': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_pago': forms.DateInput(attrs={'type': 'date'},format='%d%m%Y'),
             'monto_pagado':forms.NumberInput(attrs={'placeholder':'Ingresa el monto pagado'}),
             'numero_referencia':forms.TextInput(attrs={'placeholder':'Ingresa el numero de referencia'})
         }
@@ -72,16 +82,22 @@ class TarifaForm(forms.ModelForm):
         model = Tarifa
         fields = ['fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente']
         widgets = {
-            'fecha_vigencia': forms.DateInput(attrs={'type': 'date'}),
-            'Precio': forms.NumberInput(attrs={'placeholder':'Ingresa el precio de la tarifa'})
+            'fecha_vigencia': forms.DateInput(attrs={'type': 'date'},format='%d%m%Y'),
+            'precio': forms.NumberInput(attrs={'placeholder':'Ingresa el precio de la tarifa'})
         }
 
 class NotificacionLecturaForm(forms.ModelForm):
     class Meta:
         model = NotificacionLectura
         fields = ['registro_consumo']
+        widgets = {
+            'registro_consumo': forms.TextInput(attrs={'placeholder': 'Ingresa el registro de consumo'})
+        }
 
 class NotificacionPagoForm(forms.ModelForm):
     class Meta:
         model = NotificacionPago
         fields = ['deuda_pendiente']
+        widgets = {
+            'deuda_pendiente': forms.TextInput(attrs={'placeholder': 'Ingresa la deuda pendiente'})
+        }

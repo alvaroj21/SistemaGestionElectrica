@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Contrato{% endblock %}
+
+{% block page_title %}Editar Contrato{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_contratos' %}" class="boton">Volver</a>
+    </div>
+    
+    <div>
+        <h3>Editar Contrato: {{ contrato.numero_contrato }}</h3>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Actualizar Contrato</button>
+        </form>
+    </div>
+{% endblock %}

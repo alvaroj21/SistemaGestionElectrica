@@ -11,10 +11,13 @@ urlpatterns = [
     # Clientes
     path('clientes/', views.lista_clientes, name='lista_clientes'), #  pagina de lista de clientes
     path('clientes/crear/', views.crear_cliente, name='crear_cliente'), # Página para crear un nuevo cliente
-    
+    path('clientes/eliminar/<int:cliente_id>/', views.eliminar_cliente, name='eliminar_cliente'), # Eliminar cliente
+    path('clientes/editar/<int:cliente_id>/', views.editar_cliente, name='editar_cliente'), # Editar cliente
     # Contratos
     path('contratos/', views.lista_contratos, name='lista_contratos'), # Página de lista de contratos
-    path('contratos/crear/', views.crear_contrato, name='crear_contrato'),  # Página para crear un nuevo contrato
+    path('contratos/crear/', views.crear_contrato, name='crear_contrato'),  # Página para crear un nuevo contrat
+    path('contratos/eliminar/<int:contrato_id>/', views.eliminar_contrato, name='eliminar_contrato'), # Eliminar contrato
+    path('contratos/editar/<int:contrato_id>/', views.editar_contrato, name='editar_contrato'), # Editar contrato   
     
     # Medidores
     path('medidores/', views.lista_medidores, name='lista_medidores'), # Página de lista de medidores

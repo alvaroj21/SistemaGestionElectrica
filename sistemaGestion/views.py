@@ -150,6 +150,63 @@ def crear_cliente(request):
     return render(request, 'clientes/crear_cliente.html', datos)
 
 
+def editar_cliente(request, cliente_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'clientes'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+    except Cliente.DoesNotExist:
+        messages.error(request, 'El cliente no existe')
+        return redirect('sistemaGestion:lista_clientes')
+    
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            cliente_actualizado = form.save()
+            messages.success(request, f'Cliente "{cliente_actualizado.nombre}" actualizado exitosamente')
+            return redirect('sistemaGestion:lista_clientes')
+    else:
+        form = ClienteForm(instance=cliente)
+    
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'cliente': cliente
+    }
+    return render(request, 'clientes/editar_cliente.html', datos)
+
+
+def eliminar_cliente(request, cliente_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    if not tiene_permiso(request, 'clientes'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+    except Cliente.DoesNotExist:
+            messages.error(request, 'El cliente no existe')
+            return redirect('sistemaGestion:lista_clientes')
+    if request.method == 'POST':
+        nombre_cliente = cliente.nombre
+        cliente.delete()
+        messages.success(request, f'Cliente "{nombre_cliente}" eliminado exitosamente')
+        return redirect('sistemaGestion:lista_clientes')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'cliente': cliente
+    }
+    return render(request, 'clientes/eliminar_cliente.html', datos)
+
+
 # ============================================================================
 # VISTAS PARA GESTIÓN DE CONTRATOS
 # ============================================================================
@@ -194,6 +251,62 @@ def crear_contrato(request):
         'form': form
     }
     return render(request, 'contratos/crear_contrato.html', datos)
+
+def editar_contrato(request, contrato_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'contratos'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+
+    try:
+        contrato = Contrato.objects.get(id=contrato_id)
+    except Contrato.DoesNotExist:
+        messages.error(request, 'El contrato no existe')
+        return redirect('sistemaGestion:lista_contratos')
+
+    if request.method == 'POST':
+        form = ContratoForm(request.POST, instance=contrato)
+        if form.is_valid():
+            contrato_actualizado = form.save()
+            messages.success(request, f'Contrato "{contrato_actualizado.numero_contrato}" actualizado exitosamente')
+            return redirect('sistemaGestion:lista_contratos')
+    else:
+        form = ContratoForm(instance=contrato)
+
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'contrato': contrato
+    }
+    return render(request, 'contratos/editar_contrato.html', datos)
+
+
+def eliminar_contrato(request, contrato_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'contratos'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        contrato = Contrato.objects.get(id=contrato_id)
+    except Contrato.DoesNotExist:
+        messages.error(request, 'El contrato no existe')
+        return redirect('sistemaGestion:lista_contratos')
+    if request.method == 'POST':
+        nombre_contrato = contrato.numero_contrato
+        contrato.delete()
+        messages.success(request, f'Contrato "{nombre_contrato}" eliminado exitosamente')
+        return redirect('sistemaGestion:lista_contratos')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'contrato': contrato
+    }
+    return render(request, 'contratos/eliminar_contrato.html', datos)
 
 
 # ============================================================================
@@ -404,14 +517,10 @@ def lista_notificaciones(request):
     return render(request, 'notificaciones/lista_notificaciones.html', datos)
 
 # ============================================================================
-# VISTAS FALTANTES - AGREGAR ESTAS FUNCIONES
+# VISTAS CREAR BOLETA Y PAGO, TARIFA Y USUARIO
 # ============================================================================
 
 def crear_boleta(request):
-    """
-    Vista que muestra el formulario para crear una nueva boleta.
-    Requiere permisos de 'boletas'.
-    """
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
@@ -437,10 +546,6 @@ def crear_boleta(request):
 
 
 def crear_pago(request):
-    """
-    Vista que muestra el formulario para crear un nuevo pago.
-    Requiere permisos de 'pagos'.
-    """
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
@@ -466,10 +571,6 @@ def crear_pago(request):
 
 
 def crear_tarifa(request):
-    """
-    Vista que muestra el formulario para crear una nueva tarifa.
-    Requiere permisos de 'tarifas'.
-    """
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
@@ -495,10 +596,6 @@ def crear_tarifa(request):
 
 
 def crear_usuario(request):
-    """
-    Vista que muestra el formulario para crear un nuevo usuario.
-    Requiere permisos de 'usuarios'.
-    """
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
@@ -524,10 +621,6 @@ def crear_usuario(request):
 
 
 def lista_pagos(request):
-    """
-    Vista que muestra la lista de pagos.
-    Requiere permisos de 'pagos'.
-    """
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     

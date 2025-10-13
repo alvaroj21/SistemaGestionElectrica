@@ -49,9 +49,14 @@ class Medidor(models.Model):
     imagen_ubicacion = models.URLField(max_length=200, blank=True, null=True, help_text="URL de la imagen de ubicación del medidor")
 
 class Lectura(models.Model):
+    TIPO_LECTURA_CHOICES = [
+        ('Digital', 'Digital'),
+        ('Analogica', 'Analógica'),
+    ]
+    
     fecha_lectura = models.DateField()
     consumo_energetico = models.CharField(max_length=45)
-    tipo_lectura = models.CharField(max_length=45)
+    tipo_lectura = models.CharField(max_length=45, choices=TIPO_LECTURA_CHOICES, default='Digital')
     lectura_actual = models.CharField(max_length=45)
 
 

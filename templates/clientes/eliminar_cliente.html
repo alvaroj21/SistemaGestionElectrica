@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Cliente - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Eliminar Cliente{% endblock %}
+
+{% block content %}
+    
+    <!-- Alerta de Advertencia -->
+    <div class="informacion-login">
+        <h4>
+            <i class="fas fa-exclamation-triangle"></i> ¡Atención!
+        </h4>
+        <p>Esta acción eliminará permanentemente el cliente del sistema.</p>
+        <p>
+            <strong>Esta acción NO se puede deshacer.</strong> 
+            Asegúrate de que realmente deseas eliminar este cliente.
+        </p>
+    </div>
+
+    <!-- Información del Cliente -->
+    <h3><i class="fas fa-user"></i> Datos del Cliente a Eliminar</h3>
+    
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>Número Cliente:</strong></td>
+                <td>{{ cliente.numero_cliente }}</td>
+            </tr>
+            <tr>
+                <td><strong>Nombre:</strong></td>
+                <td>{{ cliente.nombre }}</td>
+            </tr>
+            <tr>
+                <td><strong>Email:</strong></td>
+                <td>{{ cliente.email }}</td>
+            </tr>
+            <tr>
+                <td><strong>Teléfono:</strong></td>
+                <td>{{ cliente.telefono }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Botones de Acción -->
+    <div>
+        <!-- Botón Cancelar -->
+        <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+        
+        <!-- Formulario de Confirmación -->
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="boton boton-peligro" 
+                    onclick="return confirm('¿Estás completamente seguro de que deseas eliminar este cliente?')">
+                <i class="fas fa-trash-alt"></i> Sí, Eliminar Cliente
+            </button>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="informacion-login">
+        <strong>Nota:</strong> Si este cliente tiene contratos, medidores o boletas asociadas, 
+        es recomendable revisar primero esas relaciones antes de proceder con la eliminación.
+    </div>
+{% endblock %}
