@@ -21,13 +21,23 @@ class ClienteForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         if email and not forms.EmailField().clean(email):
             raise forms.ValidationError("Ingrese un email válido.")
-        if Cliente.objects.filter(email=email).exists():
+        
+        clientes = Cliente.objects.filter(email=email)
+        if self.instance.id:
+            clientes = clientes.exclude(id=self.instance.id)
+        
+        if clientes.exists():
             raise forms.ValidationError("Ya existe un cliente con este email.")
         return email
 
     def clean_numero_cliente(self):
         numero = self.cleaned_data.get('numero_cliente')
-        if Cliente.objects.filter(numero_cliente=numero).exists():
+        
+        clientes = Cliente.objects.filter(numero_cliente=numero)
+        if self.instance.id:
+            clientes = clientes.exclude(id=self.instance.id)
+        
+        if clientes.exists():
             raise forms.ValidationError("Ya existe un cliente con este número de cliente.")
         return numero
 
@@ -49,7 +59,12 @@ class ContratoForm(forms.ModelForm):
 
     def clean_numero_contrato(self):
         numero = self.cleaned_data.get('numero_contrato')
-        if Contrato.objects.filter(numero_contrato=numero).exists():
+        
+        contratos = Contrato.objects.filter(numero_contrato=numero)
+        if self.instance.id:
+            contratos = contratos.exclude(id=self.instance.id)
+        
+        if contratos.exists():
             raise forms.ValidationError("Ya existe un contrato con este número.")
         return numero
 
@@ -82,7 +97,7 @@ class TarifaForm(forms.ModelForm):
     def clean_fecha_vigencia(self):
         fecha_vigencia = self.cleaned_data.get('fecha_vigencia')
         if fecha_vigencia and fecha_vigencia < timezone.now().date():
-            raise forms.ValidationError("La fecha de vigencia no puede ser en el pasado.")
+            raise forms.ValidationError("La fecha de vigencia no puede ser en una fecha anterior a la actual.")
         return fecha_vigencia
 
 
@@ -100,14 +115,19 @@ class MedidorForm(forms.ModelForm):
 
     def clean_numero_medidor(self):
         numero = self.cleaned_data.get('numero_medidor')
-        if Medidor.objects.filter(numero_medidor=numero).exists():
+        
+        medidores = Medidor.objects.filter(numero_medidor=numero)
+        if self.instance.id:
+            medidores = medidores.exclude(id=self.instance.id)
+        
+        if medidores.exists():
             raise forms.ValidationError("Ya existe un medidor con ese número.")
         return numero
 
     def clean_fecha_instalacion(self):
         fecha_instalacion = self.cleaned_data.get('fecha_instalacion')
         if fecha_instalacion and fecha_instalacion > timezone.now().date():
-            raise forms.ValidationError("La fecha de instalación no puede ser en el futuro.")
+            raise forms.ValidationError("La fecha de instalación no puede ser una fecha posterior a la actual.")
         return fecha_instalacion
 
 
@@ -185,7 +205,12 @@ class PagoForm(forms.ModelForm):
 
     def clean_numero_referencia(self):
         referencia = self.cleaned_data.get('numero_referencia')
-        if Pago.objects.filter(numero_referencia=referencia).exists():
+        
+        pagos = Pago.objects.filter(numero_referencia=referencia)
+        if self.instance.id:
+            pagos = pagos.exclude(id=self.instance.id)
+        
+        if pagos.exists():
             raise forms.ValidationError("Ya existe un pago con este número de referencia.")
         return referencia
 
@@ -217,21 +242,23 @@ class UsuarioForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        # Excluir el objeto actual al editar
-        usuarios_existentes = Usuario.objects.filter(email=email)
-        if self.instance.pk:
-            usuarios_existentes = usuarios_existentes.exclude(pk=self.instance.pk)
-        if usuarios_existentes.exists():
+        
+        usuarios = Usuario.objects.filter(email=email)
+        if self.instance.id:
+            usuarios = usuarios.exclude(id=self.instance.id)
+        
+        if usuarios.exists():
             raise forms.ValidationError("Ya existe un usuario con este correo.")
         return email
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        # Excluir el objeto actual al editar
-        usuarios_existentes = Usuario.objects.filter(username=username)
-        if self.instance.pk:
-            usuarios_existentes = usuarios_existentes.exclude(pk=self.instance.pk)
-        if usuarios_existentes.exists():
+        
+        usuarios = Usuario.objects.filter(username=username)
+        if self.instance.id:
+            usuarios = usuarios.exclude(id=self.instance.id)
+        
+        if usuarios.exists():
             raise forms.ValidationError("Ya existe un usuario con este nombre de usuario.")
         return username
 
