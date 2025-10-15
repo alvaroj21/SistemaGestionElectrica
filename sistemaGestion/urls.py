@@ -22,28 +22,34 @@ urlpatterns = [
     # Medidores
     path('medidores/', views.lista_medidores, name='lista_medidores'), # Página de lista de medidores
     path('medidores/crear/', views.crear_medidor, name='crear_medidor'), # Página para crear un nuevo medidor
-    
+    path('medidores/eliminar/<int:medidor_id>/', views.eliminar_medidor, name='eliminar_medidor'), # Eliminar medidor
+    path('medidores/editar/<int:medidor_id>/', views.editar_medidor, name='editar_medidor'), # Editar medidor
     # Lecturas
     path('lecturas/', views.lista_lecturas, name='lista_lecturas'), # Página de lista de lecturas
     path('lecturas/crear/', views.crear_lectura, name='crear_lectura'), # Página para crear una nueva lectura
-
+    path('lecturas/eliminar/<int:lectura_id>/', views.eliminar_lectura, name='eliminar_lectura'), # Eliminar lectura
+    path('lecturas/editar/<int:lectura_id>/', views.editar_lectura, name='editar_lectura'), # Editar lectura
     
     # Boletas
     path('boletas/', views.lista_boletas, name='lista_boletas'), # Página de lista de boletas
     path('boletas/crear/', views.crear_boleta, name='crear_boleta'), # Página para crear una nueva boleta
-    
+    path('boletas/eliminar/<int:boleta_id>/', views.eliminar_boleta, name='eliminar_boleta'), # Eliminar boleta
+    path('boletas/editar/<int:boleta_id>/', views.editar_boleta, name='editar_boleta'), # Editar boleta
     # Pagos
     path('pagos/', views.lista_pagos, name='lista_pagos'), # Página de lista de pagos
     path('pagos/crear/', views.crear_pago, name='crear_pago'),  # Página para crear un nuevo pago
-    
+    path('pagos/eliminar/<int:pagos_id>/', views.eliminar_pago, name='eliminar_pago'), # Eliminar pago
+    path('pagos/editar/<int:pagos_id>/', views.editar_pago, name='editar_pago'), # Editar pago
     # Usuarios
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'), # Página de lista de usuarios
     path('usuarios/crear/', views.crear_usuario, name='crear_usuario'), # Página para crear un nuevo usuario
-
+    path('usuarios/eliminar/<int:usuario_id>/', views.eliminar_usuario, name='eliminar_usuario'), # Eliminar usuario
+    path('usuarios/editar/<int:usuario_id>/', views.editar_usuario, name='editar_usuario'), # Editar usuario
     # Tarifas
     path('tarifas/', views.lista_tarifas, name='lista_tarifas'), # Página de lista de tarifas
     path('tarifas/crear/', views.crear_tarifa, name='crear_tarifa'), # Página para crear una nueva tarifa
-    
+    path('tarifas/eliminar/<int:tarifa_id>/', views.eliminar_tarifa, name='eliminar_tarifa'), # Eliminar tarifa
+    path('tarifas/editar/<int:tarifa_id>/', views.editar_tarifa, name='editar_tarifa'), # Editar tarifa
     # Notificaciones
     path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'), # Página de lista de notificaciones
 ]

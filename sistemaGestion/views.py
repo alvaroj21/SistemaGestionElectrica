@@ -356,6 +356,61 @@ def crear_medidor(request):
     }
     return render(request, 'medidores/crear_medidor.html', datos)
 
+def editar_medidor(request, medidor_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'medidores'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        medidor = Medidor.objects.get(id=medidor_id)
+    except Medidor.DoesNotExist:
+        messages.error(request, 'El medidor no existe')
+        return redirect('sistemaGestion:lista_medidores')
+
+    if request.method == 'POST':
+        form = MedidorForm(request.POST, instance=medidor)
+        if form.is_valid():
+            medidor_actualizado = form.save()
+            messages.success(request, f'Medidor "{medidor_actualizado.numero_medidor}" actualizado exitosamente')
+            return redirect('sistemaGestion:lista_medidores')
+    else:
+        form = MedidorForm(instance=medidor)
+
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'medidor': medidor
+    }
+    return render(request, 'medidores/editar_medidor.html', datos)
+
+
+def eliminar_medidor(request, medidor_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'medidores'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        medidor = Medidor.objects.get(id=medidor_id)
+    except Medidor.DoesNotExist:
+        messages.error(request, 'El medidor no existe')
+        return redirect('sistemaGestion:lista_medidores')
+    if request.method == 'POST':
+        numero_medidor = medidor.numero_medidor
+        medidor.delete()
+        messages.success(request, f'Medidor "{numero_medidor}" eliminado exitosamente')
+        return redirect('sistemaGestion:lista_medidores')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'medidor': medidor
+    }
+    return render(request, 'medidores/eliminar_medidor.html', datos)
 
 # ============================================================================
 # VISTAS PARA GESTIÓN DE LECTURAS
@@ -402,6 +457,61 @@ def crear_lectura(request):
     }
     return render(request, 'lecturas/crear_lectura.html', datos)
 
+def editar_lectura(request, lectura_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'lecturas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+
+    try:
+        lectura = Lectura.objects.get(id=lectura_id)
+    except Lectura.DoesNotExist:
+        messages.error(request, 'La lectura no existe')
+        return redirect('sistemaGestion:lista_lecturas')
+
+    if request.method == 'POST':
+        form = LecturaForm(request.POST, instance=lectura)
+        if form.is_valid():
+            lectura_actualizada = form.save()
+            messages.success(request, f'Lectura "{lectura_actualizada.id}" actualizada exitosamente')
+            return redirect('sistemaGestion:lista_lecturas')
+    else:
+        form = LecturaForm(instance=lectura)
+
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'lectura': lectura
+    }
+    return render(request, 'lecturas/editar_lectura.html', datos)
+
+
+def eliminar_lectura(request, lectura_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'lecturas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        lectura = Lectura.objects.get(id=lectura_id)
+    except Lectura.DoesNotExist:
+        messages.error(request, 'La lectura no existe')
+        return redirect('sistemaGestion:lista_lecturas')
+    if request.method == 'POST':
+        nombre_cliente = lectura.nombre
+        lectura.delete()
+        messages.success(request, f'Lectura "{nombre_cliente}" eliminada exitosamente')
+        return redirect('sistemaGestion:lista_lecturas')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'lectura': lectura
+    }
+    return render(request, 'lecturas/eliminar_lectura.html', datos)
 
 # ============================================================================
 # VISTAS PARA GESTIÓN DE BOLETAS
@@ -434,6 +544,86 @@ def lista_boletas(request):
     }
     return render(request, 'boletas/lista_boletas.html', datos)
 
+def crear_boleta(request):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    if not tiene_permiso(request, 'boletas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    if request.method == 'POST':
+        form = BoletaForm(request.POST)
+        if form.is_valid():
+            boleta = form.save()
+            messages.success(request, 'Boleta creada exitosamente')
+            return redirect('sistemaGestion:lista_boletas')
+    else:
+        form = BoletaForm()
+    
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form
+    }
+    return render(request, 'boletas/crear_boleta.html', datos)
+
+def editar_boleta(request, boleta_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'boletas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+
+    try:
+        boleta = Boleta.objects.get(id=boleta_id)
+    except Boleta.DoesNotExist:
+        messages.error(request, 'La boleta no existe')
+        return redirect('sistemaGestion:lista_boletas')
+
+    if request.method == 'POST':
+        form = BoletaForm(request.POST, instance=boleta)
+        if form.is_valid():
+            boleta_actualizada = form.save()
+            messages.success(request, f'Boleta "{boleta_actualizada.id}" actualizada exitosamente')
+            return redirect('sistemaGestion:lista_boletas')
+    else:
+        form = BoletaForm(instance=boleta)
+
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'boleta': boleta
+    }
+    return render(request, 'boletas/editar_boleta.html', datos)
+
+
+def eliminar_boleta(request, boleta_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'boletas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        boleta = Boleta.objects.get(id=boleta_id)
+    except Boleta.DoesNotExist:
+        messages.error(request, 'La boleta no existe')
+        return redirect('sistemaGestion:lista_boletas')
+    if request.method == 'POST':
+        nombre_cliente = boleta.nombre_cliente
+        boleta.delete()
+        messages.success(request, f'Boleta "{nombre_cliente}" eliminada exitosamente')
+        return redirect('sistemaGestion:lista_boletas')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'boleta': boleta
+    }
+    return render(request, 'boletas/eliminar_boleta.html', datos)
+
 
 # ============================================================================
 # VISTAS PARA GESTIÓN DE TARIFAS
@@ -456,6 +646,84 @@ def lista_tarifas(request):
     }
     return render(request, 'tarifas/lista_tarifas.html', datos)
 
+def crear_tarifa(request):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    if not tiene_permiso(request, 'tarifas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    if request.method == 'POST':
+        form = TarifaForm(request.POST)
+        if form.is_valid():
+            tarifa = form.save()
+            messages.success(request, 'Tarifa creada exitosamente')
+            return redirect('sistemaGestion:lista_tarifas')
+    else:
+        form = TarifaForm()
+    
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form
+    }
+    return render(request, 'tarifas/crear_tarifa.html', datos)
+
+def editar_tarifa(request, tarifa_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'tarifas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+
+    try:
+        tarifa = Tarifa.objects.get(id=tarifa_id)
+    except Tarifa.DoesNotExist:
+        messages.error(request, 'La tarifa no existe')
+        return redirect('sistemaGestion:lista_tarifas')
+
+    if request.method == 'POST':
+        form = TarifaForm(request.POST, instance=tarifa)
+        if form.is_valid():
+            tarifa_actualizada = form.save()
+            messages.success(request, f'Tarifa "{tarifa_actualizada.nombre_tarifa}" actualizada exitosamente')
+            return redirect('sistemaGestion:lista_tarifas')
+    else:
+        form = TarifaForm(instance=tarifa)
+
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form,
+        'tarifa': tarifa
+    }
+    return render(request, 'tarifas/editar_tarifa.html', datos)
+
+def eliminar_tarifa(request, tarifa_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'tarifas'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        tarifa = Tarifa.objects.get(id=tarifa_id)
+    except Tarifa.DoesNotExist:
+        messages.error(request, 'La tarifa no existe')
+        return redirect('sistemaGestion:lista_tarifas')
+    if request.method == 'POST':
+        nombre_tarifa = tarifa.nombre_tarifa
+        tarifa.delete()
+        messages.success(request, f'Tarifa "{nombre_tarifa}" eliminada exitosamente')
+        return redirect('sistemaGestion:lista_tarifas')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'tarifa': tarifa
+    }
+    return render(request, 'tarifas/eliminar_tarifa.html', datos)
 
 # ============================================================================
 # VISTAS PARA GESTIÓN DE USUARIOS DEL SISTEMA
@@ -477,6 +745,85 @@ def lista_usuarios(request):
         'usuarios': usuarios
     }
     return render(request, 'usuarios/lista_usuarios.html', datos)
+
+
+def crear_usuario(request):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    
+    if not tiene_permiso(request, 'usuarios'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente')
+            return redirect('sistemaGestion:lista_usuarios')
+    else:
+        form = UsuarioForm()
+    
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'form': form
+    }
+    return render(request, 'usuarios/crear_usuario.html', datos)
+
+def editar_usuario(request, usuario_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+    if not tiene_permiso(request, 'usuarios'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        messages.error(request, 'El usuario no existe')
+        return redirect('sistemaGestion:lista_usuarios')
+
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            usuario_actualizado = form.save()
+            messages.success(request, f'Usuario "{usuario_actualizado.username}" actualizado exitosamente')
+            return redirect('sistemaGestion:lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    datos = {
+        'username': request.session.get('username'),
+        'form': form,
+        'usuario': usuario
+    }
+    return render(request, 'usuarios/editar_usuario.html', datos)
+
+def eliminar_usuario(request, usuario_id):
+    if not usuario_logueado(request):
+        return redirect('sistemaGestion:login')
+
+    if not tiene_permiso(request, 'usuarios'):
+        messages.error(request, 'No tienes permisos para acceder a esta sección')
+        return redirect('sistemaGestion:dashboard')
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        messages.error(request, 'El usuario no existe')
+        return redirect('sistemaGestion:lista_usuarios')
+    if request.method == 'POST':
+        username = usuario.username
+        usuario.delete()
+        messages.success(request, f'Usuario "{username}" eliminado exitosamente')
+        return redirect('sistemaGestion:lista_usuarios')
+    datos = {
+        'username': request.session.get('username'),
+        'nombre': request.session.get('nombre'),
+        'usuario': usuario
+    }
+    return render(request, 'usuarios/eliminar_usuario.html', datos)
 
 
 # ============================================================================
@@ -519,33 +866,25 @@ def lista_notificaciones(request):
     return render(request, 'notificaciones/lista_notificaciones.html', datos)
 
 # ============================================================================
-# VISTAS CREAR BOLETA Y PAGO, TARIFA Y USUARIO
+# VISTAS PARA GESTIÓN DE PAGOS
 # ============================================================================
 
-def crear_boleta(request):
+def lista_pagos(request):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
-    if not tiene_permiso(request, 'boletas'):
+    if not tiene_permiso(request, 'pagos'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    if request.method == 'POST':
-        form = BoletaForm(request.POST)
-        if form.is_valid():
-            boleta = form.save()
-            messages.success(request, 'Boleta creada exitosamente')
-            return redirect('sistemaGestion:lista_boletas')
-    else:
-        form = BoletaForm()
+    pagos = Pago.objects.all()
     
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'form': form
+        'pagos': pagos
     }
-    return render(request, 'boletas/crear_boleta.html', datos)
-
+    return render(request, 'pagos/lista_pagos.html', datos)
 
 def crear_pago(request):
     if not usuario_logueado(request):
@@ -572,69 +911,59 @@ def crear_pago(request):
     return render(request, 'pagos/crear_pago.html', datos)
 
 
-def crear_tarifa(request):
+def editar_pago(request, pago_id):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
-    
-    if not tiene_permiso(request, 'tarifas'):
+    if not tiene_permiso(request, 'pagos'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
-    
+
+    try:
+        pago = Pago.objects.get(id=pago_id)
+    except Pago.DoesNotExist:
+        messages.error(request, 'El pago no existe')
+        return redirect('sistemaGestion:lista_pagos')
+
     if request.method == 'POST':
-        form = TarifaForm(request.POST)
+        form = PagoForm(request.POST, instance=pago)
         if form.is_valid():
-            tarifa = form.save()
-            messages.success(request, 'Tarifa creada exitosamente')
-            return redirect('sistemaGestion:lista_tarifas')
+            pago_actualizado = form.save()
+            messages.success(request, f'Pago "{pago_actualizado.id}" actualizado exitosamente')
+            return redirect('sistemaGestion:lista_pagos')
     else:
-        form = TarifaForm()
-    
+        form = PagoForm(instance=pago)
+
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'form': form
+        'form': form,
+        'pago': pago
     }
-    return render(request, 'tarifas/crear_tarifa.html', datos)
+    return render(request, 'pagos/editar_pago.html', datos)
 
 
-def crear_usuario(request):
+def eliminar_pago(request, pago_id):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
-    
-    if not tiene_permiso(request, 'usuarios'):
-        messages.error(request, 'No tienes permisos para acceder a esta sección')
-        return redirect('sistemaGestion:dashboard')
-    
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            usuario = form.save()
-            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente')
-            return redirect('sistemaGestion:lista_usuarios')
-    else:
-        form = UsuarioForm()
-    
-    datos = {
-        'username': request.session.get('username'),
-        'nombre': request.session.get('nombre'),
-        'form': form
-    }
-    return render(request, 'usuarios/crear_usuario.html', datos)
 
-
-def lista_pagos(request):
-    if not usuario_logueado(request):
-        return redirect('sistemaGestion:login')
-    
     if not tiene_permiso(request, 'pagos'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
-    pagos = Pago.objects.all()
-    
+    try:
+        pago = Pago.objects.get(id=pago_id)
+    except Pago.DoesNotExist:
+        messages.error(request, 'El pago no existe')
+        return redirect('sistemaGestion:lista_pagos')
+    if request.method == 'POST':
+        nombre_cliente = pago.nombre_cliente
+        pago.delete()
+        messages.success(request, f'Pago "{nombre_cliente}" eliminado exitosamente')
+        return redirect('sistemaGestion:lista_pagos')
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'pagos': pagos
+        'pago': pago
     }
-    return render(request, 'pagos/lista_pagos.html', datos)
+    return render(request, 'pagos/eliminar_pago.html', datos)
+

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar pago{% endblock %}
+
+{% block page_title %}Editar pago{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">Volver</a>
+    </div>
+    
+    <div>
+        <h3>Editar pago: {{ pago.id }}</h3>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Actualizar pago</button>
+        </form>
+    </div>
+{% endblock %}

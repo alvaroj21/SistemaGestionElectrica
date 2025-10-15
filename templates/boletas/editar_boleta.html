@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar boleta{% endblock %}
+
+{% block page_title %}Editar boleta{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton">Volver</a>
+    </div>
+    
+    <div> 
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Actualizar boleta</button>
+        </form>
+    </div>
+{% endblock %}

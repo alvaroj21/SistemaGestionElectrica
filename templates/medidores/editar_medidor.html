@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Medidor{% endblock %}
+
+{% block page_title %}Editar Medidor{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">Volver</a>
+    </div>
+    
+    <div>
+        <h3>Editar Medidor: {{ medidor.numero_medidor }}</h3>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Actualizar Medidor</button>
+        </form>
+    </div>
+{% endblock %}

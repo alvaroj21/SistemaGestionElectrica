@@ -38,6 +38,7 @@
             <tr>
                 <td><strong>Fecha de fin:</strong></td>
                 <td>{{ contrato.fecha_fin }}</td>
+            </tr>
         </tbody>
     </table>
 
@@ -56,6 +57,12 @@
                 <i class="fas fa-trash-alt"></i> Sí, Eliminar Contrato
             </button>
         </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="informacion-login">
+        <strong>Nota:</strong> Al eliminar este contrato, se perderán todas las relaciones con clientes y medidores asociados. 
+        Revisa las dependencias antes de proceder.
     </div>
 
 {% endblock %}

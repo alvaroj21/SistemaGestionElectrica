@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Usuario - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Eliminar Usuario{% endblock %}
+
+{% block content %}
+    
+    <!-- Alerta de Advertencia -->
+    <div class="informacion-login">
+        <h4>
+            <i class="fas fa-exclamation-triangle"></i> ¡Atención!
+        </h4>
+        <p>Esta acción eliminará permanentemente el usuario del sistema.</p>
+        <p>
+            <strong>Esta acción NO se puede deshacer.</strong> 
+            Asegúrate de que realmente deseas eliminar este usuario.
+        </p>
+    </div>
+
+    <!-- Información del Usuario -->
+    <h3><i class="fas fa-user-cog"></i> Datos del Usuario a Eliminar</h3>
+    
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>Nombre de Usuario:</strong></td>
+                <td>{{ usuario.username }}</td>
+            </tr>
+            <tr>
+                <td><strong>Email:</strong></td>
+                <td>{{ usuario.email }}</td>
+            </tr>
+            <tr>
+                <td><strong>Teléfono:</strong></td>
+                <td>{{ usuario.telefono }}</td>
+            </tr>
+            <tr>
+                <td><strong>Rol:</strong></td>
+                <td>{{ usuario.rol }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Botones de Acción -->
+    <div>
+        <!-- Botón Cancelar -->
+        <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+        
+        <!-- Formulario de Confirmación -->
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="boton boton-peligro" 
+                    onclick="return confirm('¿Estás completamente seguro de que deseas eliminar este usuario?')">
+                <i class="fas fa-trash-alt"></i> Sí, Eliminar Usuario
+            </button>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="informacion-login">
+        <strong>Nota:</strong> Al eliminar este usuario, perderá acceso completo al sistema. 
+        Si está actualmente conectado, su sesión será invalidada.
+    </div>
+{% endblock %}

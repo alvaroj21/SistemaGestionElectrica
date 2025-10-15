@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Tarifa - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Eliminar Tarifa{% endblock %}
+
+{% block content %}
+    
+    <!-- Alerta de Advertencia -->
+    <div class="informacion-login">
+        <h4>
+            <i class="fas fa-exclamation-triangle"></i> ¡Atención!
+        </h4>
+        <p>Esta acción eliminará permanentemente la tarifa del sistema.</p>
+        <p>
+            <strong>Esta acción NO se puede deshacer.</strong> 
+            Asegúrate de que realmente deseas eliminar esta tarifa.
+        </p>
+    </div>
+
+    <!-- Información de la Tarifa -->
+    <h3><i class="fas fa-dollar-sign"></i> Datos de la Tarifa a Eliminar</h3>
+    
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>Fecha de Vigencia:</strong></td>
+                <td>{{ tarifa.fecha_vigencia }}</td>
+            </tr>
+            <tr>
+                <td><strong>Precio:</strong></td>
+                <td>${{ tarifa.precio }}</td>
+            </tr>
+            <tr>
+                <td><strong>Tipo de Tarifa:</strong></td>
+                <td>{{ tarifa.tipo_tarifa }}</td>
+            </tr>
+            <tr>
+                <td><strong>Tipo de Cliente:</strong></td>
+                <td>{{ tarifa.tipo_cliente }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Botones de Acción -->
+    <div>
+        <!-- Botón Cancelar -->
+        <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+        
+        <!-- Formulario de Confirmación -->
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="boton boton-peligro" 
+                    onclick="return confirm('¿Estás completamente seguro de que deseas eliminar esta tarifa?')">
+                <i class="fas fa-trash-alt"></i> Sí, Eliminar Tarifa
+            </button>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="informacion-login">
+        <strong>Nota:</strong> Al eliminar esta tarifa, los contratos y boletas que dependan de ella 
+        podrían verse afectados. Revisa las dependencias antes de proceder.
+    </div>
+{% endblock %}

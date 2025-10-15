@@ -1,7 +1,7 @@
 from django import forms
 from django.utils import timezone
 from django.core.validators import RegexValidator
-from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, Notification
+from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura
 
 
 # ==========================================================
@@ -15,7 +15,7 @@ class ClienteForm(forms.ModelForm):
 
     class Meta:
         model = Cliente
-        fields = ['cliente', 'nombre', 'email', 'telefono', 'numero_cliente']
+        fields = ['numero_cliente', 'nombre', 'email', 'telefono']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -36,14 +36,19 @@ class ClienteForm(forms.ModelForm):
 # FORMULARIO CONTRATO
 # ==========================================================
 class ContratoForm(forms.ModelForm):
+    fecha_inicio = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    fecha_fin = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Contrato
-        fields = ['identificato', 'fecha_inicio', 'fecha_fin', 'estado', 'numero_contrato', 'cliente_id_cliente']
+        fields = ['fecha_inicio', 'fecha_fin', 'estado', 'numero_contrato']
 
     def clean_numero_contrato(self):
         numero = self.cleaned_data.get('numero_contrato')
-        if numero <= 0:
-            raise forms.ValidationError("El número de contrato debe ser positivo.")
         if Contrato.objects.filter(numero_contrato=numero).exists():
             raise forms.ValidationError("Ya existe un contrato con este número.")
         return numero
@@ -55,20 +60,18 @@ class ContratoForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de fin debe ser posterior a la fecha de inicio.")
         return fecha_fin
 
-    def clean_cliente_id_cliente(self):
-        cliente = self.cleaned_data.get('cliente_id_cliente')
-        if not Cliente.objects.filter(pk=cliente.pk).exists():
-            raise forms.ValidationError("El cliente asociado no existe.")
-        return cliente
-
 
 # ==========================================================
 # FORMULARIO TARIFA
 # ==========================================================
 class TarifaForm(forms.ModelForm):
+    fecha_vigencia = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Tarifa
-        fields = ['id_tarifa', 'tipo_tarifa', 'tipo_cliente', 'fecha_vigencia', 'precio', 'contrato_id_contrato']
+        fields = ['fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente']
 
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')
@@ -82,34 +85,21 @@ class TarifaForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de vigencia no puede ser en el pasado.")
         return fecha_vigencia
 
-    def clean_tipo_tarifa(self):
-        tipo_tarifa = self.cleaned_data.get('tipo_tarifa')
-        tipos_validos = ['residencial', 'comercial', 'industrial']
-        if tipo_tarifa and tipo_tarifa.lower() not in tipos_validos:
-            raise forms.ValidationError("Tipo de tarifa no válido. Use: residencial, comercial o industrial.")
-        return tipo_tarifa
-
-    def clean_tipo_cliente(self):
-        tipo_cliente = self.cleaned_data.get('tipo_cliente')
-        tipos_validos = ['nuevo', 'regular', 'preferencial']
-        if tipo_cliente and tipo_cliente.lower() not in tipos_validos:
-            raise forms.ValidationError("Tipo de cliente no válido. Use: nuevo, regular o preferencial.")
-        return tipo_cliente
-
 
 # ==========================================================
 # FORMULARIO MEDIDOR
 # ==========================================================
 class MedidorForm(forms.ModelForm):
+    fecha_instalacion = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Medidor
-        fields = ['id_medidor', 'numero_medidor', 'fecha_instalacion', 'ubicacion',
-                  'estado_medidor', 'contrato_id_contrato']
+        fields = ['numero_medidor', 'fecha_instalacion', 'ubicacion', 'estado_medidor', 'imagen_ubicacion']
 
     def clean_numero_medidor(self):
         numero = self.cleaned_data.get('numero_medidor')
-        if numero <= 0:
-            raise forms.ValidationError("El número de medidor debe ser positivo.")
         if Medidor.objects.filter(numero_medidor=numero).exists():
             raise forms.ValidationError("Ya existe un medidor con ese número.")
         return numero
@@ -120,22 +110,18 @@ class MedidorForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de instalación no puede ser en el futuro.")
         return fecha_instalacion
 
-    def clean_estado_medidor(self):
-        estado = self.cleaned_data.get('estado_medidor')
-        estados_validos = ['activo', 'inactivo', 'mantenimiento', 'desinstalado']
-        if estado and estado.lower() not in estados_validos:
-            raise forms.ValidationError("Estado no válido. Use: activo, inactivo, mantenimiento o desinstalado.")
-        return estado
-
 
 # ==========================================================
 # FORMULARIO LECTURA
 # ==========================================================
 class LecturaForm(forms.ModelForm):
+    fecha_lectura = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Lectura
-        fields = ['id_lectura', 'fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual',
-                  'medidor_id_medidor', 'medidor_contrato_id_contrato']
+        fields = ['fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual']
 
     def clean_lectura_actual(self):
         lectura = self.cleaned_data.get('lectura_actual')
@@ -155,23 +141,21 @@ class LecturaForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de lectura no puede ser en el futuro.")
         return fecha_lectura
 
-    def clean_tipo_lectura(self):
-        tipo_lectura = self.cleaned_data.get('tipo_lectura')
-        tipos_validos = ['real', 'estimada', 'automatica']
-        if tipo_lectura and tipo_lectura.lower() not in tipos_validos:
-            raise forms.ValidationError("Tipo de lectura no válido. Use: real, estimada o automatica.")
-        return tipo_lectura
-
 
 # ==========================================================
 # FORMULARIO BOLETA
 # ==========================================================
 class BoletaForm(forms.ModelForm):
+    fecha_emision = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    fecha_vencimiento = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Boleta
-        fields = ['id_boleta', 'fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico',
-                  'estado', 'lectura_id_lectura', 'lectura_medidor_id_medidor',
-                  'lectura_medidor_contrato_id_contrato']
+        fields = ['fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico', 'estado']
 
     def clean_monto_total(self):
         monto = self.cleaned_data.get('monto_total')
@@ -186,28 +170,21 @@ class BoletaForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de vencimiento debe ser posterior a la fecha de emisión.")
         return fecha_vencimiento
 
-    def clean_estado(self):
-        estado = self.cleaned_data.get('estado')
-        estados_validos = ['pendiente', 'pagada', 'vencida', 'cancelada']
-        if estado and estado.lower() not in estados_validos:
-            raise forms.ValidationError("Estado no válido. Use: pendiente, pagada, vencida o cancelada.")
-        return estado
-
 
 # ==========================================================
 # FORMULARIO PAGO
 # ==========================================================
 class PagoForm(forms.ModelForm):
+    fecha_pago = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = Pago
-        fields = ['id_pago', 'fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia',
-                  'estado_pago', 'boleta_id_boleta', 'boleta_lectura_id_lectura',
-                  'boleta_lectura_medidor_id_medidor', 'boleta_lectura_medidor_contrato_id_contrato']
+        fields = ['fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia', 'estado_pago']
 
     def clean_numero_referencia(self):
         referencia = self.cleaned_data.get('numero_referencia')
-        if referencia <= 0:
-            raise forms.ValidationError("El número de referencia debe ser positivo.")
         if Pago.objects.filter(numero_referencia=referencia).exists():
             raise forms.ValidationError("Ya existe un pago con este número de referencia.")
         return referencia
@@ -224,20 +201,6 @@ class PagoForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de pago no puede ser en el futuro.")
         return fecha_pago
 
-    def clean_metodo_pago(self):
-        metodo = self.cleaned_data.get('metodo_pago')
-        metodos_validos = ['efectivo', 'tarjeta', 'transferencia', 'cheque']
-        if metodo and metodo.lower() not in metodos_validos:
-            raise forms.ValidationError("Método de pago no válido. Use: efectivo, tarjeta, transferencia o cheque.")
-        return metodo
-
-    def clean_estado_pago(self):
-        estado = self.cleaned_data.get('estado_pago')
-        estados_validos = ['pendiente', 'completado', 'fallido', 'reembolsado']
-        if estado and estado.lower() not in estados_validos:
-            raise forms.ValidationError("Estado de pago no válido. Use: pendiente, completado, fallido o reembolsado.")
-        return estado
-
 
 # ==========================================================
 # FORMULARIO USUARIO
@@ -250,49 +213,54 @@ class UsuarioForm(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ['id_usuario', 'nombre', 'email', 'telefono', 'rol']
+        fields = ['username', 'password', 'email', 'telefono', 'rol']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if Usuario.objects.filter(email=email).exists():
+        # Excluir el objeto actual al editar
+        usuarios_existentes = Usuario.objects.filter(email=email)
+        if self.instance.pk:
+            usuarios_existentes = usuarios_existentes.exclude(pk=self.instance.pk)
+        if usuarios_existentes.exists():
             raise forms.ValidationError("Ya existe un usuario con este correo.")
         return email
 
-    def clean_rol(self):
-        rol = self.cleaned_data.get('rol')
-        roles_validos = ['admin', 'usuario', 'operador']
-        if rol.lower() not in roles_validos:
-            raise forms.ValidationError("Rol no válido. Use: admin, usuario u operador.")
-        return rol
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        # Excluir el objeto actual al editar
+        usuarios_existentes = Usuario.objects.filter(username=username)
+        if self.instance.pk:
+            usuarios_existentes = usuarios_existentes.exclude(pk=self.instance.pk)
+        if usuarios_existentes.exists():
+            raise forms.ValidationError("Ya existe un usuario con este nombre de usuario.")
+        return username
 
 
 # ==========================================================
-# FORMULARIO NOTIFICACIONES
+# FORMULARIO NOTIFICACION PAGO
 # ==========================================================
-class NotificationForm(forms.ModelForm):
+class NotificacionPagoForm(forms.ModelForm):
     class Meta:
-        model = Notification
-        fields = ['id_notification', 'tipo_notification', 'estado_notification', 'fecha_generation',
-                  'fecha_revision', 'lectura_id_lectura', 'lectura_medidor_id_medidor',
-                  'lectura_medidor_contrato_id_contrato', 'pago_id_pago', 'usuario_id_usuario']
+        model = NotificacionPago
+        fields = ['deuda_pendiente']
 
-    def clean_fecha_revision(self):
-        fecha_generation = self.cleaned_data.get('fecha_generation')
-        fecha_revision = self.cleaned_data.get('fecha_revision')
-        if fecha_generation and fecha_revision and fecha_revision < fecha_generation:
-            raise forms.ValidationError("La fecha de revisión no puede ser anterior a la fecha de generación.")
-        return fecha_revision
+    def clean_deuda_pendiente(self):
+        deuda = self.cleaned_data.get('deuda_pendiente')
+        if not deuda or deuda.strip() == '':
+            raise forms.ValidationError("La información de deuda pendiente es requerida.")
+        return deuda
 
-    def clean_tipo_notification(self):
-        tipo = self.cleaned_data.get('tipo_notification')
-        tipos_validos = ['lectura', 'pago', 'vencimiento', 'corte', 'reconexion', 'general']
-        if tipo and tipo.lower() not in tipos_validos:
-            raise forms.ValidationError("Tipo de notificación no válido. Use: lectura, pago, vencimiento, corte, reconexion o general.")
-        return tipo
 
-    def clean_estado_notification(self):
-        estado = self.cleaned_data.get('estado_notification')
-        estados_validos = ['pendiente', 'leida', 'enviada', 'fallida']
-        if estado and estado.lower() not in estados_validos:
-            raise forms.ValidationError("Estado de notificación no válido. Use: pendiente, leida, enviada o fallida.")
-        return estado
+# ==========================================================
+# FORMULARIO NOTIFICACION LECTURA
+# ==========================================================
+class NotificacionLecturaForm(forms.ModelForm):
+    class Meta:
+        model = NotificacionLectura
+        fields = ['registro_consumo']
+
+    def clean_registro_consumo(self):
+        registro = self.cleaned_data.get('registro_consumo')
+        if not registro or registro.strip() == '':
+            raise forms.ValidationError("El registro de consumo es requerido.")
+        return registro

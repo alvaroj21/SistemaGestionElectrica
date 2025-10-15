@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar tarifa{% endblock %}
+
+{% block page_title %}Editar tarifa{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton">Volver</a>
+    </div>
+    
+    <div>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Actualizar tarifa</button>
+        </form>
+    </div>
+{% endblock %}

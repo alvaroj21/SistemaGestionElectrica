@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Pago - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Eliminar Pago{% endblock %}
+
+{% block content %}
+    
+    <!-- Alerta de Advertencia -->
+    <div class="informacion-login">
+        <h4>
+            <i class="fas fa-exclamation-triangle"></i> ¡Atención!
+        </h4>
+        <p>Esta acción eliminará permanentemente el pago del sistema.</p>
+        <p>
+            <strong>Esta acción NO se puede deshacer.</strong> 
+            Asegúrate de que realmente deseas eliminar este pago.
+        </p>
+    </div>
+
+    <!-- Información del Pago -->
+    <h3><i class="fas fa-credit-card"></i> Datos del Pago a Eliminar</h3>
+    
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>Fecha de Pago:</strong></td>
+                <td>{{ pago.fecha_pago }}</td>
+            </tr>
+            <tr>
+                <td><strong>Monto Pagado:</strong></td>
+                <td>${{ pago.monto_pagado }}</td>
+            </tr>
+            <tr>
+                <td><strong>Método de Pago:</strong></td>
+                <td>{{ pago.metodo_pago }}</td>
+            </tr>
+            <tr>
+                <td><strong>Número de Referencia:</strong></td>
+                <td>{{ pago.numero_referencia }}</td>
+            </tr>
+            <tr>
+                <td><strong>Estado del Pago:</strong></td>
+                <td>{{ pago.estado_pago }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Botones de Acción -->
+    <div>
+        <!-- Botón Cancelar -->
+        <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+        
+        <!-- Formulario de Confirmación -->
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="boton boton-peligro" 
+                    onclick="return confirm('¿Estás completamente seguro de que deseas eliminar este pago?')">
+                <i class="fas fa-trash-alt"></i> Sí, Eliminar Pago
+            </button>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="informacion-login">
+        <strong>Nota:</strong> Al eliminar este pago, se perderá el registro del mismo. 
+        Asegúrate de que no afecte la contabilidad del sistema.
+    </div>
+{% endblock %}

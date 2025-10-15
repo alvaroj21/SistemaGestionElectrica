@@ -28,9 +28,11 @@
                     <td>${{ tarifa.precio|floatformat:2 }}</td>
                     <td>{{ tarifa.fecha_vigencia }}</td>
                     <td>
-                        <a href="#" class="boton" title="Editar">
+                        <a href="{% url 'sistemaGestion:editar_tarifa' tarifa.id %}" class="boton" title="Editar">
                             <i class="fas fa-edit"></i> Editar
                         </a>
+                        <a href="{% url 'sistemaGestion:eliminar_tarifa' tarifa.id %}" class="boton" title="Eliminar">
+                            <i class="fas fa-trash-alt"></i> Eliminar
                     </td>
                 </tr>
                 {% empty %}
