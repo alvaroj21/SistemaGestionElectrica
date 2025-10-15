@@ -8,14 +8,16 @@ from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, U
 # FORMULARIO CLIENTE
 # ==========================================================
 class ClienteForm(forms.ModelForm):
-    telefono = forms.CharField(
-        validators=[RegexValidator(r'^\+?\d{8,15}$', 'Ingrese un número de teléfono válido (8 a 15 dígitos).')],
-        required=False
-    )
 
     class Meta:
         model = Cliente
         fields = ['numero_cliente', 'nombre', 'email', 'telefono']
+        widgets = {
+            'numero_cliente':forms.TextInput(attrs={'placeholder':'Ejemplo: CLI-001'}),
+            'nombre':forms.TextInput(attrs={'placeholder':'Ingresa el nombre del cliente'}),
+            'email':forms.TextInput(attrs={'placeholder':'Ingresa el email'}),
+            'telefono':forms.TextInput(attrs={'placeholder':'Ingresa un numero de telefono'})
+        }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -40,8 +42,14 @@ class ClienteForm(forms.ModelForm):
         if clientes.exists():
             raise forms.ValidationError("Ya existe un cliente con este número de cliente.")
         return numero
-
-
+    
+    def clean_numero_telefono(self):
+        telefono = self.cleaned_data['telefono']
+        if len(telefono) < 8:
+            raise forms.ValidationError("El numero no puede tener menos de 8 digitos")
+        return  telefono
+    
+    
 # ==========================================================
 # FORMULARIO CONTRATO
 # ==========================================================
@@ -56,6 +64,10 @@ class ContratoForm(forms.ModelForm):
     class Meta:
         model = Contrato
         fields = ['fecha_inicio', 'fecha_fin', 'estado', 'numero_contrato']
+        widgets = {
+            'numero_contrato':forms.TextInput(attrs={'placeholder':'Ejemplo: CO-001'})
+
+        }
 
     def clean_numero_contrato(self):
         numero = self.cleaned_data.get('numero_contrato')
@@ -75,6 +87,11 @@ class ContratoForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de fin debe ser posterior a la fecha de inicio.")
         return fecha_fin
 
+    def clean_fecha_inicio(self):
+        fecha_inicio = self.cleaned_data.get('fecha_inicio')
+        if fecha_inicio < timezone.now().date():
+            raise forms.ValidationError("La fecha de inicio no puede ser una fecha anterior a la actual")
+        return fecha_inicio
 
 # ==========================================================
 # FORMULARIO TARIFA
@@ -87,6 +104,9 @@ class TarifaForm(forms.ModelForm):
     class Meta:
         model = Tarifa
         fields = ['fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente']
+        widgets = {
+        'precio':forms.TextInput(attrs={'placeholder':'Ejemplo: Ingresa el precio de la tarifa'})
+        }
 
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')
@@ -123,11 +143,11 @@ class MedidorForm(forms.ModelForm):
         if medidores.exists():
             raise forms.ValidationError("Ya existe un medidor con ese número.")
         return numero
-
-    def clean_fecha_instalacion(self):
+        
+    def clean_fecha_instalacion_anterior(self):
         fecha_instalacion = self.cleaned_data.get('fecha_instalacion')
-        if fecha_instalacion and fecha_instalacion > timezone.now().date():
-            raise forms.ValidationError("La fecha de instalación no puede ser una fecha posterior a la actual.")
+        if fecha_instalacion < timezone.now().date():
+            raise forms. ValidationError("La fecha de instalación no puede ser una fecha anterior a la actual")
         return fecha_instalacion
 
 
@@ -158,7 +178,7 @@ class LecturaForm(forms.ModelForm):
     def clean_fecha_lectura(self):
         fecha_lectura = self.cleaned_data.get('fecha_lectura')
         if fecha_lectura and fecha_lectura > timezone.now().date():
-            raise forms.ValidationError("La fecha de lectura no puede ser en el futuro.")
+            raise forms.ValidationError("La fecha de lectura no puede ser en una fecha posterior a la actual.")
         return fecha_lectura
 
 
@@ -231,10 +251,6 @@ class PagoForm(forms.ModelForm):
 # FORMULARIO USUARIO
 # ==========================================================
 class UsuarioForm(forms.ModelForm):
-    telefono = forms.CharField(
-        validators=[RegexValidator(r'^\+?\d{8,15}$', 'Ingrese un número de teléfono válido (8 a 15 dígitos).')],
-        required=False
-    )
 
     class Meta:
         model = Usuario
@@ -261,7 +277,12 @@ class UsuarioForm(forms.ModelForm):
         if usuarios.exists():
             raise forms.ValidationError("Ya existe un usuario con este nombre de usuario.")
         return username
-
+    
+    def clean_numero_telefono(self):
+        inputnumero = self.cleaned_data['telefono']
+        if len(inputnumero) < 8:
+                raise forms.ValidationError("El numero no puede tener menos de 8 digitos")
+        return  inputnumero
 
 # ==========================================================
 # FORMULARIO NOTIFICACION PAGO

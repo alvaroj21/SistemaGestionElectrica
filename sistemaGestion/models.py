@@ -55,9 +55,9 @@ class Lectura(models.Model):
     ]
     
     fecha_lectura = models.DateField()
-    consumo_energetico = models.CharField(max_length=45)
+    consumo_energetico = models.IntegerField()
     tipo_lectura = models.CharField(max_length=45, choices=TIPO_LECTURA_CHOICES, default='Digital')
-    lectura_actual = models.CharField(max_length=45)
+    lectura_actual = models.IntegerField()
 
 
 
