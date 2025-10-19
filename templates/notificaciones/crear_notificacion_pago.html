@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Notificación de Pago - Sistema Eléctrico{% endblock %}
+
+{% block page_title %}Crear Notificación de Pago{% endblock %}
+
+{% block content %}
+    <div class="contenedor-formulario">
+        <div class="tarjeta-formulario">
+            <div class="encabezado-formulario">
+                <h3><i class="fas fa-bell-plus"></i> Nueva Notificación de Pago</h3>
+                <p>Complete la información para crear una nueva notificación de pago</p>
+            </div>
+            
+            <div class="cuerpo-formulario">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="mt-4 d-flex justify-content-center gap-2">
+                        <button type="submit" class="btn btn-primary btn-md w-auto">
+                            <i class="fas fa-save"></i> Crear Notificación
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_notificaciones' %}" class="btn btn-secondary btn-md w-auto">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -5,14 +5,27 @@
 {% block page_title %}Crear Cliente{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">Volver</a>
-    </div>
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="boton">Guardar Cliente</button>
-        </form>
+    <div class="contenedor-formulario">
+        <div class="tarjeta-formulario">
+            <div class="encabezado-formulario">
+                <h3><i class="fas fa-user-plus"></i> Nuevo Cliente</h3>
+                <p>Complete la información para registrar un nuevo cliente en el sistema</p>
+            </div>
+            
+            <div class="cuerpo-formulario">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="mt-4 d-flex justify-content-center gap-2">
+                        <button type="submit" class="btn btn-primary btn-md w-auto">
+                            <i class="fas fa-save"></i> Guardar Cliente
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_clientes' %}" class="btn btn-secondary btn-md w-auto">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

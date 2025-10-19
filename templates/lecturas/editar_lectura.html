@@ -5,17 +5,27 @@
 {% block page_title %}Editar Lectura{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">Volver</a>
-    </div>
-    
-    <div>
-        <h3>Editar Lectura: {{ lectura.id }}</h3>
-        
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="boton">Actualizar Lectura</button>
-        </form>
+    <div class="contenedor-formulario">
+        <div class="tarjeta-formulario">
+            <div class="encabezado-formulario">
+                <h3><i class="fas fa-edit"></i> Editar Lectura</h3>
+                <p>Modificar información de la lectura
+            </div>
+            
+            <div class="cuerpo-formulario">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                        <div class="mt-4 d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary btn-md w-auto">
+                                <i class="fas fa-save"></i> Actualizar Lectura
+                            </button>
+                            <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="btn btn-secondary btn-md w-auto">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

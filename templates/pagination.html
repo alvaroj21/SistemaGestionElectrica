@@ -1,0 +1,46 @@
+<!-- Componente de paginación integrado con el diseño del sistema -->
+{% if page_obj.has_other_pages %}
+<div class="paginacion">
+    <div class="paginacion-info">
+        Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} registros
+    </div>
+    
+    <div class="paginacion-botones">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="boton-paginacion" title="Primera página">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="boton-paginacion" title="Anterior">
+                <i class="fas fa-angle-left"></i>
+            </a>
+        {% else %}
+            <span class="boton-paginacion boton-deshabilitado" title="Primera página">
+                <i class="fas fa-angle-double-left"></i>
+            </span>
+            <span class="boton-paginacion boton-deshabilitado" title="Anterior">
+                <i class="fas fa-angle-left"></i>
+            </span>
+        {% endif %}
+
+        <span class="paginacion-actual">
+            {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="boton-paginacion" title="Siguiente">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="boton-paginacion" title="Última página">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        {% else %}
+            <span class="boton-paginacion boton-deshabilitado" title="Siguiente">
+                <i class="fas fa-angle-right"></i>
+            </span>
+            <span class="boton-paginacion boton-deshabilitado" title="Última página">
+                <i class="fas fa-angle-double-right"></i>
+            </span>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

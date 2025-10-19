@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Pago{% endblock %}
+{% block page_title %}Detalle de Pago{% endblock %}
+
+{% block content %}
+<div class="contenedor-formulario mt-4">
+    <div class="tarjeta-formulario w-100" style="max-width:600px;">
+        <div class="encabezado-formulario d-flex align-items-center justify-content-between" style="padding: 18px 25px;">
+            <h2 class="mb-0 fs-4">
+                <i class="fas fa-money-check-alt me-2"></i> Detalle de Pago
+            </h2>
+            <a href="{% url 'sistemaGestion:lista_pagos' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Volver a Lista
+            </a>
+        </div>
+        <div class="cuerpo-formulario">
+            <table class="table table-bordered table-striped mb-4">
+                <tbody>
+                    <tr>
+                        <th class="w-50">Fecha de Pago</th>
+                        <td>{{ pago.fecha_pago|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Monto Pagado</th>
+                        <td>${{ pago.monto_pagado }}</td>
+                    </tr>
+                    <tr>
+                        <th>Método de Pago</th>
+                        <td>{{ pago.metodo_pago }}</td>
+                    </tr>
+                    <tr>
+                        <th>Número de Referencia</th>
+                        <td>{{ pago.numero_referencia }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado del Pago</th>
+                        <td>{{ pago.estado_pago }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex gap-2">
+                <a href="{% url 'sistemaGestion:editar_pago' pago.id %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-edit me-1"></i> Editar Pago
+                </a>
+                <a href="{% url 'sistemaGestion:eliminar_pago' pago.id %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-trash-alt me-1"></i> Eliminar Pago
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

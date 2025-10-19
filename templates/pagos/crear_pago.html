@@ -5,16 +5,28 @@
 {% block page_title %}Registrar Pago{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">Volver</a>
-    </div>
-
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="boton">Registrar Pago</button>
-        </form>
+    <div class="contenedor-formulario">
+        <div class="tarjeta-formulario">
+            <div class="encabezado-formulario">
+                <h3><i class="fas fa-credit-card"></i> Registrar Pago</h3>
+                <p>Complete la información para registrar un nuevo pago en el sistema</p>
+            </div>
+            
+            <div class="cuerpo-formulario">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                        <div class="mt-4 d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary btn-md w-auto">
+                                <i class="fas fa-save"></i> Registrar Pago
+                            </button>
+                            <a href="{% url 'sistemaGestion:lista_pagos' %}" class="btn btn-secondary btn-md w-auto">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

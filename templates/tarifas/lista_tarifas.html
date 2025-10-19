@@ -5,19 +5,60 @@
 {% block page_title %}Tarifas{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:crear_tarifa' %}" class="boton boton-exito">Nueva Tarifa</a>
+    <div class="mb-4">
+        <a href="{% url 'sistemaGestion:crear_tarifa' %}" class="btn btn-secondary">Nueva Tarifa</a>
+    </div>
+    <div class="filtros-busqueda mb-3">
+        <h3><i class="fas fa-search"></i> Filtros de búsqueda</h3>
+        <form method="GET" class="filtro-form">
+            <div class="row align-items-end">
+                <div class="col-md-2 mb-3">
+                    <select name="tipo_cliente" class="form-control">
+                        <option value="">Tipo de cliente</option>
+                        <option value="Residencial" {% if search_tipo_cliente == 'Residencial' %}selected{% endif %}>Residencial</option>
+                        <option value="Comercial" {% if search_tipo_cliente == 'Comercial' %}selected{% endif %}>Comercial</option>
+                        <option value="Industrial" {% if search_tipo_cliente == 'Industrial' %}selected{% endif %}>Industrial</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <select name="tipo_tarifa" class="form-control">
+                        <option value="">Tipo de tarifa</option>
+                        <option value="Verano" {% if search_tipo_tarifa == 'Verano' %}selected{% endif %}>Verano</option>
+                        <option value="Invierno" {% if search_tipo_tarifa == 'Invierno' %}selected{% endif %}>Invierno</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="number" name="precio_min" class="form-control" placeholder="Precio mínimo" value="{{ search_precio_min }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="number" name="precio_max" class="form-control" placeholder="Precio máximo" value="{{ search_precio_max }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="date" name="fecha_vigencia" class="form-control" placeholder="Fecha de vigencia" value="{{ search_fecha }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    <div>
-        <table>
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <th>Tipo Tarifa</th>
-                    <th>Tipo Cliente</th>
-                    <th>Precio</th>
-                    <th>Fecha Vigencia</th>
-                    <th>Acciones</th>
+                    <th scope="col">Tipo Tarifa</th>
+                    <th scope="col">Tipo Cliente</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Fecha Vigencia</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,12 +68,16 @@
                     <td>{{ tarifa.tipo_cliente }}</td>
                     <td>${{ tarifa.precio|floatformat:2 }}</td>
                     <td>{{ tarifa.fecha_vigencia }}</td>
-                    <td>
-                        <a href="{% url 'sistemaGestion:editar_tarifa' tarifa.id %}" class="boton" title="Editar">
-                            <i class="fas fa-edit"></i> Editar
+                    <td class="text-center">
+                        <a href="{% url 'sistemaGestion:detalle_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
+                            <i class="fas fa-eye me-1"></i> Ver
                         </a>
-                        <a href="{% url 'sistemaGestion:eliminar_tarifa' tarifa.id %}" class="boton" title="Eliminar">
-                            <i class="fas fa-trash-alt"></i> Eliminar
+                        <a href="{% url 'sistemaGestion:editar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                        <a href="{% url 'sistemaGestion:eliminar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-secondary" title="Eliminar">
+                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
@@ -42,6 +87,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% include 'pagination.html' %}
     </div>
 {% endblock %}
 

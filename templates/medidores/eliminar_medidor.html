@@ -5,69 +5,52 @@
 {% block page_title %}Eliminar Medidor{% endblock %}
 
 {% block content %}
-    
-    <!-- Alerta de Advertencia -->
-    <div class="informacion-login">
-        <h4>
-            <i class="fas fa-exclamation-triangle"></i> ¡Atención!
-        </h4>
-        <p>Esta acción eliminará permanentemente el medidor del sistema.</p>
-        <p>
-            <strong>Esta acción NO se puede deshacer.</strong> 
-            Asegúrate de que realmente deseas eliminar este medidor.
-        </p>
-    </div>
-
-    <!-- Información del Medidor -->
-    <h3><i class="fas fa-tachometer-alt"></i> Datos del Medidor a Eliminar</h3>
-    
-    <table>
-        <tbody>
-            <tr>
-                <td><strong>Número de Medidor:</strong></td>
-                <td>{{ medidor.numero_medidor }}</td>
-            </tr>
-            <tr>
-                <td><strong>Fecha de Instalación:</strong></td>
-                <td>{{ medidor.fecha_instalacion }}</td>
-            </tr>
-            <tr>
-                <td><strong>Ubicación:</strong></td>
-                <td>{{ medidor.ubicacion }}</td>
-            </tr>
-            <tr>
-                <td><strong>Estado del Medidor:</strong></td>
-                <td>{{ medidor.estado_medidor }}</td>
-            </tr>
-            {% if medidor.imagen_ubicacion %}
-            <tr>
-                <td><strong>Imagen de Ubicación:</strong></td>
-                <td><a href="{{ medidor.imagen_ubicacion }}" target="_blank">Ver imagen</a></td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <!-- Botones de Acción -->
-    <div>
-        <!-- Botón Cancelar -->
-        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">
-            <i class="fas fa-times"></i> Cancelar
-        </a>
-        
-        <!-- Formulario de Confirmación -->
-        <form method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="boton boton-peligro" 
-                    onclick="return confirm('¿Estás completamente seguro de que deseas eliminar este medidor?')">
-                <i class="fas fa-trash-alt"></i> Sí, Eliminar Medidor
-            </button>
-        </form>
-    </div>
-
-    <!-- Información adicional -->
-    <div class="informacion-login">
-        <strong>Nota:</strong> Al eliminar este medidor, se perderán todas las lecturas asociadas. 
-        Verifica que no tenga contratos o lecturas activas antes de proceder.
+    <div class="container py-3">
+        <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+            <i class="fas fa-exclamation-triangle fa-lg me-2"></i>
+            <div>
+                <strong>¡Atención!</strong> Esta acción eliminará permanentemente el medidor del sistema.<br>
+                <span class="fw-bold">Esta acción NO se puede deshacer.</span> Asegúrate de que realmente deseas eliminar este medidor.
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-tachometer-alt"></i> Datos del Medidor a Eliminar</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered mb-0">
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Número de Medidor:</td>
+                            <td>{{ medidor.numero_medidor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Fecha de Instalación:</td>
+                            <td>{{ medidor.fecha_instalacion }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Ubicación:</td>
+                            <td>{{ medidor.ubicacion }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Estado del Medidor:</td>
+                            <td>{{ medidor.estado_medidor }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center gap-2 mb-4">
+            <a href="{% url 'sistemaGestion:lista_medidores' %}" class="btn btn-secondary btn-md w-auto">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-md w-auto"
+                        onclick="return confirm('¿Estás completamente seguro de que deseas eliminar este medidor?')">
+                    <i class="fas fa-trash-alt"></i> Sí, Eliminar Medidor
+                </button>
+            </form>
+        </div>
     </div>
 {% endblock %}

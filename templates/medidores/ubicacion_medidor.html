@@ -1,38 +1,83 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}Ubicación Medidor {{ medidor.numero_medidor }} - Sistema Eléctrico{% endblock %}
 
 {% block page_title %}Ubicación del Medidor {{ medidor.numero_medidor }}{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">Volver a Medidores</a>
+    <div class="mb-4 d-flex gap-2">
+        <a href="{% url 'sistemaGestion:lista_medidores' %}" class="btn btn-secondary">Volver a Medidores</a>
+    <a href="{% url 'sistemaGestion:detalle_medidor' medidor.id %}" class="btn btn-secondary">Ver Detalle</a>
+    <a href="{% url 'sistemaGestion:editar_medidor' medidor.id %}" class="btn btn-secondary">Editar Medidor</a>
     </div>
 
-    <!-- Información del Medidor -->
-    <div>
-        <h3>Información del Medidor</h3>
-        <div>
-            <p><strong>Número de Medidor:</strong> {{ medidor.numero_medidor }}</p>
-            <p><strong>Cliente:</strong> {{ medidor.cliente_nombre }}</p>
-            <p><strong>Estado:</strong> {{ medidor.estado_medidor }}</p>
-            <p><strong>Fecha de Instalación:</strong> {{ medidor.fecha_instalacion }}</p>
-            <p><strong>Dirección:</strong> {{ medidor.direccion }}</p>
-            <p><strong>Ubicación:</strong> {{ medidor.ubicacion }}</p>
+    <div class="ubicacion-grid">
+        <div class="info-medidor-ubicacion">
+            <h3 class="mb-3">Información del Medidor</h3>
+            <table class="table">
+                <tr><th>Número de Medidor:</th><td><strong>{{ medidor.numero_medidor }}</strong></td></tr>
+                <tr><th>Estado:</th><td><span class="badge estado-{{ medidor.estado_medidor|lower }}">{{ medidor.estado_medidor }}</span></td></tr>
+                <tr><th>Fecha de Instalación:</th><td>{{ medidor.fecha_instalacion|date:"d/m/Y" }}</td></tr>
+                <tr><th>Ubicación:</th><td>{{ medidor.ubicacion }}</td></tr>
+            </table>
+        </div>
+        <div class="panel-imagen-fisica">
+            <h3 class="mb-3">Imagen Física del Medidor</h3>
+            {% if medidor.imagen_fisica %}
+                <div class="contenedor-imagen text-center">
+                    <img src="{{ medidor.imagen_fisica }}" alt="Medidor físico {{ medidor.numero_medidor }}" class="imagen-medidor mb-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="error-imagen d-none">
+                        <div class="icono-error">
+                            <i class="fa-solid fa-triangle-exclamation fa-2x text-warning"></i>
+                        </div>
+                        <p>Error al cargar la imagen</p>
+                        <p class="url-error">URL no válida o imagen no disponible</p>
+                    </div>
+                    <a href="{{ medidor.imagen_fisica }}" target="_blank" class="btn btn-sm btn-secondary mb-2">Ver imagen completa</a>
+                </div>
+            {% else %}
+                <div class="sin-imagen text-center">
+                    <div class="icono-sin-imagen">
+                        <i class="fa-solid fa-camera fa-2x text-muted"></i>
+                    </div>
+                    <p>No hay imagen física disponible</p>
+                    <a href="{% url 'sistemaGestion:editar_medidor' medidor.id %}" class="btn btn-sm btn-secondary mt-2">Agregar imagen</a>
+                </div>
+            {% endif %}
         </div>
     </div>
-
-    <div>
-        <div>
-            <!-- Mapa de ubicación -->
-            <div class="imagen-grafico">
-                <h3>Ubicación en el Mapa</h3>
-                <img src="{% static 'images/mapa.png' %}" alt="Mapa de ubicación">
-                
-                <div>
-                    <p><strong>Ubicación:</strong> Centro de la ciudad</p>
-                    <p><strong>Nota:</strong> Esta es una ubicación simulada para el medidor instalado.</p>
+    <div class="seccion-mapa mt-4">
+        <h3 class="mb-3">Ubicación en el Mapa</h3>
+        <div class="mapa-container">
+            <div class="mapa-ubicacion">
+                    {% if medidor.imagen_ubicacion %}
+                        <img src="{{ medidor.imagen_ubicacion }}" alt="Mapa de ubicación del medidor {{ medidor.numero_medidor }}" class="imagen-mapa mb-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="sin-mapa-fallback d-none">
+                            <div class="icono-mapa">
+                                <i class="fa-solid fa-map-location-dot fa-2x"></i>
+                            </div>
+                            <p>Error al cargar mapa</p>
+                            <p class="ubicacion-texto">{{ medidor.ubicacion }}</p>
+                            <a href="{{ medidor.imagen_ubicacion }}" target="_blank" class="btn btn-sm btn-secondary">Ver imagen original</a>
+                        </div>
+                    {% else %}
+                        <div class="sin-mapa text-center">
+                            <div class="icono-mapa">
+                                <i class="fa-solid fa-map-location-dot fa-2x"></i>
+                            </div>
+                            <p>Mapa no disponible</p>
+                            <p class="ubicacion-texto">{{ medidor.ubicacion }}</p>
+                            <a href="{% url 'sistemaGestion:editar_medidor' medidor.id %}" class="btn btn-sm btn-secondary mt-2">Agregar imagen de mapa</a>
+                        </div>
+                    {% endif %}
+            </div>
+            <div class="info-ubicacion">
+                <h4>Información de Ubicación</h4>
+                <div class="detalle-ubicacion">
+                    <p><strong>Dirección:</strong> {{ medidor.ubicacion }}</p>
+                    <div class="nota-ubicacion mt-2">
+                        <p><strong>Nota:</strong> Esta ubicación es aproximada para fines de referencia.</p>
+                    </div>
                 </div>
             </div>
         </div>

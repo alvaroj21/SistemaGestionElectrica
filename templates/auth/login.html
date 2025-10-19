@@ -9,12 +9,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="login-page">
     <div class="contenedor-login">
         <div class="caja-login">
             <form method="post">
                 {% csrf_token %}
-                <div>
+                <div class="encabezado-login">
                     <i class="fas fa-bolt"></i>
                     <h2>Sistema Eléctrico</h2>
                     <p>Inicia sesión para continuar</p>
@@ -28,20 +28,20 @@
                     {% endfor %}
                 {% endif %}
                 
-                <div>
+                <div class="campo-entrada">
                     <input type="text" name="username" placeholder="Usuario" required>
                 </div>
                 
-                <div>
+                <div class="campo-entrada">
                     <input type="password" name="password" placeholder="Contraseña" required>
                 </div>
                 
-                <button type="submit" class="boton boton-exito">
+                <button type="submit" class="btn btn-success">
                     <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                 </button>
             </form>
             
-            <div class="informacion-login">
+            <div class="informacion-login text-center">
                 <strong><i class="fas fa-users"></i> Usuarios de prueba:</strong>
                 <small>
                     <div>
@@ -51,7 +51,7 @@
                         <strong>Eléctrico:</strong> electrico1 / elec123
                     </div>
                     <div>
-                        <strong>Finanzas:</strong> finanzas1 / finanzas123
+                        <strong>Finanzas:</strong> finanzas1 / fin1234
                     </div>
                 </small>
             </div>

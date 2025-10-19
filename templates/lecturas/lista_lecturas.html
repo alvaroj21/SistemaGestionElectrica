@@ -5,19 +5,52 @@
 {% block page_title %}Lecturas{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:crear_lectura' %}" class="boton boton-exito">Nueva Lectura</a>
+    <div class="mb-4">
+        <a href="{% url 'sistemaGestion:crear_lectura' %}" class="btn btn-secondary">Nueva Lectura</a>
+    </div>
+    <div class="filtros-busqueda mb-3">
+        <h3><i class="fas fa-search"></i> Filtros de búsqueda</h3>
+        <form method="GET" class="filtro-form">
+            <div class="row align-items-end">
+                <div class="col-md-2 mb-3">
+                    <input type="date" name="fecha_lectura" class="form-control" placeholder="Fecha de lectura" value="{{ search_fecha }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <select name="tipo_lectura" class="form-control">
+                        <option value="">Tipo de lectura</option>
+                        <option value="Digital" {% if search_tipo == 'Digital' %}selected{% endif %}>Digital</option>
+                        <option value="Analogica" {% if search_tipo == 'Analogica' %}selected{% endif %}>Analógica</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="number" name="consumo_min" class="form-control" placeholder="Consumo mínimo (kWh)" value="{{ search_consumo_min }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="number" name="consumo_max" class="form-control" placeholder="Consumo máximo (kWh)" value="{{ search_consumo_max }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    <div>
-        <table>
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <th>Fecha Lectura</th>
-                    <th>Tipo</th>
-                    <th>Lectura Actual</th>
-                    <th>Consumo (kWh)</th>
-                    <th>Acciones</th>
+                    <th scope="col">Fecha Lectura</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Lectura Actual</th>
+                    <th scope="col">Consumo (kWh)</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,12 +60,15 @@
                     <td>{{ lectura.tipo_lectura }}</td>
                     <td>{{ lectura.lectura_actual }}</td>
                     <td>{{ lectura.consumo_energetico }}</td>
-                    <td>
-                        <a href="{% url 'sistemaGestion:editar_lectura' lectura.id %}" class="boton" title="Editar">
-                            <i class="fas fa-eye"></i> Editar
+                    <td class="text-center">
+                        <a href="{% url 'sistemaGestion:detalle_lectura' lectura.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
+                            <i class="fas fa-eye me-1"></i> Ver
                         </a>
-                        <a href="{% url 'sistemaGestion:eliminar_lectura' lectura.id %}" class="boton" title="Eliminar">
-                            <i class="fas fa-trash-alt"></i> Eliminar
+                        <a href="{% url 'sistemaGestion:editar_lectura' lectura.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                        <a href="{% url 'sistemaGestion:eliminar_lectura' lectura.id %}" class="btn btn-sm btn-outline-secondary" title="Eliminar">
+                            <i class="fas fa-trash-alt me-1"></i> Eliminar
                         </a>
                     </td>
                 </tr>
@@ -43,5 +79,6 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% include 'pagination.html' %}
     </div>
 {% endblock %}

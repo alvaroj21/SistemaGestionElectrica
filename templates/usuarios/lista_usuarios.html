@@ -5,19 +5,53 @@
 {% block page_title %}Usuarios{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'sistemaGestion:crear_usuario' %}" class="boton boton-exito">Nuevo Usuario</a>
+    <div class="mb-4">
+        <a href="{% url 'sistemaGestion:crear_usuario' %}" class="btn btn-secondary">Nuevo Usuario</a>
+    </div>
+    <div class="filtros-busqueda mb-3">
+        <h3><i class="fas fa-search"></i> Filtros de búsqueda</h3>
+        <form method="GET" class="filtro-form">
+            <div class="row align-items-end">
+                <div class="col-md-2 mb-3">
+                    <input type="text" name="username" class="form-control" placeholder="Nombre de usuario" value="{{ search_username }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Correo electrónico" value="{{ search_email }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="text" name="telefono" class="form-control" placeholder="Teléfono" value="{{ search_telefono }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <select name="rol" class="form-control">
+                        <option value="">Rol del usuario</option>
+                        <option value="Administrador" {% if search_rol == 'Administrador' %}selected{% endif %}>Administrador</option>
+                        <option value="Eléctrico" {% if search_rol == 'Eléctrico' %}selected{% endif %}>Eléctrico</option>
+                        <option value="Finanzas" {% if search_rol == 'Finanzas' %}selected{% endif %}>Finanzas</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    <div>
-        <table>
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <th>Nombre Usuario</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
+                    <th scope="col">Nombre Usuario</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Rol</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,21 +71,30 @@
                             <span>{{ usuario.rol }}</span>
                         {% endif %}
                     </td>
-                    <td>
-                        <a href="{% url 'sistemaGestion:editar_usuario' usuario.id %}" class="boton" title="Editar">
-                            <i class="fas fa-edit"></i> Editar
+                    <td class="text-center">
+                        <a href="{% url 'sistemaGestion:detalle_usuario' usuario.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
+                            <i class="fas fa-eye me-1"></i> Ver
                         </a>
-                        <a href="{% url 'sistemaGestion:eliminar_usuario' usuario.id %}" class="boton" title="Eliminar">
-                            <i class="fas fa-trash-alt"></i> Eliminar
+                        <a href="{% url 'sistemaGestion:editar_usuario' usuario.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar usuario">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                        <a href="{% url 'sistemaGestion:eliminar_usuario' usuario.id %}" class="btn btn-sm btn-outline-secondary" title="Eliminar usuario">
+                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6">No hay usuarios registrados</td>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                        No hay usuarios registrados
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        
+        {% include 'pagination.html' %}
     </div>
 {% endblock %}
 

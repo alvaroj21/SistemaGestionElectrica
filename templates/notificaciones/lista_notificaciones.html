@@ -5,14 +5,46 @@
 {% block page_title %}Notificaciones{% endblock %}
 
 {% block content %}
-    <div>
-        <table>
-            <thead>
+    <div class="mb-4">
+        <a href="{% url 'sistemaGestion:crear_notificacion_lectura' %}" class="btn btn-secondary">Nueva Notificación de Lectura</a>
+        <a href="{% url 'sistemaGestion:crear_notificacion_pago' %}" class="btn btn-secondary ms-2">Nueva Notificación de Pago</a>
+    </div>
+    <div class="filtros-busqueda mb-3">
+        <h3><i class="fas fa-search"></i> Filtros de búsqueda</h3>
+        <form method="GET" class="filtro-form">
+            <div class="row align-items-end">
+                <div class="col-md-3 mb-3">
+                    <select name="tipo" class="form-control">
+                        <option value="">Tipo de notificación</option>
+                        <option value="Lectura" {% if search_tipo == 'Lectura' %}selected{% endif %}>Notificaciones de Lectura</option>
+                        <option value="Pago" {% if search_tipo == 'Pago' %}selected{% endif %}>Notificaciones de Pago</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="mensaje" class="form-control" placeholder="Buscar en mensaje" value="{{ search_mensaje }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'sistemaGestion:lista_notificaciones' %}" class="btn btn-sm btn-outline-secondary fw-bold fs-6">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <th>Tipo</th>
-                    <th>Título</th>
-                    <th>Mensaje</th>
-                    <th>Acciones</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Título</th>
+                    <th scope="col">Mensaje</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,16 +52,39 @@
                 <tr>
                     <td>{{ notificacion.tipo }}</td>
                     <td>{{ notificacion.titulo }}</td>
-                    <td>{{ notificacion.mensaje }}</td>
-                    <td>
-                        <a href="#" class="boton" title="Ver detalles">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
+                    <td>{{ notificacion.mensaje|truncatechars:50 }}</td>
+                    <td class="text-center">
+                        {% if notificacion.tipo == 'Lectura' %}
+                            <a href="{% url 'sistemaGestion:detalle_notificacion_lectura' notificacion.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
+                                <i class="fas fa-eye me-1"></i> Ver
+                            </a>
+                            <a href="{% url 'sistemaGestion:editar_notificacion_lectura' notificacion.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'sistemaGestion:eliminar_notificacion_lectura' notificacion.id %}" class="btn btn-sm btn-outline-secondary" title="Eliminar">
+                                <i class="fas fa-trash-alt me-1"></i> Eliminar
+                            </a>
+                        {% elif notificacion.tipo == 'Pago' %}
+                            <a href="{% url 'sistemaGestion:detalle_notificacion_pago' notificacion.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
+                                <i class="fas fa-eye me-1"></i> Ver
+                            </a>
+                            <a href="{% url 'sistemaGestion:editar_notificacion_pago' notificacion.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'sistemaGestion:eliminar_notificacion_pago' notificacion.id %}" class="btn btn-sm btn-outline-secondary" title="Eliminar">
+                                <i class="fas fa-trash-alt me-1"></i> Eliminar
+                            </a>
+                        {% endif %}
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="sin-datos">No hay notificaciones registradas</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% include 'pagination.html' %}
     </div>
 {% endblock %}
 

@@ -1,29 +1,28 @@
-/*
- * Alterna el estado de visibilidad de una categoría (expandir/colapsar)
- * * Funcionamiento:
- * - Si la categoría está cerrada: la abre, cambia flecha a ▲, añade clase 'active'
- * - Si la categoría está abierta: la cierra, cambia flecha a ▼, quita clase 'active'
- */
+//en este main.js van los scripts generales de la aplicacion
 
-function alternarCategoria(element) {
-    const content = element.nextElementSibling;
-    const arrow = element.querySelector('.flecha');
-    
-    if (content.style.display === 'none' || content.style.display === '') {
-        content.style.display = 'block';
-        arrow.textContent = '▲';
-        element.classList.add('active');
-    } else {
-        content.style.display = 'none';
-        arrow.textContent = '▼';
-        element.classList.remove('active');
-    }
-}
+// Validación de contraseñas en perfil_usuario.html
+// Este bloque se ejecuta solo si existen los campos de contraseña
 
-// Inicializar todas las categorías como cerradas
 document.addEventListener('DOMContentLoaded', function() {
-    const contents = document.querySelectorAll('.contenido-categoria-navegacion');
-    contents.forEach(content => {
-        content.style.display = 'none';
-    });
+    const password = document.getElementById('password');
+    const confirmarPassword = document.getElementById('confirmar_password');
+    if (password && confirmarPassword) {
+        function validarPasswords() {
+            if (password.value && confirmarPassword.value) {
+                if (password.value !== confirmarPassword.value) {
+                    confirmarPassword.setCustomValidity('Las contraseñas no coinciden');
+                    confirmarPassword.classList.add('is-invalid');
+                } else {
+                    confirmarPassword.setCustomValidity('');
+                    confirmarPassword.classList.remove('is-invalid');
+                    confirmarPassword.classList.add('is-valid');
+                }
+            } else {
+                confirmarPassword.setCustomValidity('');
+                confirmarPassword.classList.remove('is-invalid', 'is-valid');
+            }
+        }
+        password.addEventListener('input', validarPasswords);
+        confirmarPassword.addEventListener('input', validarPasswords);
+    }
 });

@@ -6,108 +6,200 @@
 
 {% block content %}
     
-    <div>
-        <h3><i class="fas fa-user"></i> Bienvenido, {{ request.session.nombre|default:request.session.username }}</h3>
-        <p><strong>Rol:</strong> {{ request.session.rol|capfirst }} | <strong>Usuario:</strong> {{ request.session.username }}</p>
+    <!-- Bienvenida -->
+    <div class="mb-4">
+        <h3 class="text-primary"><i class="fas fa-user me-2"></i> Bienvenido, {{ request.session.nombre|default:request.session.username }}</h3>
+        <p class="text-muted"><strong>Rol:</strong> {{ request.session.rol|capfirst }} | <strong>Usuario:</strong> {{ request.session.username }}</p>
     </div>
 
-    <div class="grid-estadisticas">
+    <!-- Estadísticas Rápidas -->
+    <div class="stats-grid">
         
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-users"></i> Clientes</h4>
-            <p>{{ total_clientes }}</p>
-            <small>Total registrados</small>
+            <h3>{{ total_clientes }}</h3>
+            <p>Total registrados</p>
         </div>
         {% endif %}
 
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-file-contract"></i> Contratos</h4>
-            <p>{{ total_contratos }}</p>
-            <small>Contratos activos</small>
+            <h3>{{ total_contratos }}</h3>
+            <p>Contratos activos</p>
         </div>
         {% endif %}
 
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-tachometer-alt"></i> Medidores</h4>
-            <p>{{ total_medidores }}</p>
-            <small>Medidores instalados</small>
+            <h3>{{ total_medidores }}</h3>
+            <p>Medidores instalados</p>
         </div>
         {% endif %}
 
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-chart-line"></i> Lecturas Pendientes</h4>
-            <p>{{ lecturas_pendientes }}</p>
-            <small>Requieren atención</small>
+            <h3>{{ lecturas_pendientes }}</h3>
+            <p>Requieren atención</p>
         </div>
         {% endif %}
 
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-file-invoice"></i> Boletas</h4>
-            <p>{{ boletas_emitidas }}</p>
-            <small>Emitidas este mes</small>
+            <h3>{{ boletas_emitidas }}</h3>
+            <p>Emitidas este mes</p>
         </div>
         {% endif %}
 
-    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-        <div class="tarjeta-estadistica">
+        {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+        <div class="stat-tarjeta">
             <h4><i class="fas fa-credit-card"></i> Pagos</h4>
-            <p>{{ pagos_realizados }}</p>
-            <small>Procesados este mes</small>
+            <h3>{{ pagos_realizados }}</h3>
+            <p>Procesados este mes</p>
         </div>
         {% endif %}
     </div>
 
-    <div class="accesos-rapidos">
-        <h3><i class="fas fa-bolt"></i> Accesos Rápidos</h3>
-        
-        <div>
-            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-            <a href="{% url 'sistemaGestion:lista_clientes' %}" class="boton">
-                <i class="fas fa-users"></i> Ver Clientes
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
-            <a href="{% url 'sistemaGestion:lista_medidores' %}" class="boton">
-                <i class="fas fa-tachometer-alt"></i> Ver Medidores
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
-            <a href="{% url 'sistemaGestion:lista_lecturas' %}" class="boton">
-                <i class="fas fa-chart-line"></i> Ver Lecturas
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-            <a href="{% url 'sistemaGestion:lista_boletas' %}" class="boton">
-                <i class="fas fa-file-invoice"></i> Ver Boletas
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-            <a href="{% url 'sistemaGestion:lista_pagos' %}" class="boton">
-                <i class="fas fa-credit-card"></i> Ver Pagos
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'admin' or request.session.rol == 'finanzas' %}
-            <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="boton">
-                <i class="fas fa-dollar-sign"></i> Ver Tarifas
-            </a>
-            {% endif %}
-
-            {% if request.session.rol == 'Administrador' %}
-            <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="boton">
-                <i class="fas fa-user-cog"></i> Ver Usuarios
-            </a>
-            {% endif %}
+    <!-- Accesos Rápidos -->
+    <div class="contenido-principal">
+        <div class="encabezado-pagina">
+            <h2><i class="fas fa-rocket"></i> Accesos Rápidos</h2>
         </div>
-    </div>
-    
+        
+        <!-- Botones de Crear -->
+        <div class="mb-4">
+            <h6 class="text-muted mb-3">Crear Nuevo</h6>
+            <div class="row g-2">
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_contrato' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-file-contract me-2"></i> Nuevo Contrato
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.session.rol == 'Administrador' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_tarifa' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-coins me-2"></i> Nueva Tarifa
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_notificacion_pago' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-bell me-2"></i> Notificación de Pago
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_notificacion_lectura' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-bell me-2"></i> Notificación de Lectura
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_cliente' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-user-plus me-2"></i> Nuevo Cliente
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_lectura' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-plus-circle me-2"></i> Nueva Lectura
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_boleta' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-file-invoice me-2"></i> Nueva Boleta
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_pago' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-hand-holding-usd me-2"></i> Registrar Pago
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:crear_usuario' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-user-shield me-2"></i> Nuevo Usuario
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Botones de Consultar -->
+        <div class="mb-4">
+            <h6 class="text-muted mb-3">Consultar</h6>
+            <div class="row g-2">
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_clientes' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-users me-2"></i> Ver Clientes
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_usuarios' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-user-shield me-2"></i> Ver Usuarios
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_contratos' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-file-contract me-2"></i> Ver Contratos
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.session.rol == 'Administrador' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_tarifas' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-coins me-2"></i> Ver Tarifas
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' or request.session.rol == 'Eléctrico' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_notificaciones' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-bell me-2"></i> Ver Notificaciones
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_medidores' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i> Ver Medidores
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'sistemaGestion:lista_boletas' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-file-invoice me-2"></i> Ver Boletas
+                    </a>
+                </div>
+                {% endif %}
 {% endblock %}
