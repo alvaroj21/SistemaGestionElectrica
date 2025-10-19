@@ -100,18 +100,12 @@
                         </a>
                         {% endif %}
 
-                        {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
-                        <a class="nav-link" href="{% url 'sistemaGestion:lista_boletas' %}">
-                            <i class="fas fa-file-invoice"></i>
-                            <span>Boletas</span>
-                        </a>
-                        {% endif %}
                     </nav>
 
-                    <!-- GESTIÓN COMERCIAL -->
+                    <!-- GESTIÓN FINANZAS -->
                     {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                     <nav class="nav flex-column">
-                        <h6 class="text-muted px-3 py-2 mb-1">Comercial</h6>
+                        <h6 class="text-muted px-3 py-2 mb-1">Finanzas</h6>
                         
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_contratos' %}">
                             <i class="fas fa-handshake"></i>
@@ -127,6 +121,12 @@
                             <i class="fas fa-dollar-sign"></i>
                             <span>Tarifas</span>
                         </a>
+                    {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
+                        <a class="nav-link" href="{% url 'sistemaGestion:lista_boletas' %}">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>Boletas</span>
+                        </a>
+                        {% endif %}
                     </nav>
                     {% endif %}
 
