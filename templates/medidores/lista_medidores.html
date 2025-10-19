@@ -58,13 +58,7 @@
                 {% for medidor in medidores %}
                 <tr>
                     <td>{{ medidor.numero_medidor }}</td>
-                    <td>
-                        {% if medidor.estado_medidor == 'Activo' %}
-                            <span>Activo</span>
-                        {% else %}
-                            <span>{{ medidor.estado_medidor }}</span>
-                        {% endif %}
-                    </td>
+                    <td>{{ medidor.estado }}</td>
                     <td>{{ medidor.fecha_instalacion }}</td>
                     <td>{{ medidor.ubicacion }}</td>
                     <td class="text-center">
