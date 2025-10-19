@@ -1,4 +1,4 @@
-/* LOGIN - Adaptado al estilo del sistema */ 
+/* LOGIN*/ 
 .login-page {
     background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
     min-height: 100vh;
