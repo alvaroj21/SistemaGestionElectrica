@@ -60,11 +60,7 @@
                     <td>{{ contrato.fecha_inicio }}</td>
                     <td>{{ contrato.fecha_fin }}</td>
                     <td>
-                        {% if contrato.estado == 'Activo' %}
-                            <span>Activo</span>
-                        {% else %}
-                            <span>Inactivo</span>
-                        {% endif %}
+                        {{ contrato.estado }}
                     </td>
                     <td class="text-center">
                         <a href="{% url 'sistemaGestion:detalle_contrato' contrato.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
