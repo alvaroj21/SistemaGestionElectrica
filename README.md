@@ -7,6 +7,7 @@ Este registro de datos se complementa con la idea de poder entregar informacion 
 Actualmente la plataforma se encuentra en desarrollo, lo presentado actualmente solo es un ejemplo y prototipo de lo que se desea realizar con este proyecto.
 
 La pagina se encuentra alojada actualmente en: https://sgem.pythonanywhere.com/ para su testeo.
+Dada las limitaciones de pythonanywhere la base de datos configurada es distinta a la usada por clever cloud, es decir, es una base de datos de mysql que proviene desde el mismo pythonanywhere asi que los datos van a diferir de lo utilizado en clever cloud.
 
 Para usar el proyecto:
 
