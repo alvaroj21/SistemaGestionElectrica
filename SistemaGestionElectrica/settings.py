@@ -30,7 +30,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 # Agrega 'sistemaGestion' a la lista de aplicaciones instaladas
 INSTALLED_APPS = [
