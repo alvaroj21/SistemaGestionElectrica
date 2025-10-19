@@ -147,7 +147,7 @@ def lista_clientes(request):
     
     # Ordenar los resultados por número de cliente
     clientes = clientes.order_by('numero_cliente')
-    page_obj = paginar_objetos(request, clientes)
+    page_obj = paginar_objetos(request, clientes,)
     
     #en datos se pasa el username quien esta logueado el nombre de la persona que esta logueada
     #los clientes usando la paginacion, la pagina actual y los filtros de busqueda aplicados
