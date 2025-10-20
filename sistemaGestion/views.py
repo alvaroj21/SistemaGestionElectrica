@@ -106,7 +106,7 @@ def dashboard(request):
         'total_medidores': Medidor.objects.count(),
         'lecturas_pendientes': Lectura.objects.count(), 
         'boletas_emitidas': Boleta.objects.count(),
-        'pagos_realizados': Pago.objects.filter(estado_pago='Confirmado').count(),
+        'pagos_realizados': Pago.objects.filter(estado_pago='Pagado').count(),
     }
     return render(request, 'dashboard.html', datos)
 
