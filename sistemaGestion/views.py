@@ -698,7 +698,7 @@ def editar_lectura(request, lectura_id):
         form = LecturaForm(request.POST, instance=lectura)
         if form.is_valid():
             lectura_actualizada = form.save()
-            messages.success(request, f'Lectura "{lectura_actualizada.id}" actualizada exitosamente')
+            messages.success(request, f'Lectura actualizada exitosamente')
             return redirect('sistemaGestion:lista_lecturas')
     else:
         form = LecturaForm(instance=lectura)
@@ -726,9 +726,8 @@ def eliminar_lectura(request, lectura_id):
         messages.error(request, 'La lectura no existe')
         return redirect('sistemaGestion:lista_lecturas')
     if request.method == 'POST':
-        nombre_cliente = lectura.nombre
         lectura.delete()
-        messages.success(request, f'Lectura "{nombre_cliente}" eliminada exitosamente')
+        messages.success(request, f'Lectura eliminada exitosamente')
         return redirect('sistemaGestion:lista_lecturas')
     datos = {
         'username': request.session.get('username'),
@@ -864,7 +863,7 @@ def editar_boleta(request, boleta_id):
         form = BoletaForm(request.POST, instance=boleta)
         if form.is_valid():
             boleta_actualizada = form.save()
-            messages.success(request, f'Boleta "{boleta_actualizada.id}" actualizada exitosamente')
+            messages.success(request, f'Boleta actualizada exitosamente')
             return redirect('sistemaGestion:lista_boletas')
     else:
         form = BoletaForm(instance=boleta)
@@ -892,9 +891,8 @@ def eliminar_boleta(request, boleta_id):
         messages.error(request, 'La boleta no existe')
         return redirect('sistemaGestion:lista_boletas')
     if request.method == 'POST':
-        nombre_cliente = boleta.nombre_cliente
         boleta.delete()
-        messages.success(request, f'Boleta "{nombre_cliente}" eliminada exitosamente')
+        messages.success(request, f'Boleta eliminada exitosamente')
         return redirect('sistemaGestion:lista_boletas')
     datos = {
         'username': request.session.get('username'),
@@ -1019,7 +1017,7 @@ def editar_tarifa(request, tarifa_id):
         form = TarifaForm(request.POST, instance=tarifa)
         if form.is_valid():
             tarifa_actualizada = form.save()
-            messages.success(request, f'Tarifa "{tarifa_actualizada.nombre_tarifa}" actualizada exitosamente')
+            messages.success(request, f'Tarifa actualizada exitosamente')
             return redirect('sistemaGestion:lista_tarifas')
     else:
         form = TarifaForm(instance=tarifa)
@@ -1047,9 +1045,8 @@ def eliminar_tarifa(request, tarifa_id):
         messages.error(request, 'La tarifa no existe')
         return redirect('sistemaGestion:lista_tarifas')
     if request.method == 'POST':
-        nombre_tarifa = tarifa.nombre_tarifa
         tarifa.delete()
-        messages.success(request, f'Tarifa "{nombre_tarifa}" eliminada exitosamente')
+        messages.success(request, f'Tarifa eliminada exitosamente')
         return redirect('sistemaGestion:lista_tarifas')
     datos = {
         'username': request.session.get('username'),
@@ -1328,7 +1325,7 @@ def editar_pago(request, pago_id):
         form = PagoForm(request.POST, instance=pago)
         if form.is_valid():
             pago_actualizado = form.save()
-            messages.success(request, f'Pago "{pago_actualizado.id}" actualizado exitosamente')
+            messages.success(request, f'Pago actualizado exitosamente')
             return redirect('sistemaGestion:lista_pagos')
     else:
         form = PagoForm(instance=pago)
@@ -1356,9 +1353,8 @@ def eliminar_pago(request, pago_id):
         messages.error(request, 'El pago no existe')
         return redirect('sistemaGestion:lista_pagos')
     if request.method == 'POST':
-        nombre_cliente = pago.nombre_cliente
         pago.delete()
-        messages.success(request, f'Pago "{nombre_cliente}" eliminado exitosamente')
+        messages.success(request, f'Pago eliminado exitosamente')
         return redirect('sistemaGestion:lista_pagos')
     datos = {
         'username': request.session.get('username'),

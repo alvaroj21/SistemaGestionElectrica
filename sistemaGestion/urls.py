@@ -50,8 +50,8 @@ urlpatterns = [
     path('pagos/', views.lista_pagos, name='lista_pagos'), # Página de lista de pagos
     path('pagos/crear/', views.crear_pago, name='crear_pago'),  # Página para crear un nuevo pago
     path('pagos/<int:pago_id>/', views.detalle_pago, name='detalle_pago'), # Detalle de pago
-    path('pagos/eliminar/<int:pagos_id>/', views.eliminar_pago, name='eliminar_pago'), # Eliminar pago
-    path('pagos/editar/<int:pagos_id>/', views.editar_pago, name='editar_pago'), # Editar pago
+    path('pagos/eliminar/<int:pago_id>/', views.eliminar_pago, name='eliminar_pago'), # Eliminar pago
+    path('pagos/editar/<int:pago_id>/', views.editar_pago, name='editar_pago'), # Editar pago
     
     # Usuarios
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'), # Página de lista de usuarios
