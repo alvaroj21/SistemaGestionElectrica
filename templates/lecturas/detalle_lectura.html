@@ -34,7 +34,105 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="d-flex gap-2">
+
+            <!-- Información de Medidor y Trazabilidad -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-sitemap me-2"></i> Trazabilidad Completa
+                </h5>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2">
+                                    <strong><i class="fas fa-user me-2"></i>Cliente:</strong> 
+                                    {% if cliente %}
+                                        {{ cliente.nombre }} ({{ cliente.numero_cliente }})
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                                <p class="mb-2">
+                                    <strong><i class="fas fa-file-contract me-2"></i>Contrato:</strong> 
+                                    {% if contrato %}
+                                        {{ contrato.numero_contrato }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                                <p class="mb-2">
+                                    <strong><i class="fas fa-tachometer-alt me-2"></i>Medidor:</strong> 
+                                    {% if medidor %}
+                                        {{ medidor.numero_medidor }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2">
+                                    <strong><i class="fas fa-map-marker-alt me-2"></i>Ubicación:</strong> 
+                                    {% if medidor %}
+                                        {{ medidor.ubicacion }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                                <p class="mb-2">
+                                    <strong><i class="fas fa-bolt me-2"></i>Consumo:</strong> 
+                                    {{ lectura.consumo_energetico }} kWh
+                                </p>
+                            </div>
+                        </div>
+                        {% if medidor %}
+                        <div class="mt-2">
+                            <a href="{% url 'sistemaGestion:detalle_medidor' medidor.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i> Ver Medidor Completo
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boleta Asociada -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-file-invoice me-2"></i> Boleta Generada
+                </h5>
+                {% if boleta %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Monto Total:</strong> ${{ boleta.monto_total }}</p>
+                                    <p class="mb-2"><strong>Fecha Emisión:</strong> {{ boleta.fecha_emision }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Fecha Vencimiento:</strong> {{ boleta.fecha_vencimiento }}</p>
+                                    <p class="mb-2"><strong>Estado:</strong> 
+                                        <span class="badge {% if boleta.estado == 'Pagada' %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ boleta.estado }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'sistemaGestion:detalle_boleta' boleta.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i> Ver Boleta Completa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Esta lectura aún no tiene boleta generada.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
                 <a href="{% url 'sistemaGestion:editar_lectura' lectura.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar Lectura
                 </a>

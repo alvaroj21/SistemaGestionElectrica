@@ -18,12 +18,34 @@
             <table class="table table-bordered table-striped mb-4">
                 <tbody>
                     <tr>
+                        <th class="w-50">Estado</th>
+                        <td>
+                            {% if notificacion.revisada %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Revisado</span>
+                            {% else %}
+                                <span class="badge bg-warning"><i class="fas fa-bell"></i> Pendiente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="w-50">Fecha Notificación</th>
+                        <td>{{ notificacion.fecha_notificacion|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
                         <th class="w-50">Registro de Consumo</th>
                         <td>{{ notificacion.registro_consumo }}</td>
                     </tr>
                 </tbody>
             </table>
             <div class="d-flex gap-2">
+                {% if not notificacion.revisada and request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
+                <form method="POST" action="{% url 'sistemaGestion:marcar_notificacion_revisada' 'lectura' notificacion.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('¿Marcar esta notificación como revisado?')">
+                        <i class="fas fa-check-circle me-1"></i> Marcar como Revisado
+                    </button>
+                </form>
+                {% endif %}
                 <a href="{% url 'sistemaGestion:editar_notificacion_lectura' notificacion.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar
                 </a>

@@ -1,7 +1,10 @@
 from django import forms
 from datetime import date, timedelta
 import re
-from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura
+from .models import (
+    Cliente, Contrato, Tarifa, Tarifa_has_Contrato, Medidor, Lectura, 
+    Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura
+)
 #se importan los modelos necesarios para los formularios y el timedelta y date para validaciones de fechas
 #timedelta permite hacer operaciones con fechas como sumar o restar días
 #time permite obtener la fecha actual para validaciones
@@ -9,6 +12,21 @@ from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, U
 #los widgets permiten personalizar los campos del formulario con atributos HTML como clases CSS o placeholders o tipos de input
 #los labels permiten definir etiquetas personalizadas para los campos del formulario
 # y los def clean_<campo> permiten definir validaciones personalizadas para cada campo
+
+# ==========================================================
+# NOTA IMPORTANTE: OPCIÓN 4 - LÓGICA EN VISTAS
+# ==========================================================
+# Los formularios en este archivo NO utilizan __init__ personalizado.
+# Toda la lógica de formateo de fechas y pre-carga de datos se maneja
+# directamente en las vistas (views.py) para mayor simplicidad y claridad.
+# 
+# Ventajas de este enfoque:
+# - Código más simple en formularios
+# - Lógica visible donde se usa (en las vistas)
+# - Más fácil de depurar
+# - No requiere conocimiento de *args/**kwargs
+# ==========================================================
+
 # ==========================================================
 # FORMULARIO CLIENTE
 # ==========================================================
@@ -81,21 +99,34 @@ class ClienteForm(forms.ModelForm):
 # FORMULARIO CONTRATO
 # ==========================================================
 class ContratoForm(forms.ModelForm):
+    # Campo adicional para seleccionar UNA tarifa mediante un menú desplegable
+    tarifa = forms.ModelChoiceField(
+        queryset=Tarifa.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False,
+        label='Tarifa Aplicable',
+        help_text='Selecciona la tarifa que se aplicará a este contrato',
+        empty_label='-- Selecciona una tarifa --'
+    )
+    
     class Meta:
         model = Contrato
-        fields = ['fecha_inicio', 'fecha_fin', 'estado', 'numero_contrato']
+        fields = ['cliente', 'fecha_inicio', 'fecha_fin', 'estado', 'numero_contrato']
         widgets = {
-            'fecha_inicio': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'fecha_fin': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'cliente': forms.Select(attrs={'class': 'form-control'}),
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+            'fecha_fin': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'numero_contrato': forms.TextInput(attrs={'placeholder': 'Ejemplo: CON-001', 'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-control'})
         }
         labels = {
+            'cliente': 'Cliente',
             'fecha_inicio': 'Fecha de Inicio',
             'fecha_fin': 'Fecha de Finalización',
             'estado': 'Estado del Contrato',
             'numero_contrato': 'Número de Contrato'
         }
+    
     #def clean_numero_contrato se encarga de validar que el número de contrato tenga un formato correcto y que no exista otro contrato con el mismo número
     def clean_numero_contrato(self):
         numero = self.cleaned_data.get('numero_contrato')
@@ -161,7 +192,7 @@ class TarifaForm(forms.ModelForm):
         model = Tarifa
         fields = ['fecha_vigencia', 'precio', 'tipo_tarifa', 'tipo_cliente']
         widgets = {
-            'fecha_vigencia': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_vigencia': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'precio': forms.NumberInput(attrs={'placeholder': 'Ejemplo: 150', 'class': 'form-control', 'min': '1'}),
             'tipo_tarifa': forms.Select(attrs={'class': 'form-control'}),
             'tipo_cliente': forms.Select(attrs={'class': 'form-control'})
@@ -172,6 +203,7 @@ class TarifaForm(forms.ModelForm):
             'tipo_tarifa': 'Tipo de Tarifa',
             'tipo_cliente': 'Tipo de Cliente'
         }
+    
     #def clean_precio se encarga de validar que el precio sea mayor a 0
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')
@@ -194,16 +226,18 @@ class TarifaForm(forms.ModelForm):
 class MedidorForm(forms.ModelForm):
     class Meta:
         model = Medidor
-        fields = ['numero_medidor', 'fecha_instalacion', 'ubicacion', 'estado_medidor', 'imagen_ubicacion', 'imagen_fisica']
+        fields = ['contrato', 'numero_medidor', 'fecha_instalacion', 'ubicacion', 'estado_medidor', 'imagen_ubicacion', 'imagen_fisica']
         widgets = {
+            'contrato': forms.Select(attrs={'class': 'form-control'}),
             'numero_medidor': forms.TextInput(attrs={'placeholder': 'Ejemplo: MED-001','class': 'form-control'}),
-            'fecha_instalacion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_instalacion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'ubicacion': forms.TextInput(attrs={'placeholder': 'Dirección o ubicación del medidor','class': 'form-control'}),
             'estado_medidor': forms.Select(attrs={'class': 'form-control'}),
             'imagen_ubicacion': forms.URLInput(attrs={'placeholder': 'https://ejemplo.com/mapa-ubicacion.jpg','class': 'form-control'}),
             'imagen_fisica': forms.URLInput(attrs={'placeholder': 'https://ejemplo.com/foto-medidor.jpg','class': 'form-control'})
         }
         labels = {
+            'contrato': 'Contrato Asociado',
             'numero_medidor': 'Número de Medidor',
             'fecha_instalacion': 'Fecha de Instalación',
             'ubicacion': 'Ubicación',
@@ -211,6 +245,7 @@ class MedidorForm(forms.ModelForm):
             'imagen_ubicacion': 'URL Imagen Mapa/Ubicación (opcional)',
             'imagen_fisica': 'URL Imagen Física del Medidor (opcional)'
         }
+    
     #def clean_numero_medidor se encarga de validar que el número de medidor tenga un formato correcto y que no exista otro medidor con el mismo número
     def clean_numero_medidor(self):
         numero = self.cleaned_data.get('numero_medidor')
@@ -254,19 +289,22 @@ class MedidorForm(forms.ModelForm):
 class LecturaForm(forms.ModelForm):
     class Meta:
         model = Lectura
-        fields = ['fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual']
+        fields = ['medidor', 'fecha_lectura', 'consumo_energetico', 'tipo_lectura', 'lectura_actual']
         widgets = {
-            'fecha_lectura': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'medidor': forms.Select(attrs={'class': 'form-control'}),
+            'fecha_lectura': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'consumo_energetico': forms.NumberInput(attrs={'placeholder': 'Consumo en kWh','class': 'form-control','min': '0'}),
             'tipo_lectura': forms.Select(attrs={'class': 'form-control'}),
             'lectura_actual': forms.NumberInput(attrs={'placeholder': 'Lectura actual del medidor','class': 'form-control','min': '0'})
         }
         labels = {
+            'medidor': 'Medidor',
             'fecha_lectura': 'Fecha de Lectura',
             'consumo_energetico': 'Consumo Energético (kWh)',
             'tipo_lectura': 'Tipo de Lectura',
             'lectura_actual': 'Lectura Actual'
         }
+    
     #def clean_lectura_actual se encarga de validar que la lectura actual sea un número positivo
     def clean_lectura_actual(self):
         lectura = self.cleaned_data.get('lectura_actual')
@@ -310,22 +348,24 @@ class LecturaForm(forms.ModelForm):
 class BoletaForm(forms.ModelForm):  
     class Meta:
         model = Boleta
-        fields = ['fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico', 'estado']
+        fields = ['lectura', 'fecha_emision', 'fecha_vencimiento', 'monto_total', 'consumo_energetico', 'estado']
         widgets = {
-            'fecha_emision': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'lectura': forms.Select(attrs={'class': 'form-control'}),
+            'fecha_emision': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'monto_total': forms.NumberInput(attrs={'placeholder': 'Monto total a pagar','class': 'form-control','min': '1'}),
             'consumo_energetico': forms.TextInput(attrs={'placeholder': 'Ejemplo: 150 kWh','class': 'form-control'}),
-            'estado': forms.Select(attrs={'class': 'form-control'})
+            'estado': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
+            'lectura': 'Lectura Asociada',
             'fecha_emision': 'Fecha de Emisión',
             'fecha_vencimiento': 'Fecha de Vencimiento',
             'monto_total': 'Monto Total ($)',
             'consumo_energetico': 'Consumo Energético',
-            'estado': 'Estado'
+            'estado': 'Estado de la Boleta',
         }
-    #def clean_monto_total se encarga de validar que el monto total sea mayor a 0
+    
     def clean_monto_total(self):
         monto = self.cleaned_data.get('monto_total')
         
@@ -336,7 +376,7 @@ class BoletaForm(forms.ModelForm):
             raise forms.ValidationError("El monto total debe ser mayor a cero.")
         
         return monto
-    #def clean_fecha_vencimiento se encarga de validar que la fecha de vencimiento sea posterior a la fecha de emisión y que tenga al menos 15 días para pagar
+    
     def clean_fecha_vencimiento(self):
         fecha_emision = self.cleaned_data.get('fecha_emision')
         fecha_vencimiento = self.cleaned_data.get('fecha_vencimiento')
@@ -357,24 +397,44 @@ class BoletaForm(forms.ModelForm):
 # FORMULARIO PAGO
 # ==========================================================
 class PagoForm(forms.ModelForm):
+    # Campo de ayuda para mostrar información de la boleta
+    info_boleta = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control bg-light',
+            'rows': 4,
+            'readonly': 'readonly',
+            'style': 'font-weight: bold; color: #333;'
+        }),
+        label='Información de la Boleta Seleccionada',
+        help_text='Selecciona una boleta para ver su información'
+    )
+    
     class Meta:
         model = Pago
-        fields = ['fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia', 'estado_pago']
+        fields = ['boleta', 'fecha_pago', 'monto_pagado', 'metodo_pago', 'numero_referencia', 'estado_pago']
         widgets = {
-            'fecha_pago': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'monto_pagado': forms.NumberInput(attrs={'placeholder': 'Monto pagado','class': 'form-control','min': '1'}),
+            'boleta': forms.Select(attrs={'class': 'form-control', 'onchange': 'mostrarInfoBoleta(this)'}),
+            'fecha_pago': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+            'monto_pagado': forms.NumberInput(attrs={
+                'placeholder': 'Monto pagado',
+                'class': 'form-control',
+                'min': '1',
+                'id': 'id_monto_pagado'
+            }),
             'metodo_pago': forms.Select(attrs={'class': 'form-control'}),
             'numero_referencia': forms.TextInput(attrs={'placeholder': 'Número de referencia o comprobante','class': 'form-control'}),
             'estado_pago': forms.Select(attrs={'class': 'form-control'})
         }
         labels = {
+            'boleta': 'Boleta a Pagar',
             'fecha_pago': 'Fecha de Pago',
             'monto_pagado': 'Monto Pagado ($)',
             'metodo_pago': 'Método de Pago',
             'numero_referencia': 'Número de Referencia',
             'estado_pago': 'Estado del Pago'
         }
-    #def clean_numero_referencia se encarga de validar que el número de referencia no esté vacío y que no exista otro pago con el mismo número
+    
     def clean_numero_referencia(self):
         referencia = self.cleaned_data.get('numero_referencia')
 
@@ -389,14 +449,14 @@ class PagoForm(forms.ModelForm):
             raise forms.ValidationError("Ya existe un pago con este número de referencia.")
         
         return referencia
-    #def clean_monto_pagado se encarga de validar que el monto pagado sea mayor a 0
+    
     def clean_monto_pagado(self):
         monto = self.cleaned_data.get('monto_pagado')
         
         if monto <= 0:
             raise forms.ValidationError("El monto pagado debe ser mayor a cero.")
         return monto
-    #def clean_fecha_pago se encarga de validar que la fecha de pago no sea futura
+    
     def clean_fecha_pago(self):
         fecha_pago = self.cleaned_data.get('fecha_pago')
         
@@ -404,6 +464,31 @@ class PagoForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de pago no puede ser futura.")
         
         return fecha_pago
+    
+    def clean(self):
+        """Validación adicional para verificar que el pago no exceda el saldo pendiente"""
+        cleaned_data = super().clean()
+        boleta = cleaned_data.get('boleta')
+        monto_pagado = cleaned_data.get('monto_pagado')
+        
+        if boleta and monto_pagado:
+            # Calcular el total pagado manualmente sumando todos los pagos de esta boleta
+            from django.db.models import Sum
+            total_pagado_actual = boleta.pagos.aggregate(Sum('monto_pagado'))['monto_pagado__sum'] or 0
+            
+            # Si estamos editando, restar el monto anterior de este pago
+            if self.instance and self.instance.pk:
+                total_pagado_actual -= self.instance.monto_pagado
+            
+            saldo_pendiente = boleta.monto_total - total_pagado_actual
+            
+            # Advertencia si el pago excede el saldo (pero permitirlo)
+            if monto_pagado > saldo_pendiente:
+                self.add_error('monto_pagado', 
+                    f'⚠️ El monto pagado (${monto_pagado:,}) excede el saldo pendiente (${saldo_pendiente:,}). '
+                    f'Se aplicará un pago en exceso de ${(monto_pagado - saldo_pendiente):,}.')
+        
+        return cleaned_data
 
 
 # ==========================================================
@@ -478,11 +563,13 @@ class UsuarioForm(forms.ModelForm):
 class NotificacionPagoForm(forms.ModelForm):
     class Meta:
         model = NotificacionPago
-        fields = ['deuda_pendiente']
+        fields = ['pago', 'deuda_pendiente']
         widgets = {
+            'pago': forms.Select(attrs={'class': 'form-control'}),
             'deuda_pendiente': forms.Textarea(attrs={'placeholder': 'Descripción de la deuda pendiente','class': 'form-control','rows': 3})
         }
         labels = {
+            'pago': 'Pago Asociado',
             'deuda_pendiente': 'Descripción de Deuda Pendiente'
         }
     #def clean_deuda_pendiente se encarga de validar que la información de deuda pendiente no esté vacía
@@ -504,11 +591,13 @@ class NotificacionPagoForm(forms.ModelForm):
 class NotificacionLecturaForm(forms.ModelForm):
     class Meta:
         model = NotificacionLectura
-        fields = ['registro_consumo']
+        fields = ['lectura', 'registro_consumo']
         widgets = {
+            'lectura': forms.Select(attrs={'class': 'form-control'}),
             'registro_consumo': forms.Textarea(attrs={'placeholder': 'Descripción del registro de consumo','class': 'form-control','rows': 3})
         }
         labels = {
+            'lectura': 'Lectura Asociada',
             'registro_consumo': 'Registro de Consumo'
         }
     #def clean_registro_consumo se encarga de validar que la información de registro de consumo no esté vacía

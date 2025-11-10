@@ -11,24 +11,41 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'images/icono_pagina.ico' %}">
     <!-- Nuestros estilos personalizados (después de Bootstrap) -->
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 </head>
 <body>
     {% if request.session.user_logged %}
     <div class="contenedor">
         
-        <!-- Navbar Bootstrap -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-            <div class="container-fluid">
+        <!-- Navbar Bootstrap con diseño profesional -->
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm header-custom">
+            <div class="container-fluid header-content">
                 <div class="navbar-brand d-flex align-items-center">
                     <img src="{% static 'images/logo.png' %}" alt="Logo" class="logotipo me-2">
-                    <h1 class="mb-0">Sistema Eléctrico</h1>
+                    <div>
+                        <h1 class="mb-0 header-title">Sistema de Gestión Eléctrica</h1>
+                        <p class="mb-0 header-subtitle" style="font-size: 0.75rem;">Panel de Administración</p>
+                    </div>
                 </div>
                 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Botón de cambio de tema -->
+                    <button class="btn btn-outline-light btn-sm" id="theme-toggle" title="Cambiar tema">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    
                     <!-- Dropdown del usuario -->
                     <div class="dropdown">
                         <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
@@ -65,37 +82,37 @@
         <!-- Layout principal con Bootstrap -->
         <div class="container-fluid p-0">
             <div class="row g-0">
-                <!-- Sidebar -->
-                <aside class="col-md-3 col-lg-2 barra-lateral">
+                <!-- Sidebar con diseño diagonal -->
+                <aside class="col-md-3 col-lg-2 sidebar-diagonal">
                     <!-- INICIO -->
                     <nav class="nav flex-column py-3">
                         <a class="nav-link" href="{% url 'sistemaGestion:dashboard' %}">
-                            <i class="fas fa-home"></i> 
+                            <span class="icon"><i class="fas fa-home"></i></span>
                             <span>Inicio</span>
                         </a>
                     </nav>
 
                     <!-- ACCESOS PRINCIPALES -->
                     <nav class="nav flex-column">
-                        <h6 class="text-muted px-3 py-2 mb-1">Principal</h6>
+                        <h6 class="text-muted px-3 py-2 mb-1" style="color: rgba(255,255,255,0.5) !important;">Principal</h6>
                         
                         {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_clientes' %}">
-                            <i class="fas fa-users"></i>
+                            <span class="icon"><i class="fas fa-users"></i></span>
                             <span>Clientes</span>
                         </a>
                         {% endif %}
 
                         {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_medidores' %}">
-                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                             <span>Medidores</span>
                         </a>
                         {% endif %}
 
                         {% if request.session.rol == 'Administrador' or request.session.rol == 'Eléctrico' %}
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_lecturas' %}">
-                            <i class="fas fa-chart-line"></i>
+                            <span class="icon"><i class="fas fa-chart-line"></i></span>
                             <span>Lecturas</span>
                         </a>
                         {% endif %}
@@ -105,25 +122,25 @@
                     <!-- GESTIÓN FINANZAS -->
                     {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                     <nav class="nav flex-column">
-                        <h6 class="text-muted px-3 py-2 mb-1">Finanzas</h6>
+                        <h6 class="text-muted px-3 py-2 mb-1" style="color: rgba(255,255,255,0.5) !important;">Finanzas</h6>
                         
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_contratos' %}">
-                            <i class="fas fa-handshake"></i>
+                            <span class="icon"><i class="fas fa-handshake"></i></span>
                             <span>Contratos</span>
                         </a>
                         
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_pagos' %}">
-                            <i class="fas fa-credit-card"></i>
+                            <span class="icon"><i class="fas fa-credit-card"></i></span>
                             <span>Pagos</span>
                         </a>
                         
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_tarifas' %}">
-                            <i class="fas fa-dollar-sign"></i>
+                            <span class="icon"><i class="fas fa-dollar-sign"></i></span>
                             <span>Tarifas</span>
                         </a>
                     {% if request.session.rol == 'Administrador' or request.session.rol == 'Finanzas' %}
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_boletas' %}">
-                            <i class="fas fa-file-invoice"></i>
+                            <span class="icon"><i class="fas fa-file-invoice"></i></span>
                             <span>Boletas</span>
                         </a>
                         {% endif %}
@@ -133,10 +150,10 @@
                     <!-- ADMINISTRACIÓN -->
                     {% if request.session.rol == 'Administrador' %}
                     <nav class="nav flex-column">
-                        <h6 class="text-muted px-3 py-2 mb-1">Sistema</h6>
+                        <h6 class="text-muted px-3 py-2 mb-1" style="color: rgba(255,255,255,0.5) !important;">Sistema</h6>
                         
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_usuarios' %}">
-                            <i class="fas fa-user-cog"></i>
+                            <span class="icon"><i class="fas fa-user-cog"></i></span>
                             <span>Usuarios</span>
                         </a>
                     </nav>
@@ -144,7 +161,7 @@
 
                     <nav class="nav flex-column">
                         <a class="nav-link" href="{% url 'sistemaGestion:lista_notificaciones' %}">
-                            <i class="fas fa-bell"></i>
+                            <span class="icon"><i class="fas fa-bell"></i></span>
                             <span>Notificaciones</span>
                         </a>
                     </nav>
@@ -178,7 +195,83 @@
     {% endblock %}
     {% endif %}
     
+    
+    <!-- jQuery (requerido por Select2) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap Bundle (incluye Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
+    
+    {% load static %}
+    <script src="{% static 'js/theme-toggle.js' %}"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+    
+    <!-- Inicializar Select2 
+    ==========================================
+    Select2 es una librería que mejora los elementos <select> nativos del HTML,
+    convirtiéndolos en menús desplegables avanzados con:
+    
+    ✅ Búsqueda en tiempo real: Filtra opciones mientras escribes
+    ✅ Escalabilidad: Maneja miles de opciones sin problemas de rendimiento
+    ✅ Interfaz moderna: Diseño limpio integrado con Bootstrap 5
+    ✅ Soporte multiidioma: Configurado en español
+    ✅ Accesibilidad: Permite limpiar la selección fácilmente
+    
+    Esta configuración se aplica AUTOMÁTICAMENTE a todos los <select> del sitio.
+    Si necesitas excluir algún select específico, agrégale la clase 'no-select2':
+    
+    Ejemplo: <select class="no-select2">...</select>
+    
+    Configuración actual:
+    - theme: 'bootstrap-5' → Estilo consistente con Bootstrap
+    - language: 'es' → Mensajes en español
+    - placeholder: 'Seleccionar...' → Texto por defecto
+    - allowClear: true → Botón para limpiar selección
+    - width: '100%' → Ocupa todo el ancho disponible
+    - matcher: Búsqueda sin distinción de mayúsculas/minúsculas
+    ========================================== -->
+    <script>
+        $(document).ready(function() {
+            // Aplicar Select2 a todos los selects del formulario
+            $('select').not('.no-select2').select2({
+                theme: 'bootstrap-5',
+                language: 'es',
+                placeholder: function() {
+                    return $(this).data('placeholder') || 'Seleccionar...';
+                },
+                allowClear: true,
+                width: '100%',
+                dropdownAutoWidth: true,
+                matcher: function(params, data) {
+                    // Si no hay búsqueda, mostrar todo
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    
+                    // No mostrar el placeholder en resultados
+                    if (typeof data.text === 'undefined') {
+                        return null;
+                    }
+                    
+                    // Búsqueda sin distinción de mayúsculas/minúsculas
+                    var term = params.term.toLowerCase();
+                    var text = data.text.toLowerCase();
+                    
+                    if (text.indexOf(term) > -1) {
+                        return data;
+                    }
+                    
+                    return null;
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
 

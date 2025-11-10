@@ -13,15 +13,25 @@
         <h3><i class="fas fa-search"></i> Filtros de búsqueda</h3>
         <form method="GET" class="filtro-form">
             <div class="row align-items-end">
-                <div class="col-md-3 mb-3">
+                <div class="col-md-2 mb-3">
+                    <label class="form-label small">Tipo</label>
                     <select name="tipo" class="form-control">
-                        <option value="">Tipo de notificación</option>
-                        <option value="Lectura" {% if search_tipo == 'Lectura' %}selected{% endif %}>Notificaciones de Lectura</option>
-                        <option value="Pago" {% if search_tipo == 'Pago' %}selected{% endif %}>Notificaciones de Pago</option>
+                        <option value="">Todos</option>
+                        <option value="Lectura" {% if search_tipo == 'Lectura' %}selected{% endif %}>Lectura</option>
+                        <option value="Pago" {% if search_tipo == 'Pago' %}selected{% endif %}>Pago</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="mensaje" class="form-control" placeholder="Buscar en mensaje" value="{{ search_mensaje }}">
+                <div class="col-md-2 mb-3">
+                    <label class="form-label small">Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="pendiente" {% if search_estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="revisada" {% if search_estado == 'revisada' %}selected{% endif %}>Revisado</option>
+                    </select>
+                </div>
+                <div class="col-md-5 mb-3">
+                    <label class="form-label small">Buscar en mensaje</label>
+                    <input type="text" name="mensaje" class="form-control" placeholder="Buscar..." value="{{ search_mensaje }}">
                 </div>
                 <div class="col-md-3 mb-3">
                     <div class="d-flex gap-2">
@@ -42,17 +52,33 @@
             <thead class="table-dark">
                 <tr>
                     <th scope="col">Tipo</th>
+                    <th scope="col">Estado</th>
                     <th scope="col">Título</th>
                     <th scope="col">Mensaje</th>
+                    <th scope="col">Fecha</th>
                     <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for notificacion in notificaciones %}
                 <tr>
-                    <td>{{ notificacion.tipo }}</td>
+                    <td>
+                        {% if notificacion.tipo == 'Lectura' %}
+                            <i class="fas fa-bolt text-info"></i> Lectura
+                        {% else %}
+                            <i class="fas fa-dollar-sign text-warning"></i> Pago
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if notificacion.revisada %}
+                            <span class="badge bg-success"><i class="fas fa-check-circle"></i> Revisado</span>
+                        {% else %}
+                            <span class="badge bg-warning"><i class="fas fa-bell"></i> Pendiente</span>
+                        {% endif %}
+                    </td>
                     <td>{{ notificacion.titulo }}</td>
                     <td>{{ notificacion.mensaje|truncatechars:50 }}</td>
+                    <td>{{ notificacion.fecha|date:"d/m/Y H:i" }}</td>
                     <td class="text-center">
                         {% if notificacion.tipo == 'Lectura' %}
                             <a href="{% url 'sistemaGestion:detalle_notificacion_lectura' notificacion.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Ver detalles">
@@ -79,7 +105,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="sin-datos">No hay notificaciones registradas</td>
+                    <td colspan="6" class="sin-datos">No hay notificaciones registradas</td>
                 </tr>
                 {% endfor %}
             </tbody>

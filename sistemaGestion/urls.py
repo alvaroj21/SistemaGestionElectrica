@@ -69,6 +69,7 @@ urlpatterns = [
     
     # Notificaciones
     path('notificaciones/', views.lista_notificaciones, name='lista_notificaciones'), # Página de lista de notificaciones
+    path('notificaciones/marcar-revisada/<str:tipo>/<int:notificacion_id>/', views.marcar_notificacion_revisada, name='marcar_notificacion_revisada'), # Marcar notificación como revisada
     
     # Notificaciones de Lectura
     path('notificaciones/lectura/crear/', views.crear_notificacion_lectura, name='crear_notificacion_lectura'), # Crear notificación de lectura
@@ -81,4 +82,7 @@ urlpatterns = [
     path('notificaciones/pago/<int:notificacion_id>/', views.detalle_notificacion_pago, name='detalle_notificacion_pago'), # Detalle de notificación de pago
     path('notificaciones/pago/editar/<int:notificacion_id>/', views.editar_notificacion_pago, name='editar_notificacion_pago'), # Editar notificación de pago
     path('notificaciones/pago/eliminar/<int:notificacion_id>/', views.eliminar_notificacion_pago, name='eliminar_notificacion_pago'), # Eliminar notificación de pago
+    
+    # Reportes PDF
+    path('boletas/<int:boleta_id>/pdf/', views.generar_pdf_boleta, name='pdf_boleta'), # Generar PDF de boleta
 ]

@@ -43,7 +43,54 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="d-flex gap-2">
+
+            <!-- Sección de Contratos Asociados -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-file-contract me-2"></i> Contratos Asociados
+                </h5>
+                {% if contratos %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>N° Contrato</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contrato in contratos %}
+                                <tr>
+                                    <td>{{ contrato.numero_contrato }}</td>
+                                    <td>{{ contrato.fecha_inicio }}</td>
+                                    <td>{{ contrato.fecha_fin }}</td>
+                                    <td>
+                                        <span class="badge {% if contrato.estado == 'Activo' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ contrato.estado }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'sistemaGestion:detalle_contrato' contrato.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Este cliente no tiene contratos asociados.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
                 <a href="{% url 'sistemaGestion:editar_cliente' cliente.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar Cliente
                 </a>

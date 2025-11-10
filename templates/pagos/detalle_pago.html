@@ -39,7 +39,110 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="d-flex gap-2">
+
+            <!-- Trazabilidad Completa desde Cliente hasta Pago -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-stream me-2"></i> Trazabilidad Completa
+                </h5>
+                {% if info_completa %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-3 text-muted">Cadena Completa de Relaciones</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-user me-2"></i>Cliente:</strong> 
+                                        {% if info_completa.cliente.nombre %}
+                                            {{ info_completa.cliente.nombre }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-2"><strong><i class="fas fa-file-contract me-2"></i>Contrato:</strong> {{ info_completa.numero_contrato|default:"N/A" }}</p>
+                                    <p class="mb-2"><strong><i class="fas fa-tachometer-alt me-2"></i>Medidor:</strong> {{ info_completa.numero_medidor|default:"N/A" }}</p>
+                                    <p class="mb-2"><strong><i class="fas fa-map-marker-alt me-2"></i>Ubicación:</strong> {{ info_completa.ubicacion_medidor|default:"N/A" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-calendar me-2"></i>Fecha Lectura:</strong> 
+                                        {% if info_completa.fecha_lectura != "N/A" %}
+                                            {{ info_completa.fecha_lectura|date:"d/m/Y" }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-2"><strong><i class="fas fa-bolt me-2"></i>Consumo:</strong> {{ info_completa.consumo_lectura|default:"N/A" }} 
+                                        {% if info_completa.consumo_lectura != "N/A" %}kWh{% endif %}
+                                    </p>
+                                    <p class="mb-2"><strong><i class="fas fa-file-invoice-dollar me-2"></i>Monto Boleta:</strong> 
+                                        {% if info_completa.monto_boleta != "N/A" %}
+                                            ${{ info_completa.monto_boleta|floatformat:0 }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-2"><strong><i class="fas fa-credit-card me-2"></i>Monto Pagado:</strong> ${{ info_completa.monto_pagado|floatformat:0 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Boleta Asociada -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-file-invoice me-2"></i> Boleta Pagada
+                </h5>
+                {% if boleta %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Monto Total:</strong> ${{ boleta.monto_total }}</p>
+                                    <p class="mb-2"><strong>Fecha Emisión:</strong> {{ boleta.fecha_emision }}</p>
+                                    <p class="mb-2"><strong>Fecha Vencimiento:</strong> {{ boleta.fecha_vencimiento }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Consumo:</strong> {{ boleta.consumo_energetico }}</p>
+                                    <p class="mb-2"><strong>Estado:</strong> 
+                                        <span class="badge {% if boleta.estado == 'Pagada' %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ boleta.estado }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'sistemaGestion:detalle_boleta' boleta.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i> Ver Boleta Completa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Este pago no tiene boleta asociada.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Resumen del Pago -->
+            <div class="mt-4">
+                <div class="alert {% if pago.estado_pago == 'Pagado' %}alert-success{% else %}alert-warning{% endif %}">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-check-circle me-2"></i>Estado del Pago
+                    </h6>
+                    <p class="mb-0">
+                        Este pago de <strong>${{ pago.monto_pagado }}</strong> fue realizado el 
+                        <strong>{{ pago.fecha_pago }}</strong> mediante <strong>{{ pago.metodo_pago }}</strong>.
+                    </p>
+                    <p class="mb-0 mt-2">
+                        <small>Referencia: {{ pago.numero_referencia }}</small>
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
                 <a href="{% url 'sistemaGestion:editar_pago' pago.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar Pago
                 </a>

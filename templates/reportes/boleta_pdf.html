@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Boleta de Consumo Eléctrico - {{ boleta.id }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 10px;
+            line-height: 1.4;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header-top {
+            background-color: #1e40af;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .header-content {
+            width: 100%;
+        }
+        
+        .header-left {
+            float: left;
+            width: 65%;
+        }
+        
+        .header-right {
+            float: right;
+            width: 30%;
+            text-align: right;
+        }
+        
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .logo-section {
+            display: inline-block;
+            background-color: white;
+            color: #1e3a8a;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .header-top h1 {
+            font-size: 20px;
+            margin: 8px 0 3px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .header-top .subtitle {
+            font-size: 10px;
+            opacity: 0.9;
+        }
+        
+        .boleta-info {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        
+        .boleta-info strong {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        
+        .header {
+            background-color: #eff6ff;
+            border-left: 4px solid #1e40af;
+            padding: 12px 15px;
+            margin: 0 15px 20px 15px;
+        }
+        
+        .header h2 {
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: #1e40af;
+        }
+        
+        .header p {
+            font-size: 9px;
+            color: #333;
+        }
+        
+        .info-row {
+            width: 100%;
+            margin: 0 15px 20px 15px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 15px;
+        }
+        
+        .info-col {
+            float: left;
+            width: 48%;
+            vertical-align: top;
+        }
+        
+        .info-col:first-child {
+            margin-right: 4%;
+        }
+        
+        .info-section h3 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1e40af;
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 5px;
+        }
+        
+        .info-line {
+            margin: 5px 0;
+            font-size: 9px;
+        }
+        
+        .info-line strong {
+            display: inline-block;
+            width: 90px;
+        }
+        
+        .detalle-consumo {
+            text-align: center;
+            padding: 20px 15px;
+            background-color: #eff6ff;
+            border-left: 4px solid #1e40af;
+            border-right: 4px solid #1e40af;
+            margin: 0 15px 15px 15px;
+        }
+        
+        .detalle-consumo h3 {
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        
+        .consumo-valor {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #1e40af;
+        }
+        
+        .monto-section {
+            text-align: center;
+            padding: 20px 15px;
+            margin: 20px 15px;
+        }
+        
+        .monto-section h3 {
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        
+        .monto-total {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #1e40af;
+        }
+        
+        .fechas-pago {
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .fecha-col {
+            float: left;
+            width: 50%;
+            text-align: center;
+            padding: 8px 0;
+        }
+        
+        .fecha-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        
+        .fecha-valor {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 3px;
+            color: #000;
+        }
+        
+        table {
+            width: 95%;
+            margin: 10px 15px 15px 15px;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            background-color: #000;
+            color: white;
+            padding: 6px;
+            text-align: left;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        
+        table td {
+            padding: 6px;
+            border-bottom: 1px solid #ddd;
+            font-size: 9px;
+        }
+        
+        .section-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 20px 15px 8px 15px;
+            text-transform: uppercase;
+            color: #000;
+        }
+        
+        .nota {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 15px 15px;
+            font-size: 8px;
+            border-left: 3px solid #000;
+        }
+        
+        .info-contacto {
+            font-size: 8px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            border-top: 1px solid #ccc;
+        }
+        
+        .info-contacto p {
+            margin: 4px 0;
+        }
+        
+        .footer {
+            margin-top: 25px;
+            padding-top: 10px;
+            border-top: 2px solid #000;
+            text-align: center;
+            font-size: 8px;
+            color: #333;
+        }
+        
+        .footer p {
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Superior Llamativo -->
+    <div class="header-top">
+        <div class="header-content clearfix">
+            <div class="header-left">
+                <div class="logo-section">⚡ SGE</div>
+                <h1>Boleta de Consumo Eléctrico</h1>
+                <p class="subtitle">Sistema de Gestión Eléctrica | Energía confiable para tu hogar</p>
+            </div>
+            <div class="header-right">
+                <div class="boleta-info">
+                    <strong>N° BOLETA</strong>
+                    <div style="font-size: 18px; font-weight: bold;">{{ boleta.id }}</div>
+                    <div style="margin-top: 5px; font-size: 9px;">{{ boleta.fecha_emision|date:"d/m/Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Encabezado -->
+    <div class="header">
+        <h2>DETALLE DE CONSUMO</h2>
+        <p>Período de facturación correspondiente a la lectura del {{ lectura.fecha_lectura|date:"d/m/Y" }}</p>
+    </div>
+
+    <!-- Información Cliente y Medidor (dos columnas) -->
+    <div class="info-row clearfix">
+        <div class="info-col">
+            <div class="info-section">
+                <h3>DATOS DEL CLIENTE</h3>
+                <div class="info-line"><strong>Nombre:</strong> {{ cliente.nombre }}</div>
+                <div class="info-line"><strong>N° Cliente:</strong> {{ cliente.numero_cliente }}</div>
+                <div class="info-line"><strong>Email:</strong> {{ cliente.email }}</div>
+                <div class="info-line"><strong>Teléfono:</strong> {{ cliente.telefono }}</div>
+            </div>
+        </div>
+        
+        <div class="info-col">
+            <div class="info-section">
+                <h3>DATOS DEL SUMINISTRO</h3>
+                <div class="info-line"><strong>N° Medidor:</strong> {{ medidor.numero_medidor }}</div>
+                <div class="info-line"><strong>Ubicación:</strong> {{ medidor.ubicacion }}</div>
+                <div class="info-line"><strong>N° Contrato:</strong> {{ contrato.numero_contrato }}</div>
+                <div class="info-line"><strong>Fecha Lectura:</strong> {{ lectura.fecha_lectura|date:"d/m/Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalle de Consumo -->
+    <div class="detalle-consumo">
+        <h3>CONSUMO DEL PERÍODO</h3>
+        <div class="consumo-valor">{{ boleta.consumo_energetico }} kWh</div>
+        <p style="font-size: 9px;">Lectura Actual: {{ lectura.lectura_actual }} kWh | Tipo: {{ lectura.tipo_lectura }}</p>
+    </div>
+
+    <!-- Tarifa Aplicada -->
+    {% if tarifa %}
+    <div class="section-title">Tarifa Aplicada</div>
+    <table>
+        <tr>
+            <th>Tipo de Tarifa</th>
+            <th>Tipo de Cliente</th>
+            <th>Precio por kWh</th>
+            <th>Consumo</th>
+            <th style="text-align: right;">Subtotal</th>
+        </tr>
+        <tr>
+            <td>{{ tarifa.tipo_tarifa }}</td>
+            <td>{{ tarifa.tipo_cliente }}</td>
+            <td>${{ tarifa.precio }}</td>
+            <td>{{ boleta.consumo_energetico }} kWh</td>
+            <td style="text-align: right;">${{ boleta.monto_total }}</td>
+        </tr>
+    </table>
+    {% endif %}
+
+    <!-- Resumen de Pago -->
+    <div class="monto-section">
+        <h3>RESUMEN DE PAGO</h3>
+        <div class="monto-total">${{ boleta.monto_total }}</div>
+        <p style="font-size: 9px; margin-top: 5px;">Monto Total de la Boleta</p>
+        
+        {% if pagos %}
+        <div style="margin-top: 15px; padding: 10px; background-color: #e0f2fe; border-radius: 4px;">
+            <p style="font-size: 10px; margin: 3px 0;"><strong>Total Pagado:</strong> ${{ total_pagado }}</p>
+            {% if saldo_pendiente > 0 %}
+            <p style="font-size: 11px; margin: 3px 0; color: #dc2626;"><strong>Saldo Pendiente:</strong> ${{ saldo_pendiente }}</p>
+            {% else %}
+            <p style="font-size: 10px; margin: 3px 0; color: #16a34a;"><strong>✓ Boleta Pagada Completamente</strong></p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="fechas-pago clearfix">
+            <div class="fecha-col">
+                <div class="fecha-label">Vencimiento</div>
+                <div class="fecha-valor">{{ boleta.fecha_vencimiento|date:"d/m/Y" }}</div>
+            </div>
+            <div class="fecha-col">
+                <div class="fecha-label">Estado</div>
+                <div class="fecha-valor">{{ boleta.estado }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Pagos -->
+    {% if pagos %}
+    <div class="section-title">Pagos Registrados</div>
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Método</th>
+            <th>Referencia</th>
+            <th style="text-align: right;">Monto</th>
+        </tr>
+        {% for pago in pagos %}
+        <tr>
+            <td>{{ pago.fecha_pago|date:"d/m/Y" }}</td>
+            <td>{{ pago.metodo_pago }}</td>
+            <td>{{ pago.numero_referencia }}</td>
+            <td style="text-align: right;">${{ pago.monto_pagado }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="border-top: 2px solid #000;">
+            <td colspan="3" style="text-align: right; font-weight: bold;">TOTAL PAGADO:</td>
+            <td style="text-align: right; font-weight: bold;">${{ total_pagado|default:"0" }}</td>
+        </tr>
+        {% if saldo_pendiente %}
+        <tr>
+            <td colspan="3" style="text-align: right; font-weight: bold;">SALDO PENDIENTE:</td>
+            <td style="text-align: right; font-weight: bold;">${{ saldo_pendiente }}</td>
+        </tr>
+        {% endif %}
+    </table>
+    {% endif %}
+
+    <!-- Nota Importante -->
+    <div class="nota">
+        <strong>IMPORTANTE:</strong> 
+        {% if boleta.estado == 'Vencido' %}
+        Esta boleta se encuentra VENCIDA. Por favor regularice su situación para evitar la suspensión del servicio.
+        {% elif boleta.estado == 'Pendiente' %}
+        Pague antes del {{ boleta.fecha_vencimiento|date:"d/m/Y" }} para evitar recargos por mora.
+        {% else %}
+        Boleta pagada. Gracias por su puntualidad.
+        {% endif %}
+    </div>
+
+    <!-- Información de Contacto -->
+    <div class="info-contacto">
+        <p><strong>Métodos de Pago:</strong> Efectivo, Transferencia Bancaria, Tarjeta de Crédito/Débito</p>
+        <p><strong>Horario:</strong> Lunes a Viernes 8:00-18:00 hrs | Sábados 9:00-13:00 hrs</p>
+        <p><strong>Contacto:</strong> contacto@sistemaelectrico.cl | Tel: (2) 2345-6789</p>
+    </div>
+
+    <!-- Pie de página -->
+    <div class="footer">
+        <p><strong>SISTEMA DE GESTIÓN ELÉCTRICA</strong></p>
+        <p>Documento generado el {{ fecha_generacion|date:"d/m/Y H:i" }}</p>
+        <p>Este documento es válido como comprobante de pago</p>
+    </div>
+</body>
+</html>

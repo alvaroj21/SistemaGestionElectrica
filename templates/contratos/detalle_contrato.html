@@ -35,11 +35,135 @@
                     </tr>
                     <tr>
                         <th>Estado</th>
-                        <td>{{ contrato.estado }}</td>
+                        <td>
+                            <span class="badge {% if contrato.estado == 'Activo' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ contrato.estado }}
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="d-flex gap-2">
+
+            <!-- Sección de Cliente Asociado -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-user me-2"></i> Cliente Asociado
+                </h5>
+                {% if cliente %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+                                    <p class="mb-2"><strong>N° Cliente:</strong> {{ cliente.numero_cliente }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Email:</strong> {{ cliente.email }}</p>
+                                    <p class="mb-2"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'sistemaGestion:detalle_cliente' cliente.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i> Ver Cliente Completo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Este contrato no tiene cliente asociado.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sección de Medidores Asociados -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-tachometer-alt me-2"></i> Medidores Asociados
+                </h5>
+                {% if medidores %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>N° Medidor</th>
+                                    <th>Ubicación</th>
+                                    <th>Fecha Instalación</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medidor in medidores %}
+                                <tr>
+                                    <td>{{ medidor.numero_medidor }}</td>
+                                    <td>{{ medidor.ubicacion }}</td>
+                                    <td>{{ medidor.fecha_instalacion }}</td>
+                                    <td>
+                                        <span class="badge {% if medidor.estado_medidor == 'Operativo' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ medidor.estado_medidor }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'sistemaGestion:detalle_medidor' medidor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Este contrato no tiene medidores asociados.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sección de Tarifas Asignadas -->
+            <div class="mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-dollar-sign me-2"></i> Tarifas Asignadas
+                </h5>
+                {% if tarifas_asignadas %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tipo Tarifa</th>
+                                    <th>Tipo Cliente</th>
+                                    <th>Precio ($/kWh)</th>
+                                    <th>Vigencia</th>
+                                    <th>Fecha Asignación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asignacion in tarifas_asignadas %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-info">{{ asignacion.tarifa.tipo_tarifa }}</span>
+                                    </td>
+                                    <td>{{ asignacion.tarifa.tipo_cliente }}</td>
+                                    <td><strong>${{ asignacion.tarifa.precio }}</strong></td>
+                                    <td>{{ asignacion.tarifa.fecha_vigencia }}</td>
+                                    <td>{{ asignacion.fecha_asignacion }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Este contrato no tiene tarifas asignadas. Es necesario asignar una tarifa para calcular correctamente las boletas.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
                 <a href="{% url 'sistemaGestion:editar_contrato' contrato.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar Contrato
                 </a>

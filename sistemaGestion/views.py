@@ -7,7 +7,12 @@ usuarios y notificaciones con un sistema de autenticación por roles.
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
-from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura
+from django.http import JsonResponse, HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from io import BytesIO
+from datetime import datetime
+from .models import Cliente, Contrato, Tarifa, Medidor, Lectura, Boleta, Pago, Usuario, NotificacionPago, NotificacionLectura, Tarifa_has_Contrato
 from .forms import ClienteForm, ContratoForm, MedidorForm, LecturaForm, BoletaForm, PagoForm, TarifaForm, UsuarioForm, NotificacionLecturaForm, NotificacionPagoForm
 
 
@@ -99,6 +104,44 @@ def dashboard(request):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
     
+    # Obtener usuario desde la sesión usando username
+    try:
+        usuario = Usuario.objects.get(username=request.session.get('username'))
+    except Usuario.DoesNotExist:
+        # Si no existe el usuario, cerrar sesión y redirigir al login
+        request.session.flush()
+        messages.error(request, 'Sesión inválida. Por favor, inicia sesión nuevamente.')
+        return redirect('sistemaGestion:login')
+    
+    # Obtener notificaciones según el rol del usuario
+    notificaciones = []
+    
+    # Notificaciones de PAGO (Admin y Finanzas)
+    if usuario.rol in ['Administrador', 'Finanzas']:
+        notif_pago = NotificacionPago.objects.filter(revisada=False)[:5]
+        for n in notif_pago:
+            notificaciones.append({
+                'id': n.id,
+                'tipo': 'pago',
+                'mensaje': n.deuda_pendiente,
+                'fecha': n.fecha_notificacion,
+            })
+    
+    # Notificaciones de LECTURA (Admin y Eléctrico)
+    if usuario.rol in ['Administrador', 'Eléctrico']:
+        notif_lectura = NotificacionLectura.objects.filter(revisada=False)[:5]
+        for n in notif_lectura:
+            notificaciones.append({
+                'id': n.id,
+                'tipo': 'lectura',
+                'mensaje': n.registro_consumo,
+                'fecha': n.fecha_notificacion,
+            })
+    
+    # Ordenar por fecha más reciente
+    notificaciones.sort(key=lambda x: x['fecha'], reverse=True)
+    notificaciones = notificaciones[:5]  # Solo 5 más recientes
+    
     # Obtener estadísticas clave para el dashboard
     datos = {
         'total_clientes': Cliente.objects.count(),
@@ -107,6 +150,8 @@ def dashboard(request):
         'lecturas_pendientes': Lectura.objects.count(), 
         'boletas_emitidas': Boleta.objects.count(),
         'pagos_realizados': Pago.objects.filter(estado_pago='Pagado').count(),
+        'notificaciones': notificaciones,
+        'total_notificaciones': len(notificaciones),
     }
     return render(request, 'dashboard.html', datos)
 
@@ -139,7 +184,7 @@ def lista_clientes(request):
     if search_numero:
         clientes = clientes.filter(numero_cliente__icontains=search_numero)
     if search_nombre:
-        clientes = clientes.filter(nombre__icontains=search_nombre)
+        clientes = clientes.filter(telefono__icontains=search_nombre)
     if search_email:
         clientes = clientes.filter(email__icontains=search_email)
     if search_telefono:
@@ -263,7 +308,7 @@ def eliminar_cliente(request, cliente_id):
 def detalle_cliente(request, cliente_id):
     if not usuario_logueado(request):
         return redirect('sistemaGestion:login')
-    
+
     if not tiene_permiso(request, 'clientes'):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
@@ -274,14 +319,16 @@ def detalle_cliente(request, cliente_id):
         messages.error(request, 'El cliente no existe')
         return redirect('sistemaGestion:lista_clientes')
     
+    # Obtener información relacionada - contratos del cliente
+    contratos = cliente.contratos.all() if hasattr(cliente, 'contratos') else []
+    
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'cliente': cliente
+        'cliente': cliente,
+        'contratos': contratos
     }
     return render(request, 'clientes/detalle_cliente.html', datos)
-
-
 # ============================================================================
 # VISTAS PARA GESTIÓN DE CONTRATOS
 # ============================================================================
@@ -342,6 +389,15 @@ def crear_contrato(request):
         form = ContratoForm(request.POST)
         if form.is_valid():
             contrato = form.save()
+            
+            # Guardar la tarifa seleccionada (solo una)
+            tarifa_seleccionada = form.cleaned_data.get('tarifa')
+            if tarifa_seleccionada:
+                Tarifa_has_Contrato.objects.create(
+                    contrato=contrato,
+                    tarifa=tarifa_seleccionada
+                )
+            
             messages.success(request, f'Contrato "{contrato.numero_contrato}" creado exitosamente')
             return redirect('sistemaGestion:lista_contratos')
     else:
@@ -372,10 +428,40 @@ def editar_contrato(request, contrato_id):
         form = ContratoForm(request.POST, instance=contrato)
         if form.is_valid():
             contrato_actualizado = form.save()
+            
+            # Actualizar la tarifa asignada
+            # Primero eliminar la asignación anterior
+            Tarifa_has_Contrato.objects.filter(contrato=contrato_actualizado).delete()
+            
+            # Luego crear la nueva asignación
+            tarifa_seleccionada = form.cleaned_data.get('tarifa')
+            if tarifa_seleccionada:
+                Tarifa_has_Contrato.objects.create(
+                    contrato=contrato_actualizado,
+                    tarifa=tarifa_seleccionada
+                )
+            
             messages.success(request, f'Contrato "{contrato_actualizado.numero_contrato}" actualizado exitosamente')
             return redirect('sistemaGestion:lista_contratos')
     else:
         form = ContratoForm(instance=contrato)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Pre-seleccionar la tarifa ya asignada
+        tarifa_asignada = Tarifa_has_Contrato.objects.filter(contrato=contrato).first()
+        if tarifa_asignada:
+            form.fields['tarifa'].initial = tarifa_asignada.tarifa
+        
+        # Formatear fechas para edición
+        if contrato.fecha_inicio:
+            form.fields['fecha_inicio'].initial = contrato.fecha_inicio.strftime('%Y-%m-%d')
+        if contrato.fecha_fin:
+            form.fields['fecha_fin'].initial = contrato.fecha_fin.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_inicio'].input_formats = ['%Y-%m-%d']
+        form.fields['fecha_fin'].input_formats = ['%Y-%m-%d']
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -426,10 +512,20 @@ def detalle_contrato(request, contrato_id):
         messages.error(request, 'El contrato no existe')
         return redirect('sistemaGestion:lista_contratos')
     
+    # Obtener información relacionada usando las claves foráneas
+    cliente = contrato.cliente if contrato.cliente else None
+    medidores = contrato.medidores.all() if hasattr(contrato, 'medidores') else []
+    
+    # Obtener tarifas asignadas al contrato
+    tarifas_asignadas = Tarifa_has_Contrato.objects.filter(contrato=contrato).select_related('tarifa')
+    
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'contrato': contrato
+        'contrato': contrato,
+        'cliente': cliente,
+        'medidores': medidores,
+        'tarifas_asignadas': tarifas_asignadas
     }
     return render(request, 'contratos/detalle_contrato.html', datos)
 
@@ -528,6 +624,15 @@ def editar_medidor(request, medidor_id):
             return redirect('sistemaGestion:lista_medidores')
     else:
         form = MedidorForm(instance=medidor)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Formatear fecha para edición
+        if medidor.fecha_instalacion:
+            form.fields['fecha_instalacion'].initial = medidor.fecha_instalacion.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_instalacion'].input_formats = ['%Y-%m-%d']
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -578,10 +683,18 @@ def detalle_medidor(request, medidor_id):
         messages.error(request, 'El medidor no existe')
         return redirect('sistemaGestion:lista_medidores')
     
+    # Obtener información relacionada usando las claves foráneas y métodos helper
+    contrato = medidor.contrato if medidor.contrato else None
+    cliente = medidor.get_cliente() if hasattr(medidor, 'get_cliente') else None
+    lecturas = medidor.lecturas.all() if hasattr(medidor, 'lecturas') else []
+    
     datos = {
         'username': request.session.get('username'),
         'nombre': request.session.get('nombre'),
-        'medidor': medidor
+        'medidor': medidor,
+        'contrato': contrato,
+        'cliente': cliente,
+        'lecturas': lecturas
     }
     return render(request, 'medidores/detalle_medidor.html', datos)
 
@@ -620,6 +733,8 @@ def lista_lecturas(request):
         messages.error(request, 'No tienes permisos para acceder a esta sección')
         return redirect('sistemaGestion:dashboard')
     
+    from datetime import datetime, timedelta
+    
     # Obtener todas las lecturas inicialmente
     lecturas = Lectura.objects.all()
     
@@ -629,7 +744,13 @@ def lista_lecturas(request):
     search_consumo_min = request.GET.get('consumo_min', '')
     search_consumo_max = request.GET.get('consumo_max', '')
     
-    # Aplicar filtros si existen
+    # Nuevos filtros por período
+    periodo = request.GET.get('periodo', '')
+    año = request.GET.get('año', '')
+    mes = request.GET.get('mes', '')
+    medidor_id = request.GET.get('medidor', '')
+    
+    # Aplicar filtros existentes
     if search_fecha:
         lecturas = lecturas.filter(fecha_lectura__gte=search_fecha)
     if search_tipo:
@@ -639,8 +760,35 @@ def lista_lecturas(request):
     if search_consumo_max:
         lecturas = lecturas.filter(consumo_energetico__lte=search_consumo_max)
     
+    # Aplicar filtros por período
+    now = datetime.now()
+    if periodo == 'mes':
+        fecha_inicio = now - timedelta(days=30)
+        lecturas = lecturas.filter(fecha_lectura__gte=fecha_inicio)
+    elif periodo == 'trimestre':
+        fecha_inicio = now - timedelta(days=90)
+        lecturas = lecturas.filter(fecha_lectura__gte=fecha_inicio)
+    elif periodo == 'año':
+        fecha_inicio = now - timedelta(days=365)
+        lecturas = lecturas.filter(fecha_lectura__gte=fecha_inicio)
+    
+    # Filtrar por año/mes específico
+    if año:
+        lecturas = lecturas.filter(fecha_lectura__year=año)
+    if mes:
+        lecturas = lecturas.filter(fecha_lectura__month=mes)
+    
+    # Filtrar por medidor
+    if medidor_id:
+        lecturas = lecturas.filter(medidor_id=medidor_id)
+    
     # Ordenar los resultados
     lecturas = lecturas.order_by('-fecha_lectura')
+    
+    # Obtener años y medidores disponibles para los filtros
+    años_disponibles = Lectura.objects.dates('fecha_lectura', 'year', order='DESC')
+    medidores_disponibles = Medidor.objects.all()
+    
     page_obj = paginar_objetos(request, lecturas)
     
     datos = {
@@ -652,6 +800,13 @@ def lista_lecturas(request):
         'search_tipo': search_tipo,
         'search_consumo_min': search_consumo_min,
         'search_consumo_max': search_consumo_max,
+        'periodo_actual': periodo,
+        'año_actual': año,
+        'mes_actual': mes,
+        'medidor_actual': medidor_id,
+        'años_disponibles': años_disponibles,
+        'medidores_disponibles': medidores_disponibles,
+        'total_lecturas': lecturas.count(),
     }
     return render(request, 'lecturas/lista_lecturas.html', datos)
 
@@ -702,6 +857,15 @@ def editar_lectura(request, lectura_id):
             return redirect('sistemaGestion:lista_lecturas')
     else:
         form = LecturaForm(instance=lectura)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Formatear fecha para edición
+        if lectura.fecha_lectura:
+            form.fields['fecha_lectura'].initial = lectura.fecha_lectura.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_lectura'].input_formats = ['%Y-%m-%d']
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -752,10 +916,20 @@ def detalle_lectura(request, lectura_id):
         messages.error(request, 'La lectura no existe')
         return redirect('sistemaGestion:lista_lecturas')
     
+    # Obtener información relacionada usando las claves foráneas
+    medidor = lectura.medidor if lectura.medidor else None
+    contrato = medidor.contrato if medidor and medidor.contrato else None
+    cliente = contrato.cliente if contrato and contrato.cliente else None
+    boleta = lectura.boleta if hasattr(lectura, 'boleta') else None
+    
     datos = {
         'rol': request.session.get('rol'),
         'nombre': request.session.get('nombre'),
-        'lectura': lectura
+        'lectura': lectura,
+        'medidor': medidor,
+        'contrato': contrato,
+        'cliente': cliente,
+        'boleta': boleta
     }
     return render(request, 'lecturas/detalle_lectura.html', datos)
 
@@ -798,12 +972,19 @@ def lista_boletas(request):
     page_obj = paginar_objetos(request, boletas)
     
     # Estadísticas usando información de boletas
+    todas_boletas = Boleta.objects.all()
+    # Calcular total pagado sumando todos los pagos
+    total_pagado_manual = sum(
+        sum(pago.monto_pagado for pago in boleta.pagos.all())
+        for boleta in todas_boletas
+    )
+    
     estadisticas = {
-        'total_servicios': Boleta.objects.count(),
-        'servicios_pagados': Pago.objects.filter(estado_pago='Confirmado').count(),
-        'servicios_pendientes': Boleta.objects.filter(estado='Pendiente').count(),
-        'gasto_total_presupuestado': sum(boleta.monto_total for boleta in boletas),
-        'total_pagado': sum(pago.monto_pagado for pago in Pago.objects.filter(estado_pago='Confirmado')),
+        'total_servicios': todas_boletas.count(),
+        'servicios_pagados': todas_boletas.filter(estado='Pagado').count(),
+        'servicios_pendientes': todas_boletas.exclude(estado='Pagado').count(),
+        'gasto_total_presupuestado': sum(boleta.monto_total for boleta in todas_boletas),
+        'total_pagado': total_pagado_manual,
     }
     
     datos = {
@@ -867,6 +1048,18 @@ def editar_boleta(request, boleta_id):
             return redirect('sistemaGestion:lista_boletas')
     else:
         form = BoletaForm(instance=boleta)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Formatear fechas para edición
+        if boleta.fecha_emision:
+            form.fields['fecha_emision'].initial = boleta.fecha_emision.strftime('%Y-%m-%d')
+        if boleta.fecha_vencimiento:
+            form.fields['fecha_vencimiento'].initial = boleta.fecha_vencimiento.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_emision'].input_formats = ['%Y-%m-%d']
+        form.fields['fecha_vencimiento'].input_formats = ['%Y-%m-%d']
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -916,10 +1109,30 @@ def detalle_boleta(request, boleta_id):
         messages.error(request, 'La boleta no existe')
         return redirect('sistemaGestion:lista_boletas')
     
+    # Obtener información relacionada usando las claves foráneas
+    lectura = boleta.lectura if boleta.lectura else None
+    medidor = lectura.medidor if lectura and lectura.medidor else None
+    contrato = medidor.contrato if medidor and medidor.contrato else None
+    cliente = contrato.cliente if contrato and contrato.cliente else None
+    
+    # Obtener pagos asociados
+    pagos = boleta.pagos.all() if hasattr(boleta, 'pagos') else []
+    
+    # Calcular totales manualmente
+    total_pagado = sum(pago.monto_pagado for pago in pagos)
+    saldo_pendiente = boleta.monto_total - total_pagado
+    
     datos = {
         'rol': request.session.get('rol'),
         'nombre': request.session.get('nombre'),
-        'boleta': boleta
+        'boleta': boleta,
+        'lectura': lectura,
+        'medidor': medidor,
+        'contrato': contrato,
+        'cliente': cliente,
+        'pagos': pagos,
+        'total_pagado': total_pagado,
+        'saldo_pendiente': saldo_pendiente
     }
     return render(request, 'boletas/detalle_boleta.html', datos)
 
@@ -1021,6 +1234,15 @@ def editar_tarifa(request, tarifa_id):
             return redirect('sistemaGestion:lista_tarifas')
     else:
         form = TarifaForm(instance=tarifa)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Formatear fecha para edición
+        if tarifa.fecha_vigencia:
+            form.fields['fecha_vigencia'].initial = tarifa.fecha_vigencia.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_vigencia'].input_formats = ['%Y-%m-%d']
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -1329,6 +1551,32 @@ def editar_pago(request, pago_id):
             return redirect('sistemaGestion:lista_pagos')
     else:
         form = PagoForm(instance=pago)
+        
+        # ========== LÓGICA MOVIDA DESDE __init__ (OPCIÓN 4) ==========
+        # Formatear fecha para edición
+        if pago.fecha_pago:
+            form.fields['fecha_pago'].initial = pago.fecha_pago.strftime('%Y-%m-%d')
+        
+        # Configurar input_formats
+        form.fields['fecha_pago'].input_formats = ['%Y-%m-%d']
+        
+        # Mostrar información de la boleta asociada
+        if pago.boleta:
+            from django.db.models import Sum
+            boleta = pago.boleta
+            
+            # Calcular total pagado manualmente
+            total_pagado = boleta.pagos.aggregate(Sum('monto_pagado'))['monto_pagado__sum'] or 0
+            saldo_pendiente = boleta.monto_total - total_pagado
+            
+            info_text = f"""Boleta ID: {boleta.id}
+Cliente: {boleta.get_cliente().nombre}
+Monto Total: ${boleta.monto_total:,}
+Total Pagado: ${total_pagado:,}
+Saldo Pendiente: ${saldo_pendiente:,}
+Estado Actual: {boleta.estado}"""
+            form.fields['info_boleta'].initial = info_text
+        # ============================================================
 
     datos = {
         'username': request.session.get('username'),
@@ -1378,10 +1626,16 @@ def detalle_pago(request, pago_id):
         messages.error(request, 'El pago no existe')
         return redirect('sistemaGestion:lista_pagos')
     
+    # Obtener información relacionada usando las claves foráneas
+    boleta = pago.boleta if pago.boleta else None
+    info_completa = pago.get_info_completa() if hasattr(pago, 'get_info_completa') else {}
+    
     datos = {
         'rol': request.session.get('rol'),
         'nombre': request.session.get('nombre'),
-        'pago': pago
+        'pago': pago,
+        'boleta': boleta,
+        'info_completa': info_completa
     }
     return render(request, 'pagos/detalle_pago.html', datos)
 
@@ -1401,15 +1655,24 @@ def lista_notificaciones(request):
     # Filtros de búsqueda
     search_tipo = request.GET.get('tipo', '')
     search_mensaje = request.GET.get('mensaje', '')
+    search_estado = request.GET.get('estado', '')
     
     # Obtener notificaciones de ambos tipos con filtros
-    notificaciones_lectura = NotificacionLectura.objects.all().order_by('id')
-    notificaciones_pago = NotificacionPago.objects.all().order_by('id')
+    notificaciones_lectura = NotificacionLectura.objects.all().order_by('-fecha_notificacion')
+    notificaciones_pago = NotificacionPago.objects.all().order_by('-fecha_notificacion')
     
     # Aplicar filtros de texto en el mensaje
     if search_mensaje:
         notificaciones_lectura = notificaciones_lectura.filter(registro_consumo__icontains=search_mensaje)
         notificaciones_pago = notificaciones_pago.filter(deuda_pendiente__icontains=search_mensaje)
+    
+    # Aplicar filtro de estado
+    if search_estado == 'pendiente':
+        notificaciones_lectura = notificaciones_lectura.filter(revisada=False)
+        notificaciones_pago = notificaciones_pago.filter(revisada=False)
+    elif search_estado == 'revisada':
+        notificaciones_lectura = notificaciones_lectura.filter(revisada=True)
+        notificaciones_pago = notificaciones_pago.filter(revisada=True)
     
     # Combinar ambos tipos de notificaciones con su ID para acciones CRUD
     notificaciones = []
@@ -1422,6 +1685,8 @@ def lista_notificaciones(request):
                 'tipo': 'Lectura',
                 'titulo': 'Notificación de Lectura',
                 'mensaje': notif.registro_consumo,
+                'fecha': notif.fecha_notificacion,
+                'revisada': notif.revisada,
                 'url_detalle': f'/notificaciones/lectura/{notif.id}/',
                 'url_editar': f'/notificaciones/lectura/editar/{notif.id}/',
                 'url_eliminar': f'/notificaciones/lectura/eliminar/{notif.id}/'
@@ -1435,6 +1700,8 @@ def lista_notificaciones(request):
                 'tipo': 'Pago',
                 'titulo': 'Notificación de Pago',
                 'mensaje': notif.deuda_pendiente,
+                'fecha': notif.fecha_notificacion,
+                'revisada': notif.revisada,
                 'url_detalle': f'/notificaciones/pago/{notif.id}/',
                 'url_editar': f'/notificaciones/pago/editar/{notif.id}/',
                 'url_eliminar': f'/notificaciones/pago/eliminar/{notif.id}/'
@@ -1451,6 +1718,7 @@ def lista_notificaciones(request):
         'page_obj': page_obj,
         'search_tipo': search_tipo,
         'search_mensaje': search_mensaje,
+        'search_estado': search_estado,
     }
     return render(request, 'notificaciones/lista_notificaciones.html', datos)
 
@@ -1501,10 +1769,16 @@ def detalle_notificacion_lectura(request, notificacion_id):
         messages.error(request, 'La notificación no existe')
         return redirect('sistemaGestion:lista_notificaciones')
     
+    # Obtener información relacionada usando las claves foráneas
+    lectura = notificacion.lectura if notificacion.lectura else None
+    info_completa = notificacion.get_info_completa() if hasattr(notificacion, 'get_info_completa') else {}
+    
     datos = {
         'rol': request.session.get('rol'),
         'nombre': request.session.get('nombre'),
-        'notificacion': notificacion
+        'notificacion': notificacion,
+        'lectura': lectura,
+        'info_completa': info_completa
     }
     return render(request, 'notificaciones/detalle_notificacion_lectura.html', datos)
 
@@ -1617,10 +1891,16 @@ def detalle_notificacion_pago(request, notificacion_id):
         messages.error(request, 'La notificación no existe')
         return redirect('sistemaGestion:lista_notificaciones')
     
+    # Obtener información relacionada usando las claves foráneas
+    pago = notificacion.pago if notificacion.pago else None
+    info_completa = notificacion.get_info_completa() if hasattr(notificacion, 'get_info_completa') else {}
+    
     datos = {
         'rol': request.session.get('rol'),
         'nombre': request.session.get('nombre'),
-        'notificacion': notificacion
+        'notificacion': notificacion,
+        'pago': pago,
+        'info_completa': info_completa
     }
     return render(request, 'notificaciones/detalle_notificacion_pago.html', datos)
 
@@ -1744,3 +2024,127 @@ def perfil_usuario(request):
     }
     
     return render(request, 'usuarios/perfil_usuario.html', datos)
+
+
+# ============================================================================
+# VISTA AJAX PARA MARCAR NOTIFICACIONES COMO REVISADAS
+# ============================================================================
+
+def marcar_notificacion_revisada(request, tipo, notificacion_id):
+    """Marcar una notificación como revisada"""
+    if not usuario_logueado(request):
+        messages.error(request, 'Debes iniciar sesión')
+        return redirect('sistemaGestion:login')
+    
+    if request.method != 'POST':
+        messages.error(request, 'Método no permitido')
+        return redirect('sistemaGestion:lista_notificaciones')
+    
+    try:
+        # Obtener usuario desde la sesión usando username
+        usuario = Usuario.objects.get(username=request.session.get('username'))
+        
+        if tipo == 'pago':
+            # Verificar permisos
+            if usuario.rol not in ['Administrador', 'Finanzas']:
+                messages.error(request, 'No tienes permisos para marcar esta notificación')
+                return redirect('sistemaGestion:detalle_notificacion_pago', notificacion_id=notificacion_id)
+            
+            notificacion = NotificacionPago.objects.get(id=notificacion_id)
+            notificacion.revisada = True
+            notificacion.save()
+            
+            messages.success(request, 'Notificación de pago marcada como revisado')
+            return redirect('sistemaGestion:detalle_notificacion_pago', notificacion_id=notificacion_id)
+            
+        elif tipo == 'lectura':
+            # Verificar permisos
+            if usuario.rol not in ['Administrador', 'Eléctrico']:
+                messages.error(request, 'No tienes permisos para marcar esta notificación')
+                return redirect('sistemaGestion:detalle_notificacion_lectura', notificacion_id=notificacion_id)
+            
+            notificacion = NotificacionLectura.objects.get(id=notificacion_id)
+            notificacion.revisada = True
+            notificacion.save()
+            
+            messages.success(request, 'Notificación de lectura marcada como revisado')
+            return redirect('sistemaGestion:detalle_notificacion_lectura', notificacion_id=notificacion_id)
+        else:
+            messages.error(request, 'Tipo de notificación no válido')
+            return redirect('sistemaGestion:lista_notificaciones')
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, 'Usuario no encontrado')
+        return redirect('sistemaGestion:login')
+    except (NotificacionPago.DoesNotExist, NotificacionLectura.DoesNotExist):
+        messages.error(request, 'Notificación no encontrada')
+        return redirect('sistemaGestion:lista_notificaciones')
+
+
+# ============================================================================
+# GENERACIÓN DE REPORTES EN PDF
+# ============================================================================
+
+def generar_pdf_boleta(request, boleta_id):
+    """
+    Genera un PDF de una boleta específica
+    Utiliza xhtml2pdf para convertir templates HTML a PDF
+    """
+    try:
+        boleta = Boleta.objects.get(id=boleta_id)
+        
+        # Obtener información relacionada
+        lectura = boleta.lectura if boleta.lectura else None
+        medidor = lectura.medidor if lectura and lectura.medidor else None
+        contrato = medidor.contrato if medidor and medidor.contrato else None
+        cliente = contrato.cliente if contrato and contrato.cliente else None
+        
+        # Obtener tarifa aplicada (si existe relación)
+        tarifa = None
+        if contrato:
+            tarifa_contrato = Tarifa_has_Contrato.objects.filter(contrato=contrato).first()
+            if tarifa_contrato:
+                tarifa = tarifa_contrato.tarifa
+        
+        # Obtener pagos realizados
+        pagos = boleta.pagos.all().order_by('fecha_pago') if hasattr(boleta, 'pagos') else []
+        
+        # Calcular totales manualmente
+        total_pagado = sum(pago.monto_pagado for pago in pagos)
+        saldo_pendiente = boleta.monto_total - total_pagado
+        
+        # Contexto para el template
+        context = {
+            'boleta': boleta,
+            'lectura': lectura,
+            'medidor': medidor,
+            'contrato': contrato,
+            'cliente': cliente,
+            'tarifa': tarifa,
+            'pagos': pagos,
+            'total_pagado': total_pagado,
+            'saldo_pendiente': saldo_pendiente,
+            'fecha_generacion': datetime.now(),
+        }
+        
+        # Renderizar el template HTML
+        html_string = render_to_string('reportes/boleta_pdf.html', context)
+        
+        # Generar PDF con xhtml2pdf
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
+        
+        if not pdf.err:
+            response = HttpResponse(result.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="boleta_{boleta.id}.pdf"'
+            return response
+        else:
+            return HttpResponse("Error al generar PDF", status=500)
+        
+    except Boleta.DoesNotExist:
+        return HttpResponse("Boleta no encontrada", status=404)
+    except Exception as e:
+        return HttpResponse(f"Error al generar PDF: {str(e)}", status=500)
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        return redirect('sistemaGestion:lista_notificaciones')

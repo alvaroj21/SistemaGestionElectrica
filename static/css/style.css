@@ -430,6 +430,65 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25); /* Sombra al enfocar */
 }
 
+/* Estilos para campos de selección múltiple con radio buttons (como tarifa) */
+.cuerpo-formulario ul {
+    list-style: none; /* Sin viñetas */
+    padding: 15px; /* Espaciado interno */
+    margin: 0.5rem 0 1.5rem 0; /* Margen superior e inferior */
+    background-color: var(--fondo-claro); /* Fondo claro */
+    border: 1px solid #dee2e6; /* Borde gris claro */
+    border-radius: 6px; /* Bordes redondeados */
+}
+
+.cuerpo-formulario ul li {
+    margin-bottom: 10px; /* Espacio entre opciones */
+    padding: 10px 15px; /* Espaciado interno */
+    background: white; /* Fondo blanco */
+    border-radius: 4px; /* Bordes redondeados */
+    border: 1px solid #e9ecef; /* Borde gris muy claro */
+    transition: all 0.3s ease; /* Transición suave */
+}
+
+.cuerpo-formulario ul li:last-child {
+    margin-bottom: 0; /* Sin espacio en el último elemento */
+}
+
+.cuerpo-formulario ul li:hover {
+    background-color: #f8f9fa; /* Fondo ligeramente más oscuro al pasar el ratón */
+    border-color: var(--color-acento); /* Borde azul claro al pasar el ratón */
+}
+
+.cuerpo-formulario ul li label {
+    display: flex; /* Diseño flexible */
+    align-items: center; /* Alineación vertical */
+    margin: 0; /* Sin margen */
+    cursor: pointer; /* Cursor de puntero */
+    font-weight: 500; /* Peso normal de fuente */
+    color: var(--color-primario); /* Color del texto */
+    width: 100%; /* Ancho completo */
+}
+
+.cuerpo-formulario ul li input[type="checkbox"],
+.cuerpo-formulario ul li input[type="radio"] {
+    width: auto; /* Ancho automático */
+    margin-right: 10px; /* Espacio a la derecha */
+    cursor: pointer; /* Cursor de puntero */
+    transform: scale(1.3); /* Ligeramente más grande */
+    flex-shrink: 0; /* No reducir tamaño */
+}
+
+/* Ajuste específico para el campo de tarifa */
+.cuerpo-formulario p:has(ul) {
+    margin-bottom: 1.5rem; /* Espacio consistente */
+}
+
+.cuerpo-formulario p:has(ul) label {
+    font-weight: 600; /* Peso de la fuente para la etiqueta principal */
+    color: var(--color-primario); /* Color del texto */
+    margin-bottom: 0.5rem; /* Espacio inferior */
+    display: block; /* En bloque */
+}
+
 /* 10. ALERTAS Y MENSAJES */
 .alert {
     border-radius: 8px; /* Bordes redondeados */
