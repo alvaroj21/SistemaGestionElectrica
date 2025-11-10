@@ -34,10 +34,6 @@ from django.db.models import Sum
 # ============================================
 # MODELO CLIENTE
 # ============================================
-# Es el modelo base de la jerarquía. No tiene relaciones de entrada.
-# Un cliente puede tener múltiples contratos (relación 1:N).
-# 
-# CAMPOS:
 # - numero_cliente: Identificador único del cliente
 # - nombre: Nombre completo del cliente
 # - email: Correo electrónico único
@@ -53,12 +49,9 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=15)
     
     def __str__(self):
-        """Representación en texto del cliente"""
         return f"{self.numero_cliente} - {self.nombre}"
     
     class Meta:
-        verbose_name = "Cliente"
-        verbose_name_plural = "Clientes"
         ordering = ['nombre']  # Ordenar alfabéticamente por nombre
 
 # ============================================
@@ -78,7 +71,7 @@ class Cliente(models.Model):
 # RELACIONES:
 # - cliente (N:1): El cliente dueño del contrato
 # - medidores (1:N): Todos los medidores asociados al contrato
-# - tarifa_contratos (N:M): Tarifas aplicadas al contrato (relación intermedia)
+# - tarifa_contratos (N:M): Tarifas aplicadas al contrato 
 #
 # COMPORTAMIENTO ON_DELETE:
 # - CASCADE: Si se elimina el cliente, se eliminan todos sus contratos
@@ -93,8 +86,7 @@ class Contrato(models.Model):
         Cliente, 
         on_delete=models.CASCADE,  # Si se elimina el cliente, se eliminan sus contratos
         related_name='contratos',  # Acceder desde cliente: cliente.contratos.all()
-        verbose_name='Cliente',
-        null=True,  # Temporal para migración
+        null=True,
         blank=True
     )
     fecha_inicio = models.DateField()
@@ -103,13 +95,11 @@ class Contrato(models.Model):
     numero_contrato = models.CharField(max_length=45, unique=True)
 
     def __str__(self):
-        """Representación en texto del contrato"""
         return f"Contrato {self.numero_contrato} - Cliente: {self.cliente.nombre} ({self.estado})"
     
     def get_cliente_info(self):
         """
         Retorna un diccionario con la información completa del cliente asociado.
-        Útil para mostrar datos del cliente sin múltiples consultas a la BD.
         """
         return {
             'nombre': self.cliente.nombre,
@@ -119,8 +109,6 @@ class Contrato(models.Model):
         }
     
     class Meta:
-        verbose_name = "Contrato"
-        verbose_name_plural = "Contratos"
         ordering = ['-fecha_inicio']  # Más recientes primero
 
 
@@ -128,7 +116,7 @@ class Contrato(models.Model):
 # MODELO TARIFA
 # ============================================
 # Define las tarifas eléctricas según temporada y tipo de cliente.
-# No tiene relaciones de entrada (modelo independiente).
+# No tiene relaciones de entrada 
 # Se relaciona con Contrato mediante una tabla intermedia (M:N).
 #
 # CAMPOS:
@@ -157,12 +145,9 @@ class Tarifa(models.Model):
     tipo_cliente = models.CharField(max_length=45, choices=CLIENTE_CHOICES, default='Residencial')
 
     def __str__(self):
-        """Representación en texto de la tarifa con información clave"""
         return f"Tarifa {self.tipo_tarifa} - {self.tipo_cliente} (${self.precio}/kWh)"
     
     class Meta:
-        verbose_name = "Tarifa"
-        verbose_name_plural = "Tarifas"
         ordering = ['-fecha_vigencia']  # Más recientes primero
 
 # ============================================
@@ -181,35 +166,23 @@ class Tarifa(models.Model):
 # - unique_together: Evita que se asigne la misma tarifa al mismo contrato dos veces
 # - auto_now_add=True: La fecha se crea automáticamente al guardar
 #
-# USO TÍPICO:
-# - Asignar tarifa a contrato: Tarifa_has_Contrato.objects.create(tarifa=t, contrato=c)
-# - Obtener tarifas de contrato: contrato.tarifa_contratos.all()
-# - Obtener contratos de tarifa: tarifa.contrato_tarifas.all()
-#
 class Tarifa_has_Contrato(models.Model):
     tarifa = models.ForeignKey(
         Tarifa,
         on_delete=models.CASCADE,  # Si se elimina tarifa, se elimina la relación
-        related_name='contrato_tarifas',
-        verbose_name='Tarifa'
+        related_name='contrato_tarifas'
     )
     contrato = models.ForeignKey(
         Contrato,
         on_delete=models.CASCADE,  # Si se elimina contrato, se elimina la relación
-        related_name='tarifa_contratos',
-        verbose_name='Contrato'
+        related_name='tarifa_contratos'
     )
     fecha_asignacion = models.DateField(auto_now_add=True)
     
     def __str__(self):
-        """Representación en texto de la relación"""
         return f"Tarifa {self.tarifa.tipo_tarifa} aplicada a Contrato {self.contrato.numero_contrato}"
     
     def get_info_completa(self):
-        """
-        Retorna un diccionario con toda la información de la relación.
-        Útil para reportes y vistas que necesiten datos completos.
-        """
         return {
             'tarifa': {
                 'tipo': self.tarifa.tipo_tarifa,
@@ -224,8 +197,6 @@ class Tarifa_has_Contrato(models.Model):
         }
     
     class Meta:
-        verbose_name = "Tarifa por Contrato"
-        verbose_name_plural = "Tarifas por Contrato"
         unique_together = ['tarifa', 'contrato']  # Evita duplicados
 
 # ============================================
@@ -236,7 +207,7 @@ class Tarifa_has_Contrato(models.Model):
 # Un medidor puede tener múltiples lecturas (relación 1:N).
 #
 # CAMPOS:
-# - contrato: FK → Contrato (obligatorio)
+# - contrato: FK → Contrato 
 # - numero_medidor: Identificador único del medidor
 # - fecha_instalacion: Fecha en que se instaló el medidor
 # - ubicacion: Dirección física donde está instalado
@@ -247,11 +218,7 @@ class Tarifa_has_Contrato(models.Model):
 # RELACIONES:
 # - contrato (N:1): El contrato al que pertenece el medidor
 # - lecturas (1:N): Todas las lecturas tomadas de este medidor
-#
-# MÉTODOS ÚTILES:
-# - get_cliente(): Obtiene el cliente a través de contrato
-# - get_info_completa(): Retorna toda la información incluyendo cliente y contrato
-#
+
 class Medidor(models.Model):
     ESTADO_CHOICES = [
         ('Activo', 'Activo'),
@@ -264,8 +231,7 @@ class Medidor(models.Model):
         Contrato,
         on_delete=models.CASCADE,  # Si se elimina contrato, se eliminan sus medidores
         related_name='medidores',  # Acceder desde contrato: contrato.medidores.all()
-        verbose_name='Contrato',
-        null=True,  # Temporal para migración
+        null=True,  
         blank=True
     )
     numero_medidor = models.CharField(max_length=45, unique=True)
@@ -276,22 +242,12 @@ class Medidor(models.Model):
     imagen_fisica = models.URLField(max_length=200, blank=True, null=True)     # Foto del medidor
 
     def __str__(self):
-        """Representación en texto del medidor con ubicación y cliente"""
         return f"Medidor {self.numero_medidor} - Cliente: {self.contrato.cliente.nombre} - {self.ubicacion}"
     
     def get_cliente(self):
-        """
-        Retorna el cliente asociado navegando la cadena de relaciones.
-        Medidor → Contrato → Cliente
-        """
         return self.contrato.cliente
     
     def get_info_completa(self):
-        """
-        Retorna un diccionario con toda la información del medidor.
-        Incluye datos del medidor, contrato y cliente en una sola estructura.
-        Útil para vistas detalladas y reportes.
-        """
         return {
             'numero_medidor': self.numero_medidor,
             'ubicacion': self.ubicacion,
@@ -309,8 +265,6 @@ class Medidor(models.Model):
         }
     
     class Meta:
-        verbose_name = "Medidor"
-        verbose_name_plural = "Medidores"
         ordering = ['-fecha_instalacion']  # Más recientes primero
 
 # ============================================
@@ -321,7 +275,7 @@ class Medidor(models.Model):
 # Cada lectura puede tener UNA boleta asociada (relación 1:1).
 #
 # CAMPOS:
-# - medidor: FK → Medidor (obligatorio)
+# - medidor: FK → Medidor 
 # - fecha_lectura: Fecha en que se tomó la lectura
 # - consumo_energetico: Consumo en kWh durante el período
 # - tipo_lectura: Digital o Analógica (choices)
@@ -345,8 +299,7 @@ class Lectura(models.Model):
         Medidor,
         on_delete=models.CASCADE,  # Si se elimina medidor, se eliminan sus lecturas
         related_name='lecturas',  # Acceder desde medidor: medidor.lecturas.all()
-        verbose_name='Medidor',
-        null=True,  # Temporal para migración
+        null=True,  
         blank=True
     )
     fecha_lectura = models.DateField()
@@ -355,22 +308,12 @@ class Lectura(models.Model):
     lectura_actual = models.PositiveIntegerField()  # Valor actual del contador
 
     def __str__(self):
-        """Representación en texto de la lectura con información clave"""
         return f"Lectura {self.fecha_lectura} - Medidor {self.medidor.numero_medidor} - {self.consumo_energetico} kWh"
     
     def get_cliente(self):
-        """
-        Retorna el cliente asociado navegando la cadena completa.
-        Lectura → Medidor → Contrato → Cliente
-        """
         return self.medidor.contrato.cliente
     
     def get_info_completa(self):
-        """
-        Retorna un diccionario con toda la información de la lectura.
-        Incluye datos de lectura, medidor, contrato y cliente.
-        Útil para vistas detalladas, reportes y APIs.
-        """
         return {
             'fecha_lectura': self.fecha_lectura,
             'consumo': self.consumo_energetico,
@@ -390,8 +333,6 @@ class Lectura(models.Model):
         }
     
     class Meta:
-        verbose_name = "Lectura"
-        verbose_name_plural = "Lecturas"
         ordering = ['-fecha_lectura']  # Más recientes primero
 
 
@@ -403,20 +344,17 @@ class Lectura(models.Model):
 # Una boleta puede tener múltiples pagos (relación 1:N).
 #
 # CAMPOS:
-# - lectura: OneToOneField → Lectura (obligatorio, único)
+# - lectura: OneToOneField → Lectura 
 # - fecha_emision: Fecha en que se emitió la boleta
 # - fecha_vencimiento: Fecha límite de pago
 # - monto_total: Monto total a pagar
 # - consumo_energetico: Consumo que se está cobrando
-# - estado: Pagado, Pagado Parcialmente o Pendiente (editable manualmente)
+# - estado: Pagado, Pagado Parcialmente o Pendiente
 #
 # RELACIONES:
 # - lectura (1:1): La lectura que originó esta boleta
 # - pagos (1:N): Todos los pagos realizados para esta boleta
-#
-# CADENA DE RELACIONES:
-# Boleta → Lectura → Medidor → Contrato → Cliente
-#
+
 class Boleta(models.Model):
     BOLETA_CHOICES = [
         ('Pagado','Pagado'),
@@ -428,7 +366,6 @@ class Boleta(models.Model):
         Lectura,
         on_delete=models.CASCADE,  # Si se elimina lectura, se elimina su boleta
         related_name='boleta',  # Acceder desde lectura: lectura.boleta
-        verbose_name='Lectura',
         null=True,  # Temporal para migración
         blank=True
     )
@@ -443,7 +380,6 @@ class Boleta(models.Model):
     )
 
     def __str__(self):
-        """Representación en texto de la boleta con cliente y estado"""
         try:
             cliente_nombre = self.lectura.get_cliente().nombre if self.lectura and self.lectura.get_cliente() else "Sin cliente"
             return f"Boleta {self.id} - Cliente: {cliente_nombre} - ${self.monto_total} ({self.estado})"
@@ -451,13 +387,6 @@ class Boleta(models.Model):
             return f"Boleta {self.id} - ${self.monto_total} ({self.estado})"
     
     def get_cliente(self):
-        """
-        Retorna el cliente asociado navegando la cadena completa.
-        Boleta → Lectura → Medidor → Contrato → Cliente
-        
-        Returns:
-            Cliente: El cliente asociado, o None si hay error en la cadena
-        """
         try:
             if self.lectura and self.lectura.medidor and self.lectura.medidor.contrato:
                 return self.lectura.medidor.contrato.cliente
@@ -466,10 +395,6 @@ class Boleta(models.Model):
         return None
     
     def get_info_completa(self):
-        """
-        Retorna un diccionario completo con toda la información de la boleta.
-        Incluye datos de boleta, lectura, medidor y cliente.
-        """
         return {
             'id_boleta': self.id,
             'fecha_emision': self.fecha_emision,
@@ -495,7 +420,7 @@ class Boleta(models.Model):
         """
         Calcula la suma total de todos los pagos realizados para esta boleta.
         
-        Returns:
+        retorna:
             int: Total pagado en pesos, 0 si no hay pagos
         """
         total = self.pagos.aggregate(Sum('monto_pagado'))['monto_pagado__sum']
@@ -505,14 +430,12 @@ class Boleta(models.Model):
         """
         Calcula el saldo pendiente de pago (monto total - total pagado).
         
-        Returns:
+        retorna:
             int: Saldo pendiente en pesos
         """
         return self.monto_total - self.calcular_total_pagado()
     
     class Meta:
-        verbose_name = "Boleta"
-        verbose_name_plural = "Boletas"
         ordering = ['-fecha_emision']  # Más recientes primero
 
 
@@ -523,7 +446,7 @@ class Boleta(models.Model):
 # Cada pago pertenece a UNA boleta (relación N:1 con Boleta).
 #
 # CAMPOS:
-# - boleta: FK → Boleta (obligatorio)
+# - boleta: FK → Boleta 
 # - fecha_pago: Fecha en que se realizó el pago
 # - monto_pagado: Cantidad pagada en pesos
 # - metodo_pago: Efectivo, Transferencia, Tarjeta, Débito (choices)
@@ -533,10 +456,7 @@ class Boleta(models.Model):
 # RELACIONES:
 # - boleta (N:1): La boleta a la que corresponde este pago
 # - notificaciones (1:N): Notificaciones asociadas a este pago
-#
-# CADENA DE RELACIONES:
-# Pago → Boleta → Lectura → Medidor → Contrato → Cliente
-#
+
 class Pago(models.Model):
     PAGO_CHOICES = [
         ('Pagado','Pagado'),
@@ -553,7 +473,6 @@ class Pago(models.Model):
         Boleta,
         on_delete=models.CASCADE,  # Si se elimina boleta, se eliminan sus pagos
         related_name='pagos',  # Acceder desde boleta: boleta.pagos.all()
-        verbose_name='Boleta',
         null=True,  # Temporal para migración
         blank=True
     )
@@ -574,13 +493,7 @@ class Pago(models.Model):
             return f"Pago {self.numero_referencia} - ${self.monto_pagado}"
     
     def get_cliente(self):
-        """
-        Retorna el cliente asociado navegando toda la cadena de relaciones.
-        Pago → Boleta → Lectura → Medidor → Contrato → Cliente
-        
-        Returns:
-            Cliente: El cliente asociado, o None si hay error en la cadena
-        """
+
         try:
             if self.boleta and self.boleta.lectura and self.boleta.lectura.medidor and self.boleta.lectura.medidor.contrato:
                 return self.boleta.lectura.medidor.contrato.cliente
@@ -589,14 +502,6 @@ class Pago(models.Model):
         return None
     
     def get_info_completa(self):
-        """
-        Retorna un diccionario completo con toda la información del pago.
-        Incluye validación robusta para cada nivel de la cadena de relaciones.
-        Si algo falla, retorna 'N/A' en lugar de generar error.
-        
-        Returns:
-            dict: Diccionario con información completa del pago
-        """
         info = {
             'numero_referencia': self.numero_referencia,
             'fecha_pago': self.fecha_pago,
@@ -605,7 +510,7 @@ class Pago(models.Model):
             'estado': self.estado_pago,
         }
         
-        # Información de la boleta (con validación)
+        # Información de la boleta
         if self.boleta:
             try:
                 info['boleta'] = {
@@ -624,7 +529,6 @@ class Pago(models.Model):
             info['monto_boleta'] = 'N/A'
             info['estado_boleta'] = 'N/A'
         
-        # Información del cliente (con validación completa de la cadena)
         try:
             cliente = self.get_cliente()
             if cliente:
@@ -667,7 +571,7 @@ class Pago(models.Model):
                 info['fecha_lectura'] = 'N/A'
                 info['consumo_lectura'] = 'N/A'
         except Exception as e:
-            # Si hay cualquier error, rellenar con N/A
+            # Si hay cualquier error se rellena con N/A
             info['cliente'] = 'N/A'
             info['numero_contrato'] = 'N/A'
             info['numero_medidor'] = 'N/A'
@@ -676,12 +580,10 @@ class Pago(models.Model):
             info['consumo_lectura'] = 'N/A'
         
         return info
+        return info
     
     class Meta:
-        verbose_name = "Pago"
-        verbose_name_plural = "Pagos"
         ordering = ['-fecha_pago']  # Más recientes primero
-
 
 # ============================================
 # MODELO NOTIFICACION LECTURA
@@ -691,19 +593,13 @@ class Pago(models.Model):
 # Se usa para alertar sobre consumos anormales, lecturas especiales, etc.
 #
 # CAMPOS:
-# - lectura: FK → Lectura (obligatorio)
+# - lectura: FK → Lectura 
 # - registro_consumo: Texto descriptivo de la notificación (máx 500 caracteres)
 # - fecha_notificacion: Se asigna automáticamente al crear
 # - revisada: Boolean para marcar si fue leída (default: False)
 #
 # RELACIONES:
 # - lectura (N:1): La lectura que generó esta notificación
-#
-# USO TÍPICO:
-# - Personal eléctrico revisa notificaciones de consumo anormal
-# - Se marca como revisada después de tomar acción
-# - Los emojis en __str__ ayudan a identificar estado visual mente
-#
 # PERMISOS:
 # - Solo usuarios con rol 'Administrador' o 'Eléctrico' pueden ver/editar
 #
@@ -712,7 +608,6 @@ class NotificacionLectura(models.Model):
         Lectura,
         on_delete=models.CASCADE,  # Si se elimina lectura, se eliminan sus notificaciones
         related_name='notificaciones',  # Acceder desde lectura: lectura.notificaciones.all()
-        verbose_name='Lectura',
         null=True,  # Temporal para migración
         blank=True
     )
@@ -721,7 +616,7 @@ class NotificacionLectura(models.Model):
     revisada = models.BooleanField(default=False)  # Para marcar como leído
 
     def __str__(self):
-        """Representación en texto con emoji indicando si fue revisada"""
+        """se representa  con un emote indicando si fue revisada"""
         estado = "✅" if self.revisada else "🔔"
         return f"{estado} Notificación Lectura - Cliente: {self.lectura.get_cliente().nombre} - {self.registro_consumo[:30]}..."
     
@@ -745,10 +640,7 @@ class NotificacionLectura(models.Model):
         }
     
     class Meta:
-        verbose_name = "Notificación de Lectura"
-        verbose_name_plural = "Notificaciones de Lectura"
         ordering = ['-fecha_notificacion']  # Más recientes primero
-
 
 # ============================================
 # MODELO NOTIFICACION PAGO
@@ -758,28 +650,20 @@ class NotificacionLectura(models.Model):
 # Se usa para alertar sobre deudas pendientes, pagos recibidos, etc.
 #
 # CAMPOS:
-# - pago: FK → Pago (obligatorio)
+# - pago: FK → Pago
 # - deuda_pendiente: Texto descriptivo de la notificación (máx 500 caracteres)
 # - fecha_notificacion: Se asigna automáticamente al crear
 # - revisada: Boolean para marcar si fue leída (default: False)
 #
 # RELACIONES:
 # - pago (N:1): El pago que generó esta notificación
-#
-# USO TÍPICO:
-# - Personal de finanzas revisa notificaciones de pagos/deudas
-# - Se marca como revisada después de tomar acción
-# - Los emojis en __str__ ayudan a identificar estado visualmente
-#
-# PERMISOS:
-# - Solo usuarios con rol 'Administrador' o 'Finanzas' pueden ver/editar
-#
+
+
 class NotificacionPago(models.Model):
     pago = models.ForeignKey(
         Pago,
         on_delete=models.CASCADE,  # Si se elimina pago, se eliminan sus notificaciones
         related_name='notificaciones',  # Acceder desde pago: pago.notificaciones.all()
-        verbose_name='Pago',
         null=True,  # Temporal para migración
         blank=True
     )
@@ -810,13 +694,10 @@ class NotificacionPago(models.Model):
                 'email': self.pago.get_cliente().email,
                 'telefono': self.pago.get_cliente().telefono
             }
-        }
+            }
     
     class Meta:
-        verbose_name = "Notificación de Pago"
-        verbose_name_plural = "Notificaciones de Pago"
         ordering = ['-fecha_notificacion']  # Más recientes primero
-
 
 # ============================================
 # MODELO USUARIO
@@ -848,17 +729,7 @@ class NotificacionPago(models.Model):
 #   - Acceso limitado a funciones financieras
 #   - Puede gestionar: clientes, contratos, tarifas, boletas, pagos, notificaciones
 #   - NO puede ver/editar: medidores, lecturas, usuarios
-#
-# SEGURIDAD:
-# - El password debe hashearse antes de guardar (implementado en views.py)
-# - username es único (no puede haber duplicados)
-# - El sistema verifica permisos antes de cada acción
-#
-# USO EN VIEWS:
-# - request.session['username']: Obtiene el username del usuario logueado
-# - request.session['rol']: Obtiene el rol para verificar permisos
-# - tiene_permiso(request, 'modulo'): Verifica si el usuario puede acceder
-#
+
 class Usuario(models.Model):
     ROLES_CHOICES = [
         ('Administrador', 'Administrador'),
@@ -877,6 +748,4 @@ class Usuario(models.Model):
         return f"{self.username} - {self.rol}"
     
     class Meta:
-        verbose_name = "Usuario"
-        verbose_name_plural = "Usuarios"
         ordering = ['username']  # Orden alfabético por username

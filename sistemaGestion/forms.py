@@ -14,20 +14,6 @@ from .models import (
 # y los def clean_<campo> permiten definir validaciones personalizadas para cada campo
 
 # ==========================================================
-# NOTA IMPORTANTE: OPCIÓN 4 - LÓGICA EN VISTAS
-# ==========================================================
-# Los formularios en este archivo NO utilizan __init__ personalizado.
-# Toda la lógica de formateo de fechas y pre-carga de datos se maneja
-# directamente en las vistas (views.py) para mayor simplicidad y claridad.
-# 
-# Ventajas de este enfoque:
-# - Código más simple en formularios
-# - Lógica visible donde se usa (en las vistas)
-# - Más fácil de depurar
-# - No requiere conocimiento de *args/**kwargs
-# ==========================================================
-
-# ==========================================================
 # FORMULARIO CLIENTE
 # ==========================================================
 class ClienteForm(forms.ModelForm):
@@ -485,7 +471,7 @@ class PagoForm(forms.ModelForm):
             # Advertencia si el pago excede el saldo (pero permitirlo)
             if monto_pagado > saldo_pendiente:
                 self.add_error('monto_pagado', 
-                    f'⚠️ El monto pagado (${monto_pagado:,}) excede el saldo pendiente (${saldo_pendiente:,}). '
+                    f'El monto pagado (${monto_pagado:,}) excede el saldo pendiente (${saldo_pendiente:,}). '
                     f'Se aplicará un pago en exceso de ${(monto_pagado - saldo_pendiente):,}.')
         
         return cleaned_data
